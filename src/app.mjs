@@ -1,4 +1,4 @@
-import { ProductManager } from "./Product-Manager.mjs";
+import { ProductManager } from "./managers/Product-Manager.mjs";
 import express from 'express'
 import { router as productsRouter } from "./api/products/ProductsRouter.mjs";
 // import { router as cartsRouter } from "./api/carts/CartsRouter";

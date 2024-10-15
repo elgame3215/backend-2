@@ -1,4 +1,4 @@
-import { ProductManager } from "./../../Product-Manager.mjs";
+import { ProductManager } from "./../../managers/Product-Manager.mjs";
 import { Router } from "express";
 
 export const router = Router()
@@ -46,6 +46,12 @@ router.post('/', async (req, res) => {
 router.delete('/:pid', async (req, res) => {
 	res.setHeader('Content-Type', 'application/json')
 	const { pid } = req.params
+
+	if (isNaN(pid)) {
+		res.status(400).json({ succeed: false, detail: 'El ID debe ser numérico', statusCode: 400 })
+		return
+	}
+
 	const operation = await ProductManager.deleteProductById(pid)
 
 	if (!operation.succeed) {

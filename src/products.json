@@ -12,28 +12,16 @@
     "id": 1
   },
   {
-    "title": "s",
-    "description": "d",
-    "price": 500,
-    "thumbnail": "",
-    "status": true,
-    "code": "aaafdd1s",
-    "stock": 25,
-    "category": "s",
-    "asdad": "",
-    "id": 2
-  },
-  {
     "title": "titulaso",
     "description": "descripcionarda",
     "price": 999999,
     "thumbnail": "ni idea",
     "status": true,
-    "code": "codigoLOL",
+    "code": "sasa",
     "stock": 250,
     "category": "B nacional",
     "asdad": "sisisisi",
-    "id": 3
+    "id": 2
   },
   {
     "title": "s",
@@ -46,18 +34,6 @@
     "category": "s",
     "asdad": "",
     "id": 4
-  },
-  {
-    "title": "titulaso",
-    "description": "descripcionarda",
-    "price": 999999,
-    "thumbnail": "ni idea",
-    "status": true,
-    "code": "codigoLOL",
-    "stock": 250,
-    "category": "B nacional",
-    "asdad": "sisisisi",
-    "id": 5
   },
   {
     "title": "s",
@@ -82,5 +58,29 @@
     "category": "d",
     "asdad": "",
     "id": 7
+  },
+  {
+    "title": "s",
+    "description": "d",
+    "price": 0,
+    "thumbnail": "",
+    "status": true,
+    "code": "asdddssa",
+    "stock": 25,
+    "category": "d",
+    "asdad": "",
+    "id": 8
+  },
+  {
+    "title": "s",
+    "description": "d",
+    "price": 0,
+    "thumbnail": "",
+    "status": true,
+    "code": "asdddassa",
+    "stock": 25,
+    "category": "d",
+    "asdad": "",
+    "id": 9
   }
 ]
