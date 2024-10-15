@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { ProductValidator } from "./utils/Product-Validator.mjs";
 
 export class ProductManager {
 	static #nextId;
@@ -10,7 +11,8 @@ export class ProductManager {
 			this.#nextId = 0
 		} else {
 			const products = JSON.parse(fs.readFileSync(path))
-			this.#nextId = Math.max(...products.map(p => p.id)) + 1
+			const nextId = Math.max(...products.map(p => p.id)) + 1;
+			this.#nextId = nextId
 		}
 	}
 	static async getProducts() {
@@ -21,21 +23,11 @@ export class ProductManager {
 
 	static async addProduct(product) {
 		try {
-			// Valido que el producto contenga los campos requeridos
-			for (const key in product) {
-				const value = product[key];
-				if (new String(value) == '' && key != 'thumbnail') {
-					throw new Error("Todos los campos deben estar completos");
-				}
-			}
-			// Valido que el codigo sea único en la BD
-			const { code } = product;
 			const products = await this.getProducts()
-			if (products.some(p => p.code == code)) {
-				throw new Error("Código ya existente");
-			};
+			ProductValidator.validateKeys(product);
+			ProductValidator.validateValues(product);
+			ProductValidator.validateID(product, products);
 
-			// El producto es válido, le asigno un ID y lo registro
 			const id = this.#nextId++;
 			product.id = id;
 			products.push(product)
@@ -53,13 +45,15 @@ export class ProductManager {
 		}
 	};
 
+
+
 	static async getProductById(id) {
 		const products = await this.getProducts();
 		const product = products.find(p => p.id == id);
 		if (!product) {
-			return
+			return { succeed: false, detail: 'Producto no encontrado', statusCode: 404 }
 		}
-		return product
+		return { succeed: true, statusCode: 200, product }
 	}
 	static async deleteProductById(id) {
 		try {
@@ -71,6 +65,27 @@ export class ProductManager {
 			products.splice(index, 1)
 			this.updateProducts(products)
 			return { succeed: true, detail: 'Producto eliminado', statusCode: 200 }
+		} catch (err) {
+			return { succeed: false, detail: err.message, statusCode: 500 }
+		}
+	}
+	static async updateProductById(pid, modifiedValues) {
+		try {
+			ProductValidator.validateValues(modifiedValues)
+		} catch (err) {
+			return { succeed: false, detail: err.message, statusCode: 400 }
+		}
+		try {
+			const products = await ProductManager.getProducts()
+			const { product } = await ProductManager.getProductById(pid)
+			console.log(product);
+			if (!product) {
+				return { succeed: false, detail: 'Producto no encontrado', statusCode: 404 }
+			}
+			const index = products.findIndex(p => p.id == pid)
+			products[index] = { ...product, ...modifiedValues }
+			ProductManager.updateProducts(products)
+			return { succeed: true, detail: 'Product updated', statusCode: 200, updatedProduct: products[index] }
 		} catch (err) {
 			return { succeed: false, detail: err.message, statusCode: 500 }
 		}

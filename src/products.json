@@ -1,191 +1,74 @@
 [
   {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "a4daaaaabd1s",
+    "title": "",
+    "description": "descripcionarda",
+    "price": 999999,
+    "thumbnail": "ni idea",
+    "status": true,
+    "code": "codigoLOL",
+    "stock": 250,
+    "category": "B nacional",
+    "asdad": "sisisisi",
+    "id": 1
+  },
+  {
+    "title": "s",
+    "description": "d",
+    "price": 500,
+    "thumbnail": "",
+    "status": true,
+    "code": "aaafdd1s",
     "stock": 25,
+    "category": "s",
+    "asdad": "",
+    "id": 2
+  },
+  {
+    "title": "titulaso",
+    "description": "descripcionarda",
+    "price": 999999,
+    "thumbnail": "ni idea",
+    "status": true,
+    "code": "codigoLOL",
+    "stock": 250,
+    "category": "B nacional",
+    "asdad": "sisisisi",
+    "id": 3
+  },
+  {
+    "title": "s",
+    "description": "d",
+    "price": 0,
+    "thumbnail": "",
+    "status": true,
+    "code": "adsa",
+    "stock": 25,
+    "category": "s",
+    "asdad": "",
+    "id": 4
+  },
+  {
+    "title": "titulaso",
+    "description": "descripcionarda",
+    "price": 999999,
+    "thumbnail": "ni idea",
+    "status": true,
+    "code": "codigoLOL",
+    "stock": 250,
+    "category": "B nacional",
+    "asdad": "sisisisi",
     "id": 5
   },
   {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "a4daaasaabd1s",
+    "title": "s",
+    "description": "d",
+    "price": 0,
+    "thumbnail": "",
+    "status": true,
+    "code": "asddsa",
     "stock": 25,
+    "category": "d",
+    "asdad": "",
     "id": 6
-  },
-  {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "a4daaasafabd1s",
-    "stock": 25,
-    "id": 7
-  },
-  {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "a4ddbd1s",
-    "stock": 25,
-    "id": 8
-  },
-  {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "a4g1s",
-    "stock": 25,
-    "id": 9
-  },
-  {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "a4gd1s",
-    "stock": 25,
-    "id": 10
-  },
-  {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "Sin imagen",
-    "code": "a4sgd1s",
-    "stock": 25,
-    "id": 11
-  },
-  {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "",
-    "code": "a4sagd4d1s",
-    "stock": 25,
-    "id": 12
-  },
-  {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 200,
-    "thumbnail": "",
-    "code": "a4sagdd4d1s",
-    "stock": 25,
-    "id": 13
-  },
-  {
-    "title": "producto prueba",
-    "description": "Este es un producto prueba",
-    "price": 0,
-    "thumbnail": "",
-    "code": "a4sagdd4dd1s",
-    "stock": 25,
-    "id": 14
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "a4sadgdd4dd1s",
-    "stock": 25,
-    "id": 15
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "a4sadagdd4dd1s",
-    "stock": 25,
-    "id": 16
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "a4sadagdd4ddd1s",
-    "stock": 25,
-    "id": 17
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "a4sadagdd4ddad1s",
-    "stock": 25,
-    "id": 18
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "a4sadagdd4dadad1s",
-    "stock": 25,
-    "id": 19
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "a4sadagdd4daddad1s",
-    "stock": 25,
-    "id": 20
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "as1s",
-    "stock": 25,
-    "id": 21
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "afs1s",
-    "stock": 25,
-    "id": 22
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "afss1s",
-    "stock": 25,
-    "id": 23
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "afdss1s",
-    "stock": 25,
-    "id": 24
-  },
-  {
-    "title": "s",
-    "description": "s",
-    "price": 0,
-    "thumbnail": "",
-    "code": "afdadss1s",
-    "stock": 25,
-    "id": 25
   }
 ]
