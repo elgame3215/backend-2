@@ -70,5 +70,17 @@
     "category": "d",
     "asdad": "",
     "id": 6
+  },
+  {
+    "title": "s",
+    "description": "d",
+    "price": 0,
+    "thumbnail": "",
+    "status": true,
+    "code": "asdddsa",
+    "stock": 25,
+    "category": "d",
+    "asdad": "",
+    "id": 7
   }
 ]
