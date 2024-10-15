@@ -2,13 +2,15 @@ Se creará una instancia de la clase “ProductManager”
 
 Se llamará “getProducts” recién creada la instancia, debe devolver un arreglo vacío []
 
-Se llamará al método “addProduct” con los campos:
-	title: “producto prueba”
-	description:”Este es un producto prueba”
-	price:200,
-	thumbnail:”Sin imagen”
-	code:”abc123”,
-	stock:25
+Se llamará al método “addProduct” con el producto:
+const product1 = {
+	title: "producto prueba",
+	description: "Este es un producto prueba",
+	price: 200,
+	thumbnail: "Sin imagen",
+	code: "abc123",
+	stock: 25
+}
 
 	El objeto debe agregarse satisfactoriamente con un id generado automáticamente SIN REPETIRSE
 

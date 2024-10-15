@@ -1,23 +1,16 @@
 import { ProductManager } from "./Product-Manager.mjs";
 import express from 'express'
+import { router as productsRouter } from "./api/products/ProductsRouter.mjs";
+// import { router as cartsRouter } from "./api/carts/CartsRouter";
 
 const app = express();
 const PORT = 8080;
-const pm = new ProductManager('./products.json');
+ProductManager.setPath('./products.json')
 
-app.get('/products', async (req, res) => {
-	const products = await pm.getProducts();
-	res.send(products);
-})
+app.use(express.json());
 
-app.get('/products/:pid', async (req, res) => {
-	const { pid } = req.params;
-	if (isNaN(pid)) {
-		res.send('El ID debe ser numérico');
-	}
-	const product = await pm.getProductById(pid);
-	res.send(product)
-})
+app.use('/api/products', productsRouter);
+// app.use('/api/carts', cartsRouter);
 
 app.listen(PORT, () => {
 	console.log(`Server up on http://localhost:${PORT}`);
