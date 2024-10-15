@@ -32,9 +32,16 @@ router.post('/', async (req, res) => {
 		res.status(400).send(JSON.stringify(operation))
 		return
 	}
-	res.status(201).send(JSON.stringify({ ...operation, addedProduct: newProduct }))
+	res.status(201).send(JSON.stringify(operation))
 })
 
-router.delete('/products/:id', (req, res) => {
-	res.status(204).send({})
+router.delete('/:id', async (req, res) => {
+	res.setHeader('Content-Type', 'application/json')
+	const { id } = req.params
+	const operation = await ProductManager.deleteProductById(id)
+	if (!operation.succeed) {
+		res.status(operation.statusCode).json(operation)
+		return
+	}
+	res.status(operation.statusCode).json(operation)
 })

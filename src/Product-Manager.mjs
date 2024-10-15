@@ -39,11 +39,17 @@ export class ProductManager {
 			const id = this.#nextId++;
 			product.id = id;
 			products.push(product)
-			await fs.promises.writeFile(this.#path, JSON.stringify(products, null, 5))
-			return { succeed: true, detail: `Product added` }
-
+			await this.updateProducts(products)
+			return {
+				succeed: true,
+				detail: `Product added`,
+				addedProduct: product
+			}
 		} catch (err) {
-			return { succeed: false, detail: `${err}` };
+			return {
+				succeed: false,
+				detail: `${err}`
+			};
 		}
 	};
 
@@ -51,9 +57,26 @@ export class ProductManager {
 		const products = await this.getProducts();
 		const product = products.find(p => p.id == id);
 		if (!product) {
-			console.error('Producto no encontrado');
 			return
 		}
 		return product
+	}
+	static async deleteProductById(id) {
+		try {
+			const products = await this.getProducts()
+			const index = products.findIndex(p => p.id == id)
+			if (index == -1) {
+				return { succeed: false, detail: 'Producto no encontrado', statusCode: 404 }
+			}
+			products.splice(index, 1)
+			this.updateProducts(products)
+			return { succeed: true, detail: 'Producto eliminado', statusCode: 200 }
+		} catch (err) {
+			return { succeed: false, detail: err.message, statusCode: 500 }
+		}
+	}
+	static async updateProducts(products) {
+		const productsJSON = JSON.stringify(products, null, 2)
+		await fs.promises.writeFile(this.#path, productsJSON)
 	}
 }
