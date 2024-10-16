@@ -1,4 +1,4 @@
-Se creará una instancia de la clase “ProductManager”
+Se creará una instancia de la clase “ProductsManager”
 
 Se llamará “getProducts” recién creada la instancia, debe devolver un arreglo vacío []
 

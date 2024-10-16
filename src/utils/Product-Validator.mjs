@@ -19,7 +19,7 @@ export class ProductValidator {
 		for (const key in product) {
 			const value = product[key];
 			if (new String(value) == '' && this.#requiredKeys.includes(key)) {
-				throw new Error("Todos los campos deben estar completos");
+				throw new Error("Todos los campos obligatorios deben estar completos");
 			}
 		}
 	}

@@ -1,5 +1,5 @@
-import { ProductManager } from "../../Product-Manager.mjs";
+import { CartsManager } from "../../managers/Carts-Manager.mjs";
 import { Router } from "express";
 
-export const cartsRouter = Router()
+export const router = Router()
 

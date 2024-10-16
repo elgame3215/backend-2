@@ -1,19 +1,22 @@
-import { ProductManager } from "./../../managers/Product-Manager.mjs";
+import { ProductsManager } from "./../../managers/Product-Manager.mjs";
 import { Router } from "express";
 
 export const router = Router()
 
 router.get('/', async (req, res) => {
-	const { limit } = req.query
-	let products = await ProductManager.getProducts();
-	if (limit) {
-		products = products.slice(0, limit)
+	try {
+		let products = await ProductsManager.getProducts();
+		const { limit } = req.query
+		if (limit) {
+			products = products.slice(0, limit)
+		}
+		return res.status(200).json(products);
+	} catch (err) {
+		return res.status(500).json({ error: 'Error del servidor' });
 	}
-	res.status(200).send(products);
 })
 
 router.get('/:pid', async (req, res) => {
-	res.setHeader('Content-Type', 'application/json')
 	const { pid } = req.params;
 
 	if (isNaN(pid)) {
@@ -21,57 +24,56 @@ router.get('/:pid', async (req, res) => {
 		return
 	}
 
-	const { product } = await ProductManager.getProductById(pid);
-	if (!product) {
-		res.status(404).json({ error: 'Producto no encontrado' })
-		return
+	try {
+		const { product } = await ProductsManager.getProductById(pid);
+		if (!product) {
+			res.status(404).json({ error: 'Producto no encontrado' })
+			return
+		}
+		res.status(200).json(product)
+	} catch (err) {
+		res.status(500).json({ error: 'Error del servidor' })
 	}
-
-	res.status(200).json(product)
 })
 
 router.post('/', async (req, res) => {
-	res.setHeader('Content-Type', 'application/json')
 	const { ...newProduct } = req.body
-	const operation = await ProductManager.addProduct(newProduct)
-
-	if (!operation.succeed) {
-		res.status(400).send(JSON.stringify(operation))
-		return
+	try {
+		let operation = await ProductsManager.addProduct(newProduct)
+		return res.status(operation.statusCode).json(operation)
+	} catch (err) {
+		const { statusCode, detail } = operation
+		res.status(statusCode).json({ error: detail })
 	}
-
-	res.status(201).send(JSON.stringify(operation))
 })
 
 router.delete('/:pid', async (req, res) => {
-	res.setHeader('Content-Type', 'application/json')
 	const { pid } = req.params
-
 	if (isNaN(pid)) {
-		res.status(400).json({ succeed: false, detail: 'El ID debe ser numérico', statusCode: 400 })
-		return
+		return res.status(400).json({ succeed: false, detail: 'El ID debe ser numérico', statusCode: 400 })
 	}
-
-	const operation = await ProductManager.deleteProductById(pid)
-
-	if (!operation.succeed) {
-		res.status(operation.statusCode).json(operation)
-		return
+	try {
+		const operation = await ProductsManager.deleteProductById(pid)
+		if (!operation.succeed) {
+			return res.status(operation.statusCode).json(operation)
+		}
+		return res.status(operation.statusCode).json(operation)
+	} catch (err) {
+		res.status(500).json({error: 'Error del servidor'})
 	}
-
-	res.status(operation.statusCode).json(operation)
 })
 
 router.put('/:pid', async (req, res) => {
-	res.setHeader('Content-Type', 'application/json')
 	const { pid } = req.params
-
 	if (isNaN(pid)) {
-		res.status(400).json({ succeed: false, detail: 'El ID debe ser numérico', statusCode: 400 })
-		return
+		return res.status(400).json({ succeed: false, detail: 'El ID debe ser numérico', statusCode: 400 })
 	}
-
 	const { ...modifiedValues } = req.body
-	const operation = await ProductManager.updateProductById(pid, modifiedValues)
-	res.status(operation.statusCode).json(operation)
+	delete modifiedValues.id
+	try {
+		const operation = await ProductsManager.updateProductById(pid, modifiedValues)
+		return res.status(operation.statusCode).json(operation)
+	} catch (err) {
+		res.status(500).json({error: 'Error del servidor'})
+	}
 })

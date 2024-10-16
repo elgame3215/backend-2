@@ -1,20 +1,21 @@
 import fs from "node:fs";
 import { ProductValidator } from "./../utils/Product-Validator.mjs";
 
-export class ProductManager {
+export class ProductsManager {
 	static #nextId;
-	static #path
+	static #path;
+
 	static setPath(path) {
 		this.#path = path
 		if (!fs.existsSync(path)) {
 			fs.writeFileSync(path, '[]')
-			this.#nextId = 0
 		} else {
 			const products = JSON.parse(fs.readFileSync(path))
-			const nextId = Math.max(...products.map(p => p.id)) + 1;
+			const nextId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 0;
 			this.#nextId = nextId
 		}
 	}
+
 	static async getProducts() {
 		const productsJSON = await fs.promises.readFile(this.#path);
 		const products = JSON.parse(productsJSON);
@@ -22,12 +23,20 @@ export class ProductManager {
 	};
 
 	static async addProduct(product) {
+		let products;
 		try {
-			const products = await this.getProducts()
+			products = await this.getProducts()
 			ProductValidator.validateKeys(product);
 			ProductValidator.validateValues(product);
 			ProductValidator.validateID(product, products);
-
+		} catch (err) {
+			return {
+				succeed: false,
+				detail: err.message,
+				statusCode: 400
+			}
+		}
+		try {
 			const id = this.#nextId++;
 			product.id = id;
 			products.push(product)
@@ -35,17 +44,17 @@ export class ProductManager {
 			return {
 				succeed: true,
 				detail: `Product added`,
+				statusCode: 201,
 				addedProduct: product
 			}
 		} catch (err) {
 			return {
 				succeed: false,
-				detail: `${err}`
+				detail: 'Error del servidor',
+				statusCode: 500
 			};
 		}
 	};
-
-
 
 	static async getProductById(id) {
 		const products = await this.getProducts();
@@ -55,20 +64,22 @@ export class ProductManager {
 		}
 		return { succeed: true, statusCode: 200, product }
 	}
-	static async deleteProductById(id) {
+
+	static async deleteProductById(pid) {
 		try {
 			const products = await this.getProducts()
-			const index = products.findIndex(p => p.id == id)
+			const index = products.findIndex(p => p.id == pid)
 			if (index == -1) {
 				return { succeed: false, detail: 'Producto no encontrado', statusCode: 404 }
 			}
 			products.splice(index, 1)
 			this.updateProducts(products)
-			return { succeed: true, detail: 'Producto eliminado', statusCode: 200 }
+			return { succeed: true, detail: `Eliminado producto id: ${pid}`, statusCode: 200 }
 		} catch (err) {
-			return { succeed: false, detail: err.message, statusCode: 500 }
+			return { succeed: false, detail: 'Error del servidor', statusCode: 500 }
 		}
 	}
+
 	static async updateProductById(pid, modifiedValues) {
 		try {
 			ProductValidator.validateValues(modifiedValues)
@@ -76,22 +87,22 @@ export class ProductManager {
 			return { succeed: false, detail: err.message, statusCode: 400 }
 		}
 		try {
-			const products = await ProductManager.getProducts()
-			const { product } = await ProductManager.getProductById(pid)
-			console.log(product);
+			const products = await ProductsManager.getProducts()
+			const { product } = await ProductsManager.getProductById(pid)
 			if (!product) {
 				return { succeed: false, detail: 'Producto no encontrado', statusCode: 404 }
 			}
 			const index = products.findIndex(p => p.id == pid)
 			products[index] = { ...product, ...modifiedValues }
-			ProductManager.updateProducts(products)
+			ProductsManager.updateProducts(products)
 			return { succeed: true, detail: 'Product updated', statusCode: 200, updatedProduct: products[index] }
 		} catch (err) {
 			return { succeed: false, detail: err.message, statusCode: 500 }
 		}
 	}
+
 	static async updateProducts(products) {
 		const productsJSON = JSON.stringify(products, null, 2)
-		await fs.promises.writeFile(this.#path, productsJSON)
+		await fs.writeFileSync(this.#path, productsJSON)
 	}
 }
