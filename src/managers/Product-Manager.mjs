@@ -28,7 +28,7 @@ export class ProductsManager {
 			products = await this.getProducts()
 			ProductValidator.validateKeys(product);
 			ProductValidator.validateValues(product);
-			ProductValidator.validateID(product, products);
+			ProductValidator.validateCode(product, products);
 		} catch (err) {
 			return {
 				succeed: false,

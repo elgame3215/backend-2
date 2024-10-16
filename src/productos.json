@@ -1,0 +1,26 @@
+[
+  {
+    "title": "s",
+    "description": "d",
+    "price": 0,
+    "thumbnail": "",
+    "status": true,
+    "code": "9914",
+    "stock": 25,
+    "category": "d",
+    "asdad": "",
+    "id": 116
+  },
+  {
+    "title": "s",
+    "description": "d",
+    "price": 0,
+    "thumbnail": "",
+    "status": true,
+    "code": "651",
+    "stock": 25,
+    "category": "d",
+    "asdad": "",
+    "id": 118
+  }
+]

@@ -59,7 +59,7 @@ router.delete('/:pid', async (req, res) => {
 		}
 		return res.status(operation.statusCode).json(operation)
 	} catch (err) {
-		res.status(500).json({error: 'Error del servidor'})
+		res.status(500).json({ error: 'Error del servidor' })
 	}
 })
 
@@ -74,6 +74,6 @@ router.put('/:pid', async (req, res) => {
 		const operation = await ProductsManager.updateProductById(pid, modifiedValues)
 		return res.status(operation.statusCode).json(operation)
 	} catch (err) {
-		res.status(500).json({error: 'Error del servidor'})
+		res.status(500).json({ error: 'Error del servidor' })
 	}
 })

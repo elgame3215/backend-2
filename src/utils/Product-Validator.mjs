@@ -8,11 +8,11 @@ export class ProductValidator {
 		'stock',
 		'category'
 	]
-	static validateID(product, products) {
-		const { code } = product;
-		if (products.some(p => p.code == code)) {
-			throw new Error("Código ya existente");
-		};
+	static validateKeys(product) {
+		const keys = Object.keys(product);
+		if (!this.#requiredKeys.every(requiredKey => keys.includes(requiredKey))) {
+			throw new Error("Campos faltantes");
+		}
 	}
 
 	static validateValues(product) {
@@ -24,10 +24,10 @@ export class ProductValidator {
 		}
 	}
 
-	static validateKeys(product) {
-		const keys = Object.keys(product);
-		if (!this.#requiredKeys.every(requiredKey => keys.includes(requiredKey))) {
-			throw new Error("Campos faltantes");
-		}
+	static validateCode(product, products) {
+		const { code } = product;
+		if (products.some(p => p.code == code)) {
+			throw new Error("Código ya existente");
+		};
 	}
 }
