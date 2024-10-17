@@ -1,5 +1,6 @@
 import { ProductsManager } from "../../managers/Product-Manager.js";
 import { Router } from "express";
+import { ProductValidator } from "../../utils/Product-Validator.js";
 
 export const router = Router()
 
@@ -20,7 +21,7 @@ router.get('/:pid', async (req, res) => {
 	const { pid } = req.params;
 
 	if (isNaN(pid)) {
-		res.status(400).json({ error: 'El ID debe ser numérico' });
+		res.status(400).json({ detail: ProductValidator.errorMessages.nonNumericId });
 		return
 	}
 
@@ -32,7 +33,7 @@ router.get('/:pid', async (req, res) => {
 		}
 		res.status(200).json(product)
 	} catch (err) {
-		res.status(500).json({ error: 'Error del servidor' })
+		res.status(500).json({ detail: ProductsManager.errorMessages.serverError })
 	}
 })
 

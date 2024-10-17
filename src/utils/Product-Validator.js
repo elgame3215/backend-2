@@ -10,7 +10,6 @@ export class ProductValidator {
 	]
 	static validateKeys(product) {
 		const keys = Object.keys(product);
-		
 		if (!this.#requiredKeys.every(requiredKey => keys.includes(requiredKey))) {
 			throw new Error(this.errorMessages.missingCamp);
 		}

@@ -108,6 +108,7 @@ export class ProductsManager {
 
 	static errorMessages = {
 		productNotFound: 'Producto no encontrado',
-		serverError: 'Error del servidor'
+		serverError: 'Error del servidor',
+		nonNumericId: 'El ID debe ser numérico'
 	}
 }

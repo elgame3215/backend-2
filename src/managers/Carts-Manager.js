@@ -1,4 +1,3 @@
-import { createDecipheriv } from "crypto";
 import fs from "fs";
 
 export class CartsManager {
@@ -41,7 +40,7 @@ export class CartsManager {
 			return {
 				succeed: true,
 				statusCode: 201,
-				newCart
+				addedCart: newCart
 			}
 		} catch (err) {
 			return {
@@ -53,19 +52,32 @@ export class CartsManager {
 	}
 
 	static async getCartById(cid) {
-		const carts = await this.getCarts();
-		const cart = carts.find(c => c.id == cid);
-		if (!cart) {
+		try {
+			const carts = await this.getCarts();
+			const cart = carts.find(c => c.id == cid);
+			if (!cart) {
+				return {
+					succeed: false,
+					detail: this.errorMessages.cartNotFound,
+					statusCode: 404
+				}
+			}
+			return {
+				succeed: true,
+				statusCode: 200,
+				cart
+			}
+		} catch (err) {
 			return {
 				succeed: false,
-				detail: 'Carrito no encontrado',
-				statusCode: 404
+				detail: this.errorMessages.serverError,
+				statusCode: 500
 			}
 		}
-		return {
-			succeed: true,
-			statusCode: 200,
-			cart
-		}
+	}
+	static errorMessages = {
+		cartNotFound: 'Carrito no encontrado',
+		serverError: 'Error del servidor',
+		nonNumericId: 'El ID debe ser numérico'
 	}
 }

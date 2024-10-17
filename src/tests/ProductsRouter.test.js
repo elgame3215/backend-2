@@ -1,11 +1,16 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 import { ProductValidator } from "../utils/Product-Validator";
 import { ProductsManager } from "../managers/Product-Manager";
 let usedCode;
 let usedId;
 
+function randomCode() {
+	return Math.round(Math.random() * 9999);
+}
+
+
 describe('POST /products valid', async () => {
-	usedCode = Math.round(Math.random() * 9999)
+	usedCode = randomCode()
 	const validProduct = {
 		title: "s",
 		description: "d",
@@ -130,11 +135,12 @@ describe('POST /products with duplicated code', async () => {
 describe('GET /products', async () => {
 	const endpoint = 'http://localhost:8080/api/products';
 	const response = await fetch(endpoint)
+	const data = await response.json()
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200)
 	});
-	it('Should return a JSON', () => {
-		expect(response.headers.get('Content-Type')).toContain('application/json')
+	it('Data should be an array', () => {
+		expectTypeOf(data).toBeArray
 	})
 })
 
@@ -162,6 +168,155 @@ describe('GET /products/:pid not found id', async () => {
 	})
 })
 
-// describe('PUT /products:pid valid', () => {
-	
-// })
+describe('GET /products/:pid NaN id', async () => {
+	const endpoint = `http://localhost:8080/api/products/a`;
+	const response = await fetch(endpoint)
+	const data = await response.json()
+
+	it('Should have status 400', () => {
+		expect(response.status).toBe(400)
+	})
+	it('Error message should be non numeric id', () => {
+		expect(data.detail).toBe(ProductsManager.errorMessages.nonNumericId)
+	})
+})
+
+describe('PUT /products/:pid valid', async () => {
+	const newCode = randomCode()
+	const validProduct = {
+		title: "a",
+		description: "b",
+		price: 0,
+		thumbnail: "",
+		status: true,
+		code: newCode,
+		stock: 30,
+		category: "c",
+		id: -1
+	}
+	const endpoint = `http://localhost:8080/api/products/${usedId}`;
+	const response = await fetch(endpoint, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(validProduct)
+	})
+	const { updatedProduct } = await response.json()
+	const { id } = updatedProduct
+
+	it('Should have status 200', () => {
+		expect(response.status).toBe(200)
+	})
+	it('Id should have not changed', () => {
+		expect(id).toBe(usedId)
+	})
+	delete validProduct.id
+	delete updatedProduct.id
+	it('Should update values', () => {
+		expect(updatedProduct).include(validProduct)
+	})
+})
+
+describe('PUT /products/:pid invalid id', async () => {
+	const invalidIdProduct = {
+		title: "a",
+		description: "b",
+		price: 0,
+		thumbnail: "",
+		status: true,
+		code: 912,
+		stock: 30,
+		category: "c",
+		id: -1
+	}
+	const endpoint = `http://localhost:8080/api/products/-1`;
+	const response = await fetch(endpoint, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(invalidIdProduct)
+	})
+	const data = await response.json()
+
+	it('Should have status 404', () => {
+		expect(response.status).toBe(404)
+	})
+	it('Error message should be product not found', () => {
+		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
+	})
+})
+
+describe('PUT /products/:pid NaN id', async () => {
+	const endpoint = `http://localhost:8080/api/products/a`;
+	const response = await fetch(endpoint, {method: 'PUT'})
+	const data = await response.json()
+
+	it('Should have status 400', () => {
+		expect(response.status).toBe(400)
+	})
+	it('Error message should be non numeric id', () => {
+		expect(data.detail).toBe(ProductsManager.errorMessages.nonNumericId)
+	})
+})
+
+
+describe('PUT /products/:pid invalid values', async () => {
+	const invalidIdProduct = {
+		title: "",
+		description: "b",
+		price: 0,
+		thumbnail: "",
+		status: true,
+		code: 912,
+		stock: 30,
+		category: "c",
+		id: -1
+	}
+	const endpoint = `http://localhost:8080/api/products/-1`;
+	const response = await fetch(endpoint, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(invalidIdProduct)
+	})
+	const data = await response.json()
+
+	it('Should have status 400', () => {
+		expect(response.status).toBe(400)
+	})
+	it('Error message should be empty camp', () => {
+		expect(data.detail).toBe(ProductValidator.errorMessages.emptyCamp)
+	})
+})
+
+describe('DELETE /products/:pid valid', async () => {
+	const endpoint = `http://localhost:8080/api/products/${usedId}`;
+	let response = await fetch(endpoint, { method: 'DELETE' })
+	const data = await response.json()
+	const { status } = response
+
+	it('Should have status 200', () => {
+		expect(status).toBe(200)
+	})
+
+	response = await fetch(endpoint)
+	it('Product is not aviable after delete', () => {
+		expect(response.status).toBe(404)
+	})
+})
+
+describe('DELETE /products/:pid invalid id', async () => {
+	const endpoint = 'http://localhost:8080/api/products/-1';
+	let response = await fetch(endpoint, { method: 'DELETE' })
+	const data = await response.json()
+
+	it('Should have status 404', () => {
+		expect(response.status).toBe(404)
+	})
+	it('Error message should be product not found', () => {
+		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
+	})
+})
