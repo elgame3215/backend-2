@@ -1,3 +1,4 @@
+import { createDecipheriv } from "crypto";
 import fs from "fs";
 
 export class CartsManager {
@@ -29,13 +30,26 @@ export class CartsManager {
 	}
 
 	static async addCart() {
-		const carts = await this.getCarts();
-		const cart = {
-			id: this.#nextId++,
-			products: []
+		try {
+			const carts = await this.getCarts();
+			const newCart = {
+				id: this.#nextId++,
+				products: []
+			}
+			carts.push(newCart)
+			this.updateCarts(carts)
+			return {
+				succeed: true,
+				statusCode: 201,
+				newCart
+			}
+		} catch (err) {
+			return {
+				succeed: false,
+				detail: 'Error del servidor',
+				statusCode: 500,
+			}
 		}
-		carts.push(cart)
-		this.updateCarts(carts)
 	}
 
 	static async getCartById(cid) {
@@ -43,16 +57,15 @@ export class CartsManager {
 		const cart = carts.find(c => c.id == cid);
 		if (!cart) {
 			return {
-				succeed
+				succeed: false,
+				detail: 'Carrito no encontrado',
+				statusCode: 404
 			}
 		}
-		return cart
+		return {
+			succeed: true,
+			statusCode: 200,
+			cart
+		}
 	}
 }
-
-CartsManager.setPath('./carritos.json');
-
-(async () => {
-	
-	console.log(await CartsManager.getCartById(1))
-})()
