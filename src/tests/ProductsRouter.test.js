@@ -172,7 +172,7 @@ describe('GET /products/:pid NaN id', async () => {
 	const endpoint = `http://localhost:8080/api/products/a`;
 	const response = await fetch(endpoint)
 	const data = await response.json()
-
+	
 	it('Should have status 400', () => {
 		expect(response.status).toBe(400)
 	})
@@ -260,7 +260,6 @@ describe('PUT /products/:pid NaN id', async () => {
 		expect(data.detail).toBe(ProductsManager.errorMessages.nonNumericId)
 	})
 })
-
 
 describe('PUT /products/:pid invalid values', async () => {
 	const invalidIdProduct = {

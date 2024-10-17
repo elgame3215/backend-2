@@ -9,10 +9,14 @@ export class ProductsManager {
 		this.#path = path
 		if (!fs.existsSync(path)) {
 			fs.writeFileSync(path, '[]')
+			this.#nextId = 0
 		} else {
 			const products = JSON.parse(fs.readFileSync(path))
-			const nextId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 0;
-			this.#nextId = nextId
+			const nextId =
+				0 < products.length ?
+					(Math.max(...products.map(p => p.id)) + 1) :
+					0
+			this.#nextId = nextId ?? 0;
 		}
 	}
 
@@ -40,7 +44,7 @@ export class ProductsManager {
 			const id = this.#nextId++;
 			product.id = id;
 			products.push(product)
-			await this.updateProducts(products)
+			this.updateProducts(products)
 			return {
 				succeed: true,
 				detail: `Product added`,
@@ -94,7 +98,7 @@ export class ProductsManager {
 			}
 			const index = products.findIndex(p => p.id == pid)
 			products[index] = { ...product, ...modifiedValues }
-			ProductsManager.updateProducts(products)
+			this.updateProducts(products)
 			return { succeed: true, detail: 'Product updated', statusCode: 200, updatedProduct: products[index] }
 		} catch (err) {
 			return { succeed: false, detail: err.message, statusCode: 500 }
@@ -103,12 +107,12 @@ export class ProductsManager {
 
 	static async updateProducts(products) {
 		const productsJSON = JSON.stringify(products, null, 2)
-		await fs.writeFileSync(this.#path, productsJSON)
+		await fs.promises.writeFile(this.#path, productsJSON)
 	}
 
 	static errorMessages = {
 		productNotFound: 'Producto no encontrado',
 		serverError: 'Error del servidor',
-		nonNumericId: 'El ID debe ser numérico'
+		nonNumericId: 'El/Los ID deben ser numéricos'
 	}
 }

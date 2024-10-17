@@ -21,7 +21,7 @@ router.get('/:pid', async (req, res) => {
 	const { pid } = req.params;
 
 	if (isNaN(pid)) {
-		res.status(400).json({ detail: ProductValidator.errorMessages.nonNumericId });
+		res.status(400).json({ detail: ProductsManager.errorMessages.nonNumericId });
 		return
 	}
 
@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
 router.delete('/:pid', async (req, res) => {
 	const { pid } = req.params
 	if (isNaN(pid)) {
-		return res.status(400).json({ succeed: false, detail: 'El ID debe ser numérico', statusCode: 400 })
+		return res.status(400).json({ succeed: false, detail: ProductsManager.errorMessages.nonNumericId, statusCode: 400 })
 	}
 	try {
 		const operation = await ProductsManager.deleteProductById(pid)
@@ -67,7 +67,7 @@ router.delete('/:pid', async (req, res) => {
 router.put('/:pid', async (req, res) => {
 	const { pid } = req.params
 	if (isNaN(pid)) {
-		return res.status(400).json({ succeed: false, detail: 'El ID debe ser numérico', statusCode: 400 })
+		return res.status(400).json({ succeed: false, detail: ProductsManager.errorMessages.nonNumericId, statusCode: 400 })
 	}
 	const { ...modifiedValues } = req.body
 	delete modifiedValues.id

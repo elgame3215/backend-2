@@ -7,8 +7,7 @@
 	"scripts": {
 		"test": "vitest",
 		"start": "node ./src/app.js",
-		"dev": "node --watch ./src/app.js",
-		"carts": "node ./src/managers/Carts-Manager.js"
+		"dev": "node --watch ./src/app.js"
 	},
 	"keywords": [],
 	"author": "",
