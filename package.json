@@ -1,18 +1,22 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-		"start": "node ./src/app.mjs",
-		"dev": "node --watch ./src/app.mjs",
-		"carts": "node ./src/managers/Carts-Manager.mjs"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.21.1"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"main": "index.js",
+	"scripts": {
+		"test": "vitest",
+		"start": "node ./src/app.js",
+		"dev": "node --watch ./src/app.js",
+		"carts": "node ./src/managers/Carts-Manager.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"express": "^4.21.1"
+	},
+	"devDependencies": {
+		"vitest": "^2.1.3"
+	}
 }

@@ -1,4 +1,4 @@
-import { ProductsManager } from "./../../managers/Product-Manager.mjs";
+import { ProductsManager } from "../../managers/Product-Manager.js";
 import { Router } from "express";
 
 export const router = Router()

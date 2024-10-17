@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { ProductValidator } from "./../utils/Product-Validator.mjs";
+import { ProductValidator } from "../utils/Product-Validator.js";
 
 export class ProductsManager {
 	static #nextId;
@@ -50,7 +50,7 @@ export class ProductsManager {
 		} catch (err) {
 			return {
 				succeed: false,
-				detail: 'Error del servidor',
+				detail: this.errorMessages.serverError,
 				statusCode: 500
 			};
 		}
@@ -60,7 +60,7 @@ export class ProductsManager {
 		const products = await this.getProducts();
 		const product = products.find(p => p.id == id);
 		if (!product) {
-			return { succeed: false, detail: 'Producto no encontrado', statusCode: 404 }
+			return { succeed: false, detail: this.errorMessages.productNotFound, statusCode: 404 }
 		}
 		return { succeed: true, statusCode: 200, product }
 	}
@@ -70,13 +70,13 @@ export class ProductsManager {
 			const products = await this.getProducts()
 			const index = products.findIndex(p => p.id == pid)
 			if (index == -1) {
-				return { succeed: false, detail: 'Producto no encontrado', statusCode: 404 }
+				return { succeed: false, detail: this.errorMessages.productNotFound, statusCode: 404 }
 			}
 			products.splice(index, 1)
 			this.updateProducts(products)
 			return { succeed: true, detail: `Eliminado producto id: ${pid}`, statusCode: 200 }
 		} catch (err) {
-			return { succeed: false, detail: 'Error del servidor', statusCode: 500 }
+			return { succeed: false, detail: this.errorMessages.serverError, statusCode: 500 }
 		}
 	}
 
@@ -90,7 +90,7 @@ export class ProductsManager {
 			const products = await ProductsManager.getProducts()
 			const { product } = await ProductsManager.getProductById(pid)
 			if (!product) {
-				return { succeed: false, detail: 'Producto no encontrado', statusCode: 404 }
+				return { succeed: false, detail: this.errorMessages.productNotFound, statusCode: 404 }
 			}
 			const index = products.findIndex(p => p.id == pid)
 			products[index] = { ...product, ...modifiedValues }
@@ -104,5 +104,10 @@ export class ProductsManager {
 	static async updateProducts(products) {
 		const productsJSON = JSON.stringify(products, null, 2)
 		await fs.writeFileSync(this.#path, productsJSON)
+	}
+
+	static errorMessages = {
+		productNotFound: 'Producto no encontrado',
+		serverError: 'Error del servidor'
 	}
 }

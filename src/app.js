@@ -1,8 +1,8 @@
 import express from 'express'
-import { ProductsManager } from "./managers/Product-Manager.mjs";
-import { CartsManager } from "./managers/Carts-Manager.mjs";
-import { router as productsRouter } from "./api/products/ProductsRouter.mjs";
-import { router as cartsRouter } from "./api/carts/CartsRouter.mjs";
+import { ProductsManager } from "./managers/Product-Manager.js";
+import { CartsManager } from "./managers/Carts-Manager.js";
+import { router as productsRouter } from "./api/products/ProductsRouter.js";
+import { router as cartsRouter } from "./api/carts/CartsRouter.js";
 
 const app = express();
 const PORT = 8080;
