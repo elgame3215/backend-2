@@ -7,7 +7,7 @@ import { router as cartsRouter } from "./api/carts/CartsRouter.js";
 const app = express();
 const PORT = 8080;
 ProductsManager.setPath('./src/productos.json')
-CartsManager.setPath('./src/carritos.json');
+CartsManager.setPath('./src/carrito.json');
 app.use(express.json());
 
 app.use('/api/products', productsRouter);
