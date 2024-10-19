@@ -1,5 +1,8 @@
 import { describe, it, expect, expectTypeOf, assert } from "vitest";
 import { CartsManager } from "../managers/Carts-Manager";
+import { ProductsManager } from "../managers/Product-Manager";
+import { response } from "express";
+import { randomCode } from "./ProductsRouter.test";
 let usedId;
 
 function randomId() {
@@ -57,8 +60,25 @@ describe('GET /carts/:cid NaN id', async () => {
 })
 
 describe('POST /:cid/product/:pid valid', async () => {
+	const validProduct = {
+		title: "s",
+		description: "d",
+		price: 0,
+		thumbnail: "",
+		status: true,
+		code: randomCode(),
+		stock: 25,
+		category: "d",
+	}
+	const response1 = await fetch('http://localhost:8080/api/products', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(validProduct)
+	})
+	const { addedProduct } = await response1.json()
+
 	let id = randomId();
-	const endpoint = `http://localhost:8080/api/carts/${usedId}/product/${id}`;
+	const endpoint = `http://localhost:8080/api/carts/${usedId}/product/${addedProduct.id}`;
 	const response = await fetch(endpoint, { method: 'POST' })
 	const data = await response.json()
 
@@ -66,7 +86,7 @@ describe('POST /:cid/product/:pid valid', async () => {
 		expect(response.status).toBe(200)
 	})
 	it('Cart products should contain product id', () => {
-		assert.isTrue((data.cart.products).some(p => p.id == id))
+		assert.isTrue((data.cart.products).some(p => p.id == addedProduct.id))
 	})
 })
 
@@ -84,7 +104,24 @@ describe('POST /:cid/product/:pid NaN id', async () => {
 })
 
 describe('POST /:cid/product/:pid invalid cid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/-1/product/100`;
+	const validProduct = {
+		title: "s",
+		description: "d",
+		price: 0,
+		thumbnail: "",
+		status: true,
+		code: randomCode(),
+		stock: 25,
+		category: "d",
+	}
+	const response1 = await fetch('http://localhost:8080/api/products', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(validProduct)
+	})
+	const { addedProduct } = await response1.json()
+
+	const endpoint = `http://localhost:8080/api/carts/-1/product/${addedProduct.id}`;
 	const response = await fetch(endpoint, { method: 'POST' })
 	const data = await response.json()
 
@@ -93,5 +130,18 @@ describe('POST /:cid/product/:pid invalid cid', async () => {
 	})
 	it('Error message should be cart not found', () => {
 		expect(data.detail).toBe(CartsManager.errorMessages.cartNotFound)
+	})
+})
+
+describe('POST /:cid/product/:pid invalid pid', async () => {
+	const endpoint = `http://localhost:8080/api/carts/${usedId}/product/1000`;
+	const response2 = await fetch(endpoint, { method: 'POST' })
+	const data = await response2.text()
+
+	it('Should have status 404', () => {
+		expect(response2.status).toBe(404)
+	})
+	it('Error message should be product not found', () => {
+		expect(data.detail).toBe(ProductsManager.errorMessages.cartNotFound)
 	})
 })

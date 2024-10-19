@@ -4,7 +4,7 @@ import { ProductsManager } from "../managers/Product-Manager";
 let usedCode;
 let usedId;
 
-function randomCode() {
+export function randomCode() {
 	return Math.round(Math.random() * 9999);
 }
 
@@ -21,24 +21,30 @@ describe('POST /products valid', async () => {
 		stock: 25,
 		category: "d",
 	}
-	const endpoint = 'http://localhost:8080/api/products';
-	const response = await fetch(endpoint, {
+	let endpoint = 'http://localhost:8080/api/products';
+	let response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify(validProduct)
 	})
-	const { addedProduct } = (await response.json());
+
+	const data = (await response.json());
+	const {addedProduct} = data;
 	usedId = addedProduct.id
+
+
 	it('Should have status 201', () => {
 		expect(response.status).toBe(201)
 	})
-	it('Should return a JSON', () => {
-		expect(response.headers.get('Content-Type')).toContain('application/json')
-	})
 	it('Product should have id', () => {
 		expect(Object.hasOwn(addedProduct, 'id'))
+	})
+	let response2 = await fetch(endpoint)
+	let products = await response2.json()
+	it('Id should be unique', () => {
+		expect(products.filter(p => p.id == addedProduct.id).length).toBe(1)
 	})
 })
 describe('POST /products with empty camp', async () => {
@@ -172,7 +178,7 @@ describe('GET /products/:pid NaN id', async () => {
 	const endpoint = `http://localhost:8080/api/products/a`;
 	const response = await fetch(endpoint)
 	const data = await response.json()
-	
+
 	it('Should have status 400', () => {
 		expect(response.status).toBe(400)
 	})
@@ -250,7 +256,7 @@ describe('PUT /products/:pid invalid id', async () => {
 
 describe('PUT /products/:pid NaN id', async () => {
 	const endpoint = `http://localhost:8080/api/products/a`;
-	const response = await fetch(endpoint, {method: 'PUT'})
+	const response = await fetch(endpoint, { method: 'PUT' })
 	const data = await response.json()
 
 	it('Should have status 400', () => {

@@ -1,4 +1,5 @@
 import fs from "fs";
+import { ProductsManager } from "./Product-Manager.js";
 
 export class CartsManager {
 	static #path;
@@ -81,6 +82,15 @@ export class CartsManager {
 	static async addProductToCart(pid, cid) {
 		const carts = await this.getCarts();
 		const cart = carts.find(c => c.id == cid);
+		const products = await ProductsManager.getProducts()
+
+		if (!products.some(p => p.id == pid)) {
+			return {
+				succeed: false,
+				detail: ProductsManager.errorMessages.productNotFound,
+				statusCode: 404
+			}
+		}
 
 		if (!cart) {
 			return {
