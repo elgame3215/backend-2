@@ -1,7 +1,6 @@
 import { describe, it, expect, expectTypeOf, assert } from "vitest";
 import { CartsManager } from "../managers/Carts-Manager";
 import { ProductsManager } from "../managers/Product-Manager";
-import { response } from "express";
 import { randomCode } from "./ProductsRouter.test";
 let usedId;
 
@@ -135,13 +134,13 @@ describe('POST /:cid/product/:pid invalid cid', async () => {
 
 describe('POST /:cid/product/:pid invalid pid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedId}/product/1000`;
-	const response2 = await fetch(endpoint, { method: 'POST' })
-	const data = await response2.text()
+	const response = await fetch(endpoint, { method: 'POST' })
+	const data = await response.json()
 
 	it('Should have status 404', () => {
-		expect(response2.status).toBe(404)
+		expect(response.status).toBe(404)
 	})
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.cartNotFound)
+		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
 	})
 })
