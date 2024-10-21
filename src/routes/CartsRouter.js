@@ -1,7 +1,7 @@
-import { CartsManager } from "../../managers/Carts-Manager.js";
+import { CartsManager } from "../managers/Carts-Manager.js";
 import { Router } from "express";
-import { ProductValidator } from "../../utils/Product-Validator.js";
-import { ProductsManager } from "../../managers/Product-Manager.js";
+import { ProductValidator } from "../utils/Product-Validator.js";
+import { ProductsManager } from "../managers/Product-Manager.js";
 
 export const router = Router()
 

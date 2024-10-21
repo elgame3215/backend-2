@@ -1,6 +1,5 @@
-import { ProductsManager } from "../../managers/Product-Manager.js";
+import { ProductsManager } from "../managers/Product-Manager.js";
 import { Router } from "express";
-import { ProductValidator } from "../../utils/Product-Validator.js";
 
 export const router = Router()
 
