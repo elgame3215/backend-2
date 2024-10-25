@@ -4,7 +4,6 @@ export class ProductValidator {
 		'description',
 		'code',
 		'price',
-		'status',
 		'stock',
 		'category'
 	]

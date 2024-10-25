@@ -1,7 +1,9 @@
 import { ProductsManager } from "../managers/Product-Manager.js";
 import { Router } from "express";
 
+
 export const router = Router()
+
 
 router.get('/', async (req, res) => {
 	try {
@@ -10,10 +12,14 @@ router.get('/', async (req, res) => {
 		if (limit) {
 			products = products.slice(0, limit)
 		}
-		return res.status(200).json(products);
+		return res.status(200).render('index.handlebars', { products });
 	} catch (err) {
 		return res.status(500).json({ error: 'Error del servidor' });
 	}
+})
+
+router.get('/realtimeproducts', (req, res) => {
+	res.status(200).render('realTimeProducts')
 })
 
 router.get('/:pid', async (req, res) => {

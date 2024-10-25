@@ -43,8 +43,8 @@ export class ProductsManager {
 		try {
 			const id = this.#nextId++;
 			product.id = id;
-			products.push(product)
-			this.updateProducts(products)
+			products.push({ status: true, ...product })
+			await this.updateProducts(products)
 			return {
 				succeed: true,
 				detail: `Product added`,
@@ -77,7 +77,7 @@ export class ProductsManager {
 				return { succeed: false, detail: this.errorMessages.productNotFound, statusCode: 404 }
 			}
 			products.splice(index, 1)
-			this.updateProducts(products)
+			await this.updateProducts(products)
 			return { succeed: true, detail: `Eliminado producto id: ${pid}`, statusCode: 200 }
 		} catch (err) {
 			return { succeed: false, detail: this.errorMessages.serverError, statusCode: 500 }
@@ -98,7 +98,7 @@ export class ProductsManager {
 			}
 			const index = products.findIndex(p => p.id == pid)
 			products[index] = { ...product, ...modifiedValues }
-			this.updateProducts(products)
+			await this.updateProducts(products)
 			return { succeed: true, detail: 'Product updated', statusCode: 200, updatedProduct: products[index] }
 		} catch (err) {
 			return { succeed: false, detail: err.message, statusCode: 500 }
