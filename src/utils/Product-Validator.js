@@ -17,7 +17,7 @@ export class ProductValidator {
 	static validateValues(product) {
 		for (const key in product) {
 			const value = product[key];
-			if (new String(value) == '' && this.#requiredKeys.includes(key)) {
+			if (new String(value).trim() == '' && this.#requiredKeys.includes(key)) {
 				throw new Error(this.errorMessages.emptyCamp);
 			}
 		}

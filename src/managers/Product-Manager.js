@@ -84,6 +84,21 @@ export class ProductsManager {
 		}
 	}
 
+	static async deleteProductByCode(code) {
+		try {
+			const products = await this.getProducts()
+			const index = products.findIndex(p => p.code == code)
+			if (index == -1) {
+				return { succeed: false, detail: this.errorMessages.productNotFound, statusCode: 404 }
+			}
+			products.splice(index, 1)
+			await this.updateProducts(products)
+			return { succeed: true, detail: `Eliminado producto id: ${pid}`, statusCode: 200 }
+		} catch (err) {
+			return { succeed: false, detail: this.errorMessages.serverError, statusCode: 500 }
+		}
+	}
+
 	static async updateProductById(pid, modifiedValues) {
 		try {
 			ProductValidator.validateValues(modifiedValues)

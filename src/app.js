@@ -3,6 +3,7 @@ import { ProductsManager } from "./managers/Product-Manager.js";
 import { CartsManager } from "./managers/Carts-Manager.js";
 import { router as productsRouter } from "./routes/ProductsRouter.js";
 import { router as cartsRouter } from "./routes/CartsRouter.js";
+import { router as viewsRouter } from "./routes/viewsRouter.js"
 import { engine } from "express-handlebars";
 import { Server } from 'socket.io';
 
@@ -31,7 +32,20 @@ app.use(
 	},
 	productsRouter);
 app.use('/api/carts', cartsRouter);
+app.use('/', viewsRouter)
 
 io.on('connection', socket => {
 	console.log('usuario conetado', socket.id);
+	socket.on('new product', async product => {
+		const operation = await ProductsManager.addProduct(product);
+		if (!operation.succeed) {
+			socket.emit('invalid product', operation.detail)
+			return
+		}
+		io.emit('product added', product)
+	})
+	socket.on('deleteProduct', code => {
+		console.log('producto eliminado', code);
+		ProductsManager.deleteProductByCode(code)
+	})
 })

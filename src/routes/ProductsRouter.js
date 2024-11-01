@@ -12,14 +12,10 @@ router.get('/', async (req, res) => {
 		if (limit) {
 			products = products.slice(0, limit)
 		}
-		return res.status(200).render('index.handlebars', { products });
+		return res.status(200).json(products);
 	} catch (err) {
 		return res.status(500).json({ error: 'Error del servidor' });
 	}
-})
-
-router.get('/realtimeproducts', (req, res) => {
-	res.status(200).render('realTimeProducts')
 })
 
 router.get('/:pid', async (req, res) => {
