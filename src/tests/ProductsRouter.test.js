@@ -10,6 +10,7 @@ export function randomCode() {
 
 
 describe('POST /products valid', async () => {
+
 	usedCode = randomCode()
 	const validProduct = {
 		title: "s",
@@ -31,7 +32,7 @@ describe('POST /products valid', async () => {
 	})
 
 	const data = (await response.json());
-	const {addedProduct} = data;
+	const { addedProduct } = data;
 	usedId = addedProduct.id
 
 
