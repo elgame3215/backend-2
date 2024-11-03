@@ -20,6 +20,10 @@ export class ProductValidator {
 			if (new String(value).trim() == '' && this.#requiredKeys.includes(key)) {
 				throw new Error(this.errorMessages.emptyCamp);
 			}
+			if (product.price < 0 || product.stock < 0) {
+				throw new Error(this.errorMessages.negativeValues);
+				
+			}
 		}
 	}
 
@@ -32,6 +36,7 @@ export class ProductValidator {
 	static errorMessages = {
 		emptyCamp: "Todos los campos obligatorios deben estar completos",
 		duplicatedCode: "Código ya existente",
-		missingCamp: "Campos faltantes"
+		missingCamp: "Campos faltantes",
+		negativeValues: "Precio y stock no admiten valores negativos"
 	}
 }

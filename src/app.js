@@ -32,7 +32,7 @@ app.use(
 	},
 	productsRouter);
 app.use('/api/carts', cartsRouter);
-app.use('/', viewsRouter)
+app.use('/products', viewsRouter)
 
 io.on('connection', socket => {
 	console.log('usuario conetado', socket.id);
