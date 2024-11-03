@@ -6,15 +6,17 @@
 }
 
 body {
+	display: flex;
+	flex-direction: column;
 	background-color: #f4f4f9;
 	color: #333;
 	font-size: 16px;
 	line-height: 1.6;
 }
 
-.container {
+.form-container {
 	max-width: 600px;
-	margin: 50px auto;
+	margin: 30px 20px 0;
 	background-color: #fff;
 	padding: 20px;
 	border-radius: 8px;
@@ -59,7 +61,7 @@ textarea:focus {
 }
 
 textarea {
-	resize: vertical;
+	resize: none;
 }
 
 button.submit-btn {
@@ -82,4 +84,8 @@ button.submit-btn:hover {
 		margin: 20px;
 		padding: 15px;
 	}
+}
+
+.products {
+	position: relative;
 }

@@ -1,7 +1,9 @@
 import { ProductsManager } from "../managers/Product-Manager.js";
 import { Router } from "express";
 
+
 export const router = Router()
+
 
 router.get('/', async (req, res) => {
 	try {
