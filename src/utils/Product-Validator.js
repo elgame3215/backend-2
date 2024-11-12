@@ -1,3 +1,5 @@
+import { productModel } from "../dao/models/Product-Model.js";
+
 export class ProductValidator {
 	static #requiredKeys = [
 		'title',
@@ -15,23 +17,28 @@ export class ProductValidator {
 	}
 
 	static validateValues(product) {
-		for (const key in product) {
+		if (product.price < 0 || product.stock < 0) {
+			throw new Error(this.errorMessages.negativeValues);
+		}
+		for (const key of this.#requiredKeys) {
 			const value = product[key];
-			if (new String(value).trim() == '' && this.#requiredKeys.includes(key)) {
+			if (new String(value).trim() == '') {
 				throw new Error(this.errorMessages.emptyCamp);
-			}
-			if (product.price < 0 || product.stock < 0) {
-				throw new Error(this.errorMessages.negativeValues);
-				
 			}
 		}
 	}
 
-	static validateCode(product, products) {
+	static async validateCode(product) {
 		const { code } = product;
-		if (products.some(p => p.code == code)) {
-			throw new Error(this.errorMessages.duplicatedCode);
-		};
+		try {
+			if (await productModel.findOne({code: code})) {
+				throw new Error(this.errorMessages.duplicatedCode);
+			}
+		} catch (err) {
+			if (err.name != 'CastError') {
+				throw err;
+			}
+		}
 	}
 	static errorMessages = {
 		emptyCamp: "Todos los campos obligatorios deben estar completos",

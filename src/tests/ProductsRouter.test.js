@@ -1,11 +1,30 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
-import { ProductValidator } from "../utils/Product-Validator";
-import { ProductsManager } from "../managers/Product-Manager";
+import { ProductValidator } from "../utils/Product-Validator.js";
+import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
 let usedCode;
-let usedId;
+let validProduct = {
+	title: "s",
+	description: "d",
+	price: 2,
+	thumbnail: "",
+	status: true,
+	code: randomCode(),
+	stock: 25,
+	category: "d",
+}
+let response = await fetch('http://localhost:8080/api/products', {
+	method: 'POST',
+	headers: {
+		'Content-Type': 'application/json'
+	},
+	body: JSON.stringify(validProduct)
+})
+let product = await response.json()
+let usedId = product._id
+
 
 export function randomCode() {
-	return Math.round(Math.random() * 9999);
+	return String(Math.round(Math.random() * 9999));
 }
 
 
@@ -15,7 +34,7 @@ describe('POST /products valid', async () => {
 	const validProduct = {
 		title: "s",
 		description: "d",
-		price: 0,
+		price: 2,
 		thumbnail: "",
 		status: true,
 		code: usedCode,
@@ -33,7 +52,7 @@ describe('POST /products valid', async () => {
 
 	const data = (await response.json());
 	const { addedProduct } = data;
-	usedId = addedProduct.id
+	usedId = addedProduct._id
 
 
 	it('Should have status 201', () => {
@@ -45,17 +64,17 @@ describe('POST /products valid', async () => {
 	let response2 = await fetch(endpoint)
 	let products = await response2.json()
 	it('Id should be unique', () => {
-		expect(products.filter(p => p.id == addedProduct.id).length).toBe(1)
+		expect(products.filter(p => p._id == addedProduct._id).length).toBe(1)
 	})
 })
 describe('POST /products with empty camp', async () => {
 	const emptyCampProduct = {
 		title: "",
-		description: 'hola',
+		description: 'producto sin titulo',
 		price: 0,
 		thumbnail: "",
 		status: true,
-		code: "asddsa",
+		code: randomCode(),
 		stock: 25,
 		category: "d",
 		asdad: "",
@@ -158,13 +177,15 @@ describe('GET /products/:pid valid', async () => {
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200)
 	})
+
 	it('Product id is id requested', () => {
-		expect(product.id).toBe(usedId)
+
+		expect(product._id).toBe(usedId)
 	})
 })
 
 describe('GET /products/:pid not found id', async () => {
-	const endpoint = `http://localhost:8080/api/products/-1`;
+	const endpoint = `http://localhost:8080/api/products/6732705e4b887660d64ed410`;
 	const response = await fetch(endpoint)
 	const data = await response.json()
 	it('Should have status 404', () => {
@@ -175,28 +196,16 @@ describe('GET /products/:pid not found id', async () => {
 	})
 })
 
-describe('GET /products/:pid NaN id', async () => {
-	const endpoint = `http://localhost:8080/api/products/a`;
-	const response = await fetch(endpoint)
-	const data = await response.json()
-
-	it('Should have status 400', () => {
-		expect(response.status).toBe(400)
-	})
-	it('Error message should be non numeric id', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.nonNumericId)
-	})
-})
 
 describe('PUT /products/:pid valid', async () => {
-	const newCode = randomCode()
+
 	const validProduct = {
 		title: "a",
 		description: "b",
 		price: 0,
 		thumbnail: "",
 		status: true,
-		code: newCode,
+		code: randomCode(),
 		stock: 30,
 		category: "c",
 		id: -1
@@ -209,17 +218,21 @@ describe('PUT /products/:pid valid', async () => {
 		},
 		body: JSON.stringify(validProduct)
 	})
+
+
 	const { updatedProduct } = await response.json()
-	const { id } = updatedProduct
+	const { _id } = updatedProduct
+
 
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200)
 	})
 	it('Id should have not changed', () => {
-		expect(id).toBe(usedId)
+		expect(_id).toBe(usedId)
 	})
-	delete validProduct.id
-	delete updatedProduct.id
+	delete validProduct._id
+	delete updatedProduct._id
+	
 	it('Should update values', () => {
 		expect(updatedProduct).include(validProduct)
 	})
@@ -237,7 +250,7 @@ describe('PUT /products/:pid invalid id', async () => {
 		category: "c",
 		id: -1
 	}
-	const endpoint = `http://localhost:8080/api/products/-1`;
+	const endpoint = `http://localhost:8080/api/products/673261c2a615becb487f1fe2`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: {
@@ -255,19 +268,6 @@ describe('PUT /products/:pid invalid id', async () => {
 	})
 })
 
-describe('PUT /products/:pid NaN id', async () => {
-	const endpoint = `http://localhost:8080/api/products/a`;
-	const response = await fetch(endpoint, { method: 'PUT' })
-	const data = await response.json()
-
-	it('Should have status 400', () => {
-		expect(response.status).toBe(400)
-	})
-	it('Error message should be non numeric id', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.nonNumericId)
-	})
-})
-
 describe('PUT /products/:pid invalid values', async () => {
 	const invalidIdProduct = {
 		title: "",
@@ -280,7 +280,7 @@ describe('PUT /products/:pid invalid values', async () => {
 		category: "c",
 		id: -1
 	}
-	const endpoint = `http://localhost:8080/api/products/-1`;
+	const endpoint = `http://localhost:8080/api/products/${usedId}`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: {
@@ -301,21 +301,19 @@ describe('PUT /products/:pid invalid values', async () => {
 describe('DELETE /products/:pid valid', async () => {
 	const endpoint = `http://localhost:8080/api/products/${usedId}`;
 	let response = await fetch(endpoint, { method: 'DELETE' })
-	const data = await response.json()
-	const { status } = response
 
 	it('Should have status 200', () => {
-		expect(status).toBe(200)
+		expect(response.status).toBe(200)
 	})
 
-	response = await fetch(endpoint)
+	let response2 = await fetch(endpoint)
 	it('Product is not aviable after delete', () => {
-		expect(response.status).toBe(404)
+		expect(response2.status).toBe(404)
 	})
 })
 
 describe('DELETE /products/:pid invalid id', async () => {
-	const endpoint = 'http://localhost:8080/api/products/-1';
+	const endpoint = 'http://localhost:8080/api/products/673134ab2628f9f38050b816';
 	let response = await fetch(endpoint, { method: 'DELETE' })
 	const data = await response.json()
 

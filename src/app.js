@@ -1,16 +1,14 @@
 import express from 'express'
-import { ProductsManager } from "./managers/Product-Manager.js";
-import { CartsManager } from "./managers/Carts-Manager.js";
+import { ProductsManager } from "./dao/Mongo/Product-Manager-Mongo.js";
 import { router as productsRouter } from "./routes/ProductsRouter.js";
 import { router as cartsRouter } from "./routes/CartsRouter.js";
 import { router as viewsRouter } from "./routes/viewsRouter.js"
 import { engine } from "express-handlebars";
 import { Server } from 'socket.io';
+import mongoose from 'mongoose';
 
 const app = express();
 export const PORT = 8080;
-ProductsManager.setPath('./src/productos.json')
-CartsManager.setPath('./src/carrito.json');
 app.use(express.json());
 
 
@@ -49,3 +47,18 @@ io.on('connection', socket => {
 		ProductsManager.deleteProductByCode(code)
 	})
 })
+
+const connectDB = async () => {
+	try {
+		await mongoose.connect(
+			"mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.2",
+			{
+				dbName: "ecommerce"
+			}
+		)
+		console.log(`DB connected`)
+	} catch (error) {
+		console.log(`Error: ${error.message}`)
+	}
+}
+connectDB()

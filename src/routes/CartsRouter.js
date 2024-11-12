@@ -1,34 +1,41 @@
-import { CartsManager } from "../managers/Carts-Manager.js";
+import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
 import { Router } from "express";
-import { ProductValidator } from "../utils/Product-Validator.js";
-import { ProductsManager } from "../managers/Product-Manager.js";
+import { validateCid, validatePid } from "../middleware/validateMongoIDs.js";
 
 export const router = Router()
 
 router.post('/', async (req, res) => {
-	const operation = await CartsManager.addCart();
-	return res.status(operation.statusCode).json(operation)
+	try {
+		const operation = await CartsManager.addCart();
+		return res.status(201).json(operation)
+	} catch (err) {
+		return res.status(500).json(operation)
+	}
 });
 
-router.get('/:cid', async (req, res) => {
+router.get('/:cid', validateCid, async (req, res) => {
 	const { cid } = req.params;
-
-	if (isNaN(cid)) {
-		return res.status(400).json({ detail: ProductsManager.errorMessages.nonNumericId })
+	try {
+		const operation = await CartsManager.getCartById(cid);
+		if (!operation.succeed) {
+			return res.status(404).json({ error: CartsManager.errorMessages.cartNotFound })
+		}
+		return res.status(200).json(operation.cart.products)
+	} catch (err) {
+		return res.status(500).json({ error: CartsManager.errorMessages.serverError })
 	}
-	const operation = await CartsManager.getCartById(cid);
-	const { succeed, cart, statusCode } = operation;
-	if (!succeed) {
-		return res.status(statusCode).json(operation)
-	}
-	return res.status(statusCode).json(cart.products)
 })
-
-router.post('/:cid/product/:pid', async (req, res) => {
+router.post('/:cid/product/:pid', validateCid, validatePid, async (req, res) => {
 	const { cid, pid } = req.params
-	if (isNaN(cid) || isNaN(pid)) {
-		return res.status(400).json({detail: CartsManager.errorMessages.nonNumericId})
+	try {
+		const operation = await CartsManager.addProductToCart(pid, cid)
+		if (!operation.succeed) {
+			return res.status(404).json(operation)
+		}
+		return res.status(200).json(operation)
+	} catch (err) {
+		return res.status(500).json({ error: CartsManager.errorMessages.serverError })
 	}
-	const operation = await CartsManager.addProductToCart(Number(pid), Number(cid))
-	res.status(operation.statusCode).json(operation)
 })
+
+

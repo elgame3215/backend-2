@@ -1,5 +1,5 @@
 import fs from "fs";
-import { ProductsManager } from "./Product-Manager.js";
+import { ProductsManager } from "./Product-Manager-Mongo.js";
 
 export class CartsManager {
 	static #path;
