@@ -60,7 +60,7 @@ describe('GET /carts/:cid invalid id', async () => {
 		expect(response.status).toBe(404)
 	})
 	it('Error message should be cart not found', () => {
-		expect(data.error).toBe(CartsManager.errorMessages.cartNotFound)
+		expect(data.detail).toBe(CartsManager.errorMessages.cartNotFound)
 	})
 })
 
@@ -108,10 +108,9 @@ describe('POST /:cid/product/:pid invalid cid', async () => {
 })
 
 describe('POST /:cid/product/:pid invalid pid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/6732d40735244dfefccf24b0`;
+	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/000000000000000000000000`;
 	const response = await fetch(endpoint, { method: 'POST' })
 	const data = await response.json()
-
 
 	it('Should have status 404', () => {
 		expect(response.status).toBe(404)

@@ -51,14 +51,14 @@ io.on('connection', socket => {
 const connectDB = async () => {
 	try {
 		await mongoose.connect(
-			"mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.3.2",
+			"mongodb+srv://backend70335:CoderCoder@cluster0.zwnp1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
 			{
 				dbName: "ecommerce"
 			}
 		)
 		console.log(`DB connected`)
 	} catch (error) {
-		console.log(`Error: ${error.message}`)
+		console.log(`Error connecting to DB: ${error.message}`)
 	}
 }
 connectDB()

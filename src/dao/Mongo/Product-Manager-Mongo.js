@@ -1,57 +1,34 @@
-import { ProductValidator } from "../../utils/Product-Validator.js";
 import { productModel } from "../models/Product-Model.js"
 
 export class ProductsManager {
-	static async getProducts() {
-		const products = await productModel.find();
+	static async getProducts(limit = 10, page = 1, sort, query) {
+		let filter = query ? { category: query } : {};
+		let sorter = sort ? { price: sort } : {};
+		const products = await productModel.paginate(
+			filter,
+			{
+				page,
+				limit,
+				lean: true,
+				sort: sorter
+			}
+		);
 		return products
 	};
 
 	static async addProduct(product) {
-		try {
-			ProductValidator.validateKeys(product);
-			ProductValidator.validateValues(product);
-			await ProductValidator.validateCode(product);
-		} catch (err) {
-			return {
-				succeed: false,
-				detail: err.message,
-			}
-		}
 		const addedProduct = await productModel.create(product)
-		return {
-			succeed: true,
-			detail: `Product added`,
-			addedProduct
-		}
+		return addedProduct
 	};
 
 	static async getProductById(id) {
 		const product = await productModel.findById(id);
-		if (!product) {
-			return {
-				succeed: false,
-				detail: this.errorMessages.productNotFound,
-			}
-		}
-		return {
-			succeed: true,
-			product
-		}
+		return product
 	}
 
 	static async deleteProductById(pid) {
 		const deletedProduct = await productModel.findByIdAndDelete(pid);
-		if (!deletedProduct) {
-			return {
-				succeed: false,
-				detail: this.errorMessages.productNotFound,
-			}
-		}
-		return {
-			succeed: true,
-			deletedProduct
-		}
+		return deletedProduct
 	}
 
 	static async deleteProductByCode(code) {
@@ -60,28 +37,8 @@ export class ProductsManager {
 
 	static async updateProductById(pid, modifiedValues) {
 		delete modifiedValues._id
-		try {
-			ProductValidator.validateValues(modifiedValues)
-		} catch (err) {
-			return {
-				succeed: false,
-				hasFoundProduct: true,
-				detail: err.message,
-			}
-		}
 		const updatedProduct = await productModel.findByIdAndUpdate(pid, { $set: modifiedValues }, { new: true })
-		if (!updatedProduct) {
-			return {
-				succeed: false,
-				hasFoundProduct : false,
-				detail: this.errorMessages.productNotFound,
-			}
-		}
-		return {
-			succeed: true,
-			hasFoundProduct : true,
-			updatedProduct
-		}
+		return updatedProduct
 	}
 
 	static errorMessages = {

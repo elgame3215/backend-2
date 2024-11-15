@@ -24,12 +24,11 @@ let usedId = product._id
 
 
 export function randomCode() {
-	return String(Math.round(Math.random() * 9999));
+	return String(Math.round(Math.random() * 9999999));
 }
 
 
 describe('POST /products valid', async () => {
-
 	usedCode = randomCode()
 	const validProduct = {
 		title: "s",
@@ -50,7 +49,7 @@ describe('POST /products valid', async () => {
 		body: JSON.stringify(validProduct)
 	})
 
-	const data = (await response.json());
+	const data = await response.json();
 	const { addedProduct } = data;
 	usedId = addedProduct._id
 
@@ -61,8 +60,8 @@ describe('POST /products valid', async () => {
 	it('Product should have id', () => {
 		expect(Object.hasOwn(addedProduct, 'id'))
 	})
-	let response2 = await fetch(endpoint)
-	let products = await response2.json()
+	let response2 = await fetch(`${endpoint}/?limit=999999`)
+	let { payload: products } = await response2.json()
 	it('Id should be unique', () => {
 		expect(products.filter(p => p._id == addedProduct._id).length).toBe(1)
 	})
@@ -185,14 +184,14 @@ describe('GET /products/:pid valid', async () => {
 })
 
 describe('GET /products/:pid not found id', async () => {
-	const endpoint = `http://localhost:8080/api/products/6732705e4b887660d64ed410`;
+	const endpoint = `http://localhost:8080/api/products/000000000000000000000000`;
 	const response = await fetch(endpoint)
 	const data = await response.json()
 	it('Should have status 404', () => {
 		expect(response.status).toBe(404)
 	})
 	it('Error message should be product not found', () => {
-		expect(data.error).toBe(ProductsManager.errorMessages.productNotFound)
+		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
 	})
 })
 
@@ -219,7 +218,6 @@ describe('PUT /products/:pid valid', async () => {
 		body: JSON.stringify(validProduct)
 	})
 
-
 	const { updatedProduct } = await response.json()
 	const { _id } = updatedProduct
 
@@ -232,7 +230,7 @@ describe('PUT /products/:pid valid', async () => {
 	})
 	delete validProduct._id
 	delete updatedProduct._id
-	
+
 	it('Should update values', () => {
 		expect(updatedProduct).include(validProduct)
 	})
@@ -245,7 +243,7 @@ describe('PUT /products/:pid invalid id', async () => {
 		price: 0,
 		thumbnail: "",
 		status: true,
-		code: 912,
+		code: randomCode(),
 		stock: 30,
 		category: "c",
 		id: -1
@@ -259,7 +257,6 @@ describe('PUT /products/:pid invalid id', async () => {
 		body: JSON.stringify(invalidIdProduct)
 	})
 	const data = await response.json()
-
 	it('Should have status 404', () => {
 		expect(response.status).toBe(404)
 	})

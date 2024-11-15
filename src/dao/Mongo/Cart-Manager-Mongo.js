@@ -1,48 +1,19 @@
-import { ProductsManager } from "./Product-Manager-Mongo.js";
 import { cartModel } from "../models/Cart-Model.js";
-import { productModel } from "../models/Product-Model.js"
 
 export class CartsManager {
 	static async addCart() {
 		let addedCart = { products: [] }
 		addedCart = await cartModel.create(addedCart);
-		return {
-			succeed: true,
-			addedCart
-		}
+		return addedCart
 	}
 
 	static async getCartById(cid) {
-		const cart = await cartModel.findById(cid);
-		if (!cart) {
-			return {
-				succeed: false,
-				detail: this.errorMessages.cartNotFound,
-			}
-		}
-		return {
-			succeed: true,
-			cart
-		}
+		const cart = await cartModel.findById(cid).populate('products.product');
+		return cart
 	}
 
 	static async addProductToCart(pid, cid) {
 		const cart = await cartModel.findById(cid);
-		if (!cart) {
-			return {
-				succeed: false,
-				detail: this.errorMessages.cartNotFound,
-			}
-		}
-
-		const product = await productModel.findById(pid)
-		if (!product) {
-			return {
-				succeed: false,
-				detail: ProductsManager.errorMessages.productNotFound,
-			}
-		}
-
 		const addedProduct = cart.products.find(p => p._id == pid)
 		if (addedProduct) {
 			addedProduct.quantity++
@@ -51,11 +22,29 @@ export class CartsManager {
 		}
 
 		const updatedCart = await cartModel.findByIdAndUpdate(cid, cart, { new: true })
-		return {
-			succeed: true,
-			updatedCart
-		}
+		return updatedCart
 	}
+
+	static async deleteProductFromCart(pid, cid) {
+		const updatedCart = await cartModel.findByIdAndUpdate(cid,
+			{
+				$pull: { products: { _id: pid } }
+			},
+			{
+				new: true
+			}
+		)
+		return updatedCart
+	}
+
+	static async updateCartProducts(cid, productList) {
+		const updatedCart = await cartModel.findByIdAndUpdate(cid,
+			{ products: productList },
+			{ new: true }
+		)
+		return updatedCart
+	}
+
 	static errorMessages = {
 		cartNotFound: 'Carrito no encontrado',
 		serverError: 'Error del servidor',
