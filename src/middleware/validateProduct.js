@@ -1,3 +1,5 @@
+import { isValidObjectId } from "mongoose";
+import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
 import { ProductValidator } from "../utils/Product-Validator.js";
 
 export async function validateProduct(req, res, next) {
@@ -10,4 +12,48 @@ export async function validateProduct(req, res, next) {
 	} catch (err) {
 		return res.status(400).json({status: 'error', detail: err.message})
 	}
+}
+
+export async function validateProductExists(req, res, next) {
+	const { pid } = req.params;
+	const product = await ProductsManager.getProductById(pid);
+	if (!product) {
+		return res.status(404).json({ status: 'error', detail: ProductsManager.errorMessages.productNotFound });
+	}
+	next();
+}
+
+export async function validateBodyPids(req, res, next) {
+	const productList = req.body
+	if (!Array.isArray(productList)) {
+		return res.status(400).json({ status: 'error', detail: 'array expected' })
+	}
+	for (const p of productList) {
+		if (!(Object.hasOwn(p, '_id') && Object.hasOwn(p, 'quantity'))) {
+			return res.status(400).json({ status: 'error', detail: 'invalid format', invalidProduct: p })
+		}
+		if (!isValidObjectId(p._id)) {
+			return res.status(400).json({
+				status: 'error', detail: `invalid pid: ${p._id}`
+			})
+		}
+		if (isNaN(p.quantity)) {
+			return res.status(400).json({
+				status: 'error', detail: `product: ${p._id} quantity must be a number`
+			})
+		}
+		if (p.quantity < 1) {
+			return res.status(400).json({
+				status: 'error', detail: `product: ${p._id} quantity must be at least 1`
+			})
+		}
+		const product = await ProductsManager.getProductById(p._id)
+		if (!product) {
+			return res.status(404).json({
+				status: 'error', detail: ProductsManager.errorMessages.productNotFound,
+				idNotFound: p._id
+			})
+		}
+	};
+	next()
 }

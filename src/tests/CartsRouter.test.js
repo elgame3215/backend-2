@@ -73,7 +73,7 @@ describe('POST /:cid/product/:pid valid', async () => {
 		expect(response.status).toBe(200)
 	})
 	it('Cart products should contain product id', () => {
-		assert.isTrue((data.updatedCart.products).some(p => p._id == usedPid))
+		assert.isTrue((data.updatedCart.products).some(p => p.product == usedPid))
 	})
 })
 
@@ -118,4 +118,69 @@ describe('POST /:cid/product/:pid invalid pid', async () => {
 	it('Error message should be product not found', () => {
 		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
 	})
+})
+
+describe('DELETE /:cid/product/:pid valid', async () => {
+	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const response = await fetch(endpoint, { method: 'DELETE' })
+	const data = await response.json()
+
+	it('Should have status 200', () => {
+		expect(response.status).toBe(200)
+	})
+	it('Product id has been deleted', () => {
+		expect(data.updatedCart.products.find(p => p._id == usedPid)).toBeFalsy()
+	})
+})
+
+describe('PUT /:cid valid', async () => {
+	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
+	const products = JSON.stringify([{
+		quantity: 10,
+		_id: usedPid
+	}]);
+	const response = await fetch(endpoint, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: products
+	})
+	const data = await response.json()
+	it('Should have status 200', () => {
+		expect(response.status).toBe(200)
+	})
+	it('Products have been updated', () => {
+		expect(data.updatedCart.products).toEqual(JSON.parse(products))
+	})
+})
+
+describe('PUT /:cid/products/:pid', async () => {
+	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const quantity = 10
+	const products = JSON.stringify({ quantity });
+	const response = await fetch(endpoint, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: products
+	})
+	const data = await response.json()
+	it('Should have status 200', () => {
+		expect(response.status).toBe(200)
+	})
+	it('Quantity should be updated', () => {
+		expect(data.updatedCart.products.find(p => p._id == usedPid).quantity).toBe(quantity)
+	})
+})
+
+describe('DELETE api/carts/:cid', async () => {
+	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
+	const response = await fetch(endpoint, { method: 'DELETE' })
+	const data = await response.json()
+
+	it('Should have status 200', () => {
+		expect(response.status).toBe(200)
+	})
+	it('Cart must be empty', () => {
+		expect(data.updatedCart.products.length).toBe(0)
+	})
+
 })

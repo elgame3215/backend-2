@@ -33,7 +33,6 @@ app.use('/api/carts', cartsRouter);
 app.use('/products', viewsRouter)
 
 io.on('connection', socket => {
-	console.log('usuario conetado', socket.id);
 	socket.on('new product', async product => {
 		const operation = await ProductsManager.addProduct(product);
 		if (!operation.succeed) {
@@ -43,7 +42,6 @@ io.on('connection', socket => {
 		io.emit('product added', product)
 	})
 	socket.on('deleteProduct', code => {
-		console.log('producto eliminado', code);
 		ProductsManager.deleteProductByCode(code)
 	})
 })

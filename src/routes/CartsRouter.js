@@ -1,6 +1,8 @@
 import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
 import { Router } from "express";
-import { validateBodyPids, validateCartExists, validateCid, validatePid, validateProductExists } from "../middleware/validateMongoIDs.js";
+import { validateCid, validatePid } from "../middleware/validateMongoIDs.js";
+import { validateCartExists, validateProductInCart, validateQuantity } from "../middleware/validateCart.js";
+import { validateBodyPids, validateProductExists } from "../middleware/validateProduct.js";
 
 export const router = Router()
 
@@ -53,5 +55,26 @@ router.put('/:cid', validateCid, validateCartExists, validateBodyPids, async (re
 		return res.status(200).json({ status: 'success', updatedCart })
 	} catch (err) {
 		return res.status(500).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+	}
+})
+
+router.put('/:cid/product/:pid', validateCid, validatePid, validateCartExists, validateProductInCart, validateQuantity, async (req, res) => {
+	const { cid, pid } = req.params
+	const { quantity } = req.body
+	try {
+		const updatedCart = await CartsManager.updateProductQuantity(cid, pid, quantity)
+		res.status(200).json({ status: 'success', updatedCart })
+	} catch (err) {
+		res.status(500).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+	}
+})
+
+router.delete('/:cid', validateCid, validateCartExists, async (req, res) => {
+	const { cid } = req.params
+	try {
+		const updatedCart = await CartsManager.clearCart(cid)
+		res.status(200).json({status: 'success', updatedCart})
+	} catch (err) {
+		res.status(200).json({status: 'error', detail: CartsManager.errorMessages.serverError})
 	}
 })

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { cartModel } from "../models/Cart-Model.js";
 
 export class CartsManager {
@@ -8,19 +9,18 @@ export class CartsManager {
 	}
 
 	static async getCartById(cid) {
-		const cart = await cartModel.findById(cid).populate('products.product');
+		const cart = await cartModel.findById(cid);
 		return cart
 	}
 
 	static async addProductToCart(pid, cid) {
 		const cart = await cartModel.findById(cid);
-		const addedProduct = cart.products.find(p => p._id == pid)
+		const addedProduct = cart.products.find(p => p.product._id == pid)
 		if (addedProduct) {
 			addedProduct.quantity++
 		} else {
-			cart.products.push({ _id: pid, quantity: 1 })
+			cart.products.push({ product: pid, quantity: 1 })
 		}
-
 		const updatedCart = await cartModel.findByIdAndUpdate(cid, cart, { new: true })
 		return updatedCart
 	}
@@ -28,7 +28,7 @@ export class CartsManager {
 	static async deleteProductFromCart(pid, cid) {
 		const updatedCart = await cartModel.findByIdAndUpdate(cid,
 			{
-				$pull: { products: { _id: pid } }
+				$pull: { products: { product: pid } }
 			},
 			{
 				new: true
@@ -41,6 +41,30 @@ export class CartsManager {
 		const updatedCart = await cartModel.findByIdAndUpdate(cid,
 			{ products: productList },
 			{ new: true }
+		)
+		return updatedCart
+	}
+
+	static async updateProductQuantity(cid, pid, quantity) {
+		const objPid = new mongoose.Types.ObjectId(pid)
+		const updatedProduct = await cartModel.findByIdAndUpdate(cid,
+			{ 'products.$[product].quantity': quantity },
+			{
+				arrayFilters: [{ "product._id": objPid }],
+				new: true
+			}
+		)
+		return updatedProduct
+	}
+
+	static async clearCart(cid) {
+		const updatedCart = await cartModel.findByIdAndUpdate(cid,
+			{
+				products: []
+			},
+			{
+				new: true
+			}
 		)
 		return updatedCart
 	}
