@@ -13,7 +13,7 @@ export async function validateCartExists(req, res, next) {
 export async function validateProductInCart(req, res, next) {
 	const { cid, pid } = req.params
 	const cart = await CartsManager.getCartById(cid)
-	if (!cart.products.find(p => p._id == pid)) {
+	if (!cart.products.find(p => p.product._id == pid)) {
 		return res.status(404).json({ status: 'error', detail: ProductsManager.errorMessages.productNotFound })
 	}
 	next()

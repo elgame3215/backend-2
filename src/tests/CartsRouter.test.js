@@ -120,24 +120,12 @@ describe('POST /:cid/product/:pid invalid pid', async () => {
 	})
 })
 
-describe('DELETE /:cid/product/:pid valid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
-	const response = await fetch(endpoint, { method: 'DELETE' })
-	const data = await response.json()
-
-	it('Should have status 200', () => {
-		expect(response.status).toBe(200)
-	})
-	it('Product id has been deleted', () => {
-		expect(data.updatedCart.products.find(p => p._id == usedPid)).toBeFalsy()
-	})
-})
 
 describe('PUT /:cid valid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
 	const products = JSON.stringify([{
 		quantity: 10,
-		_id: usedPid
+		product: usedPid
 	}]);
 	const response = await fetch(endpoint, {
 		method: 'PUT',
@@ -149,7 +137,10 @@ describe('PUT /:cid valid', async () => {
 		expect(response.status).toBe(200)
 	})
 	it('Products have been updated', () => {
-		expect(data.updatedCart.products).toEqual(JSON.parse(products))
+		expect(data.updatedCart.products.map(p => {
+			const { quantity, product } = p
+			return { quantity, product }
+		})).toEqual(JSON.parse(products))
 	})
 })
 
@@ -163,13 +154,28 @@ describe('PUT /:cid/products/:pid', async () => {
 		body: products
 	})
 	const data = await response.json()
+
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200)
 	})
 	it('Quantity should be updated', () => {
-		expect(data.updatedCart.products.find(p => p._id == usedPid).quantity).toBe(quantity)
+		expect(data.updatedCart.products.find(p => p.product == usedPid).quantity).toBe(quantity)
 	})
 })
+
+describe('DELETE /:cid/product/:pid valid', async () => {
+	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const response = await fetch(endpoint, { method: 'DELETE' })
+	const data = await response.json()
+
+	it('Should have status 200', () => {
+		expect(response.status).toBe(200)
+	})
+	it('Product id has been deleted', () => {
+		expect(data.updatedCart.products.find(p => p._id == usedPid)).toBeFalsy()
+	})
+})
+
 
 describe('DELETE api/carts/:cid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;

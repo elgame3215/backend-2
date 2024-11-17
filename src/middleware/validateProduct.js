@@ -29,29 +29,29 @@ export async function validateBodyPids(req, res, next) {
 		return res.status(400).json({ status: 'error', detail: 'array expected' })
 	}
 	for (const p of productList) {
-		if (!(Object.hasOwn(p, '_id') && Object.hasOwn(p, 'quantity'))) {
+		if (!(Object.hasOwn(p, 'product') && Object.hasOwn(p, 'quantity'))) {
 			return res.status(400).json({ status: 'error', detail: 'invalid format', invalidProduct: p })
 		}
-		if (!isValidObjectId(p._id)) {
+		if (!isValidObjectId(p.product)) {
 			return res.status(400).json({
-				status: 'error', detail: `invalid pid: ${p._id}`
+				status: 'error', detail: `invalid pid: ${p.product}`
 			})
 		}
 		if (isNaN(p.quantity)) {
 			return res.status(400).json({
-				status: 'error', detail: `product: ${p._id} quantity must be a number`
+				status: 'error', detail: `product: ${p.product} quantity must be a number`
 			})
 		}
 		if (p.quantity < 1) {
 			return res.status(400).json({
-				status: 'error', detail: `product: ${p._id} quantity must be at least 1`
+				status: 'error', detail: `product: ${p.product} quantity must be at least 1`
 			})
 		}
-		const product = await ProductsManager.getProductById(p._id)
+		const product = await ProductsManager.getProductById(p.product)
 		if (!product) {
 			return res.status(404).json({
 				status: 'error', detail: ProductsManager.errorMessages.productNotFound,
-				idNotFound: p._id
+				idNotFound: p.product
 			})
 		}
 	};

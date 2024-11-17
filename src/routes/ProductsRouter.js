@@ -1,28 +1,21 @@
 import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
 import { Router } from "express";
 import { validatePid } from "../middleware/validateMongoIDs.js";
-import { setCamps, setLinks } from "../utils/queryProcess.js";
+import { formatResponse } from "../utils/queryProcess.js";
 import { validateProduct } from "../middleware/validateProduct.js";
+import { validateQuery } from "../middleware/validateQuery.js";
 
 
 export const router = Router()
 
 
-router.get('/', async (req, res) => {
+router.get('/', validateQuery, async (req, res) => {
 	let response = {};
 	let { limit, page, sort, query } = req.query
 	page = page ?? 1
 	try {
 		response = await ProductsManager.getProducts(limit, page, sort, query);
-		setCamps(response);
-		const endpoint = 'http://localhost:8080/api/products'
-		const prevPage = Number(page) - 1;
-		const nextPage = Number(page) + 1;
-		const limitParam = limit ? `limit=${limit}` : ''
-		const sortParam = sort ? `&sort=${sort}` : ''
-		const queryParam = query ? `&query=${query}` : ''
-		const params = `${limitParam}${sortParam}${queryParam}`
-		setLinks(response, endpoint, prevPage, params, nextPage);
+		formatResponse(response, page, limit, sort, query);
 		return res.status(200).json(response);
 	} catch (err) {
 		response.status = 'error'

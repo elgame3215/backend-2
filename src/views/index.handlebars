@@ -1,7 +1,9 @@
+<link rel="stylesheet" href="../../css/paginate.css">
+
 <div class="products">
 	<h1 class="title">PRODUCTOS</h1>
 	<div class="products-container">
-		{{#each products}}
+		{{#each response.payload}}
 		<div class="product-card">
 			<div class="product-info">
 				<h2 class="product-title">{{this.title}}</h2>
@@ -11,6 +13,26 @@
 				<p class="product-category">{{this.category}}</p>
 			</div>
 		</div>
+		{{else}}
+		<p>no hay productos disponibles</p>
 		{{/each}}
 	</div>
+</div>
+<div class="pagination">
+	<!-- Ir a la primera página -->
+	<a id="first-page-button" class="pagination-button">Primera página</a>
+
+	<!-- Ir a la página anterior -->
+	<a page="{{response.prevPage}}" id="prev-page-button" class="pagination-button">Anterior</a>
+
+	<!-- Ver la página actual -->
+	<span class="current-page">{{response.page}}/{{response.totalPages}}</span>
+
+	<!-- Ir a la página siguiente -->
+	<a page="{{response.nextPage}}" id="next-page-button" class="pagination-button">Siguiente</a>
+
+	<!-- Ir a la última página -->
+	<a page="{{response.totalPages}}" id="last-page-button" class="pagination-button">Última página</a>
+	<script src="../js/paginate.js"></script>
+</div>
 </div>

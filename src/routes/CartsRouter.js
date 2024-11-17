@@ -37,7 +37,7 @@ router.post('/:cid/product/:pid', validateCid, validatePid, validateCartExists, 
 	}
 })
 
-router.delete('/:cid/product/:pid', validateCid, validatePid, validateCartExists, async (req, res) => {
+router.delete('/:cid/product/:pid', validateCid, validatePid, validateCartExists, validateProductInCart, async (req, res) => {
 	const { cid, pid } = req.params
 	try {
 		const updatedCart = await CartsManager.deleteProductFromCart(pid, cid)

@@ -50,7 +50,7 @@ export class CartsManager {
 		const updatedProduct = await cartModel.findByIdAndUpdate(cid,
 			{ 'products.$[product].quantity': quantity },
 			{
-				arrayFilters: [{ "product._id": objPid }],
+				arrayFilters: [{ "product.product": objPid }],
 				new: true
 			}
 		)
