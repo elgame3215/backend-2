@@ -31,10 +31,6 @@ export class ProductsManager {
 		return deletedProduct
 	}
 
-	static async deleteProductByCode(code) {
-		await productModel.findOneAndDelete({ code })
-	}
-
 	static async updateProductById(pid, modifiedValues) {
 		delete modifiedValues._id
 		const updatedProduct = await productModel.findByIdAndUpdate(pid, { $set: modifiedValues }, { new: true })
@@ -44,6 +40,7 @@ export class ProductsManager {
 	static errorMessages = {
 		productNotFound: 'Producto no encontrado',
 		serverError: 'Error del servidor',
+		productOutOfStock: 'Producto sin stock suficiente'
 	}
 }
 

@@ -12,12 +12,18 @@ const socket = io()
 const submit = document.getElementById('submit');
 const productsContainer = document.querySelector('.products-container')
 
-submit.addEventListener('click', e => {
+submit.addEventListener('click', async e => {
 	e.preventDefault()
 	const form = document.getElementById('form');
 	const formData = new FormData(form);
 	const data = parseFormData(formData);
-	socket.emit('new product', data)
+	await fetch('http://localhost:8080/api/products',
+		{
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify(data)
+		}
+	)
 })
 
 socket.on('product added', product => {
@@ -30,11 +36,11 @@ socket.on('product added', product => {
 				<p class="product-stock">stock: ${product.stock}</p>
 				<p class="product-category">${product.category}</p>
 			</div>
-			<button class="delete-button" id="${product.code}">Eliminar</button>
+			<button class="delete-button" id="${product._id}">Eliminar</button>
 		</div>
 		`;
 	productsContainer.insertAdjacentHTML('beforeend', newProductEl)
-	const deleteButton = document.getElementById(product.code);
+	const deleteButton = document.getElementById(product._id);
 	deleteButton.addEventListener('click', deleteProduct);
 	document.querySelectorAll('.form-group input, textarea').forEach(n => n.value = '')
 	Toastify({
@@ -57,7 +63,7 @@ socket.on('invalid product', message => {
 })
 
 function deleteProduct(e) {
-	socket.emit('deleteProduct', e.target.id); // el producto se elimina por su codigo, no por su id
+	socket.emit('deleteProduct', e.target.id);
 	productsContainer.removeChild(e.target.parentNode);
 	Toastify({
 		text: 'Producto eliminado',

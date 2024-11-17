@@ -40,6 +40,7 @@ router.post('/', validateProduct, async (req, res) => {
 	const newProduct = req.body
 	try {
 		let addedProduct = await ProductsManager.addProduct(newProduct)
+		req.io.emit('product added', addedProduct)
 		return res.status(201).json({ status: 'success', addedProduct })
 	} catch (err) {
 		res.status(500).json({ status: 'error', detail: ProductsManager.errorMessages.serverError })

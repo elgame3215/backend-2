@@ -11,6 +11,7 @@ export function setCamps(response) {
 	delete response.limit;
 	delete response.pagingCounter;
 }
+
 export function formatResponse(response, page, limit, sort, query) {
 	setCamps(response);
 	const endpoint = 'http://localhost:8080/api/products';

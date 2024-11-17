@@ -10,15 +10,19 @@ export async function validateProduct(req, res, next) {
 		await ProductValidator.validateCode(product);
 		next();
 	} catch (err) {
-		return res.status(400).json({status: 'error', detail: err.message})
+		return res.status(400).json({ status: 'error', detail: err.message })
 	}
 }
 
-export async function validateProductExists(req, res, next) {
+export async function validateProductIsAviable(req, res, next) {
 	const { pid } = req.params;
+	const { quantity } = req.body
 	const product = await ProductsManager.getProductById(pid);
 	if (!product) {
 		return res.status(404).json({ status: 'error', detail: ProductsManager.errorMessages.productNotFound });
+	}
+	if (product.stock < 1 || (quantity && product.stock < quantity)) {
+		return res.status(400).json({ status: 'error', detail: ProductsManager.errorMessages.productOutOfStock });
 	}
 	next();
 }

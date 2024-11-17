@@ -39,3 +39,21 @@
 	padding: 8px;
 	font-size: 14px;
 }
+
+.add-button {
+	max-width: 80%;
+	justify-self: center;
+	margin-bottom: 15%;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 15px;
+	cursor: pointer;
+	font-size: 14px;
+	border-radius: 4px;
+	transition: background-color 0.3s;
+}
+
+.add-button:hover {
+	background-color: #0056b3;
+}

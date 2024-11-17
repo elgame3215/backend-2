@@ -33,7 +33,7 @@ body {
 .title {
 	display: flex;
 	align-self: center;
-	margin: 20px 0;
+	margin-top: 10px;
 }
 
 .products-container {
@@ -54,7 +54,7 @@ body {
 }
 
 .product-info {
-	padding: 20px;
+	padding: 12px;
 	text-align: center;
 }
 
@@ -90,22 +90,4 @@ body {
 
 .product-button:hover {
 	background-color: #0056b3;
-}
-
-.delete-button {
-	max-width: 40%;
-	justify-self: center;
-	margin-bottom: 15%;
-	background-color: #dd0020;
-	color: white;
-	border: none;
-	padding: 10px 15px;
-	cursor: pointer;
-	font-size: 16px;
-	border-radius: 4px;
-	transition: background-color 0.3s;
-}
-
-.delete-button:hover {
-	background-color: #b30010;
 }

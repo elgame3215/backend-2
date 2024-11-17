@@ -68,12 +68,35 @@ describe('POST /:cid/product/:pid valid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, { method: 'POST' })
 	const data = await response.json()
-
+	const usedpid = usedPid
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200)
 	})
 	it('Cart products should contain product id', () => {
-		assert.isTrue((data.updatedCart.products).some(p => p.product == usedPid))
+		assert.isTrue((data.updatedCart.products).some(p => p.product == usedpid))
+	})
+})
+
+describe('POST /:cid/product/:pid no stock', async () => {
+	usedPid = (await (await fetch('http://localhost:8080/api/products', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			...validProduct,
+			stock: 0,
+			code: randomCode()
+		})
+	})).json()).addedProduct._id
+
+	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const response = await fetch(endpoint, { method: 'POST' })
+	const data = await response.json()
+
+	it('Should have status 400', () => {
+		expect(response.status).toBe(400)
+	})
+	it('Error message should be product out of stock', () => {
+		expect(data.detail).toBe(ProductsManager.errorMessages.productOutOfStock)
 	})
 })
 
@@ -120,6 +143,36 @@ describe('POST /:cid/product/:pid invalid pid', async () => {
 	})
 })
 
+describe('PUT /:cid/product/:pid no stock', async () => {
+	usedPid = (await (await fetch('http://localhost:8080/api/products', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			...validProduct,
+			stock: 10,
+			code: randomCode()
+		})
+	})).json()).addedProduct._id
+
+	await fetch(`http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`, {method: 'POST'})
+
+	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const response = await fetch(endpoint, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			quantity: 25
+		})
+	})
+	const data = await response.json()
+	
+	it('Should have status 400', () => {
+		expect(response.status).toBe(400)
+	})
+	it('Error message should be product out of stock', () => {
+		expect(data.detail).toBe(ProductsManager.errorMessages.productOutOfStock)
+	})
+})
 
 describe('PUT /:cid valid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
@@ -167,7 +220,7 @@ describe('DELETE /:cid/product/:pid valid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, { method: 'DELETE' })
 	const data = await response.json()
-
+	
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200)
 	})

@@ -89,3 +89,21 @@ button.submit-btn:hover {
 .products {
 	position: relative;
 }
+
+.delete-button {
+	max-width: 40%;
+	justify-self: center;
+	margin-bottom: 15%;
+	background-color: #dd0020;
+	color: white;
+	border: none;
+	padding: 10px 15px;
+	cursor: pointer;
+	font-size: 16px;
+	border-radius: 4px;
+	transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+	background-color: #b30010;
+}

@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="../../css/paginate.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <div class="products">
 	<h1 class="title">PRODUCTOS</h1>
@@ -12,6 +14,7 @@
 				<p class="product-stock">stock: {{this.stock}}</p>
 				<p class="product-category">{{this.category}}</p>
 			</div>
+			<button class="add-button" id="{{this._id}}">Agregar al carrito</button>
 		</div>
 		{{else}}
 		<p>no hay productos disponibles</p>
@@ -34,5 +37,6 @@
 	<!-- Ir a la última página -->
 	<a page="{{response.totalPages}}" id="last-page-button" class="pagination-button">Última página</a>
 	<script src="../js/paginate.js"></script>
+	<script src="../js/cart.js"></script>
 </div>
 </div>

@@ -34,15 +34,15 @@ app.use('/products', viewsRouter)
 
 io.on('connection', socket => {
 	socket.on('new product', async product => {
-		const operation = await ProductsManager.addProduct(product);
+		const addedProduct = await ProductsManager.addProduct(product);
 		if (!operation.succeed) {
 			socket.emit('invalid product', operation.detail)
 			return
 		}
-		io.emit('product added', product)
+		io.emit('product added', addedProduct)
 	})
-	socket.on('deleteProduct', code => {
-		ProductsManager.deleteProductByCode(code)
+	socket.on('deleteProduct', pid => {
+		ProductsManager.deleteProductById(pid)
 	})
 })
 
