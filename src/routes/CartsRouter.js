@@ -86,7 +86,6 @@ router.put(
 	validateCartExists,
 	validateProductInCart,
 	validateQuantity,
-	validateProductIsAviable,
 	async (req, res) => {
 		const { cid, pid } = req.params
 		const { quantity } = req.body

@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
 import { ProductValidator } from "../utils/Product-Validator.js";
+import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
 
 export async function validateProduct(req, res, next) {
 	const product = req.body
@@ -8,23 +9,30 @@ export async function validateProduct(req, res, next) {
 		ProductValidator.validateKeys(product);
 		ProductValidator.validateValues(product);
 		await ProductValidator.validateCode(product);
-		next();
+		return next();
 	} catch (err) {
 		return res.status(400).json({ status: 'error', detail: err.message })
 	}
 }
 
 export async function validateProductIsAviable(req, res, next) {
-	const { pid } = req.params;
-	const { quantity } = req.body
+	const { cid, pid } = req.params;
 	const product = await ProductsManager.getProductById(pid);
 	if (!product) {
 		return res.status(404).json({ status: 'error', detail: ProductsManager.errorMessages.productNotFound });
 	}
-	if (product.stock < 1 || (quantity && product.stock < quantity)) {
+	if (product.stock == 0) {
 		return res.status(400).json({ status: 'error', detail: ProductsManager.errorMessages.productOutOfStock });
 	}
-	next();
+	const cart = await CartsManager.getCartById(cid)
+	const productInCart = cart.products.find(p => p.product._id == pid);
+	if (!productInCart) {
+		return next();
+	}
+	if (product.stock <= productInCart.quantity) {
+		return res.status(400).json({ status: 'error', detail: ProductsManager.errorMessages.productOutOfStock });
+	}
+	return next();
 }
 
 export async function validateBodyPids(req, res, next) {
@@ -59,5 +67,5 @@ export async function validateBodyPids(req, res, next) {
 			})
 		}
 	};
-	next()
+	return next()
 }

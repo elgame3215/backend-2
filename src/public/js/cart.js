@@ -4,29 +4,28 @@ if (!userCartId) {
 		.then(response => response.json())
 		.then(data => {
 			userCartId = data.addedCart._id
-			console.log(data);
 			localStorage.setItem('userCartId', userCartId)
 		})
 }
-
-const addToCartButtons = document.querySelectorAll('.add-button')
-for (let i = 0; i < addToCartButtons.length; i++) {
-	const addButton = addToCartButtons[i];
-	addButton.addEventListener('click', async e => {
-		fetch(`http://localhost:8080/api/carts/${userCartId}/product/${e.target.id}`, { method: 'POST' })
+const removeButtons = document.querySelectorAll('.remove-button')
+for (let i = 0; i < removeButtons.length; i++) {
+	const button = removeButtons[i]
+	button.addEventListener('click', async e => {
+		fetch(`http://localhost:8080/api/carts/${userCartId}/product/${e.target.id}`, { method: 'DELETE' })
 			.then(response => response.json())
 			.then(data => {
 				if (data.status == 'success') {
 					Toastify({
-						text: 'Producto agregado al carrito',
+						text: 'Producto eliminado del carrito',
 						duration: 3000,
 						gravity: 'bottom',
 						backgroundColor: '#007BFF',
 						stopOnFocus: true
 					}).showToast();
+					e.target.parentNode.parentNode.removeChild(e.target.parentNode)
 				} else {
 					Toastify({
-						text: 'Error al agregar el producto',
+						text: 'Error al eliminar el producto del carrito',
 						duration: 3000,
 						gravity: 'bottom',
 						backgroundColor: '#007BFF',

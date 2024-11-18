@@ -4,15 +4,19 @@ import { router as productsRouter } from "./routes/ProductsRouter.js";
 import { router as cartsRouter } from "./routes/CartsRouter.js";
 import { router as viewsRouter } from "./routes/viewsRouter.js"
 import { engine } from "express-handlebars";
+import Handlebars from "handlebars"
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
+import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 
 const app = express();
 export const PORT = 8080;
 app.use(express.json());
 
 
-app.engine('handlebars', engine())
+app.engine('handlebars', engine({
+	handlebars: allowInsecurePrototypeAccess(Handlebars)
+}))
 app.set('view engine', 'handlebars')
 app.set('views', './src/views')
 

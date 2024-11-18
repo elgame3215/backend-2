@@ -55,20 +55,13 @@
 	</div>
 </div>
 <div class="pagination">
-	<!-- Ir a la primera página -->
-	<a id="first-page-button" class="pagination-button">Primera página</a>
-
-	<!-- Ir a la página anterior -->
-	<a page="{{response.prevPage}}" id="prev-page-button" class="pagination-button">Anterior</a>
-
-	<!-- Ver la página actual -->
-	<span class="current-page">{{response.page}}/{{response.totalPages}}</span>
-
-	<!-- Ir a la página siguiente -->
-	<a page="{{response.nextPage}}" id="next-page-button" class="pagination-button">Siguiente</a>
-
-	<!-- Ir a la última página -->
-	<a page="{{response.totalPages}}" id="last-page-button" class="pagination-button">Última página</a>
+	<div class="pagination-buttons">
+		<a id="first-page-button" class="pagination-button">Primera página</a>
+		<a page="{{response.prevPage}}" id="prev-page-button" class="pagination-button">Anterior</a>
+		<span class="current-page">{{response.page}}/{{response.totalPages}}</span>
+		<a page="{{response.nextPage}}" id="next-page-button" class="pagination-button">Siguiente</a>
+		<a page="{{response.totalPages}}" id="last-page-button" class="pagination-button">Última página</a>
+	</div>
 </div>
 </div>
 <script src="../js/paginate.js"></script>

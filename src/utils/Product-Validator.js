@@ -1,4 +1,4 @@
-import { productModel } from "../dao/models/Product-Model.js";
+import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
 
 export class ProductValidator {
 	static #requiredKeys = [
@@ -30,14 +30,10 @@ export class ProductValidator {
 
 	static async validateCode(product) {
 		const { code } = product;
-		try {
-			if (await productModel.findOne({code: code})) {
-				throw new Error(this.errorMessages.duplicatedCode);
-			}
-		} catch (err) {
-			if (err.name != 'CastError') {
-				throw err;
-			}
+		const response = await ProductsManager.getProducts(1e12)
+		const { docs: products } = response
+		if (products.find(p => p.code == code)) {
+			throw new Error(this.errorMessages.duplicatedCode);
 		}
 	}
 	static errorMessages = {

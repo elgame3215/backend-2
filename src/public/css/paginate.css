@@ -1,6 +1,16 @@
 .pagination {
 	display: flex;
 	justify-content: center;
+	padding: 5px;
+	width: 100vw;
+	height: 6vh;
+	bottom: 0;
+	position: fixed;
+}
+
+.pagination-buttons {
+	display: flex;
+	justify-content: center;
 	margin-top: 20px;
 	bottom: 0;
 	position: fixed;
@@ -10,6 +20,12 @@
 	padding: 5px;
 	border-top: 2px #fdfdfd groove;
 	box-shadow: 0 -0.5px 7px 0.5px #cdcdcd;
+}
+
+.my-cart-button {
+	z-index: 200;
+	right: 10px;
+	position: fixed;
 }
 
 .pagination-button {
@@ -22,16 +38,13 @@
 	font-size: 14px;
 	align-items: center;
 	display: flex;
+	transition: background-color 0.3s;
 }
 
 .pagination-button:hover {
 	background-color: #0056b3;
 }
 
-.pagination-button.disabled {
-	background-color: #ccc;
-	cursor: not-allowed;
-}
 
 .current-page {
 	display: flex;
@@ -55,5 +68,23 @@
 }
 
 .add-button:hover {
+	background-color: #0056b3;
+}
+
+.remove-button {
+	max-width: 80%;
+	justify-self: center;
+	margin-bottom: 15%;
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 15px;
+	cursor: pointer;
+	font-size: 14px;
+	border-radius: 4px;
+	transition: background-color 0.3s;
+}
+
+.remove-button:hover {
 	background-color: #0056b3;
 }

@@ -18,6 +18,7 @@ router.get('/', validateQuery, async (req, res) => {
 		formatResponse(response, page, limit, sort, query);
 		return res.status(200).json(response);
 	} catch (err) {
+		console.log(err);
 		response.status = 'error'
 		return res.status(500).json(response);
 	}
@@ -32,6 +33,7 @@ router.get('/:pid', validatePid, async (req, res) => {
 		}
 		res.status(200).json(product)
 	} catch (err) {
+		console.log(err);
 		res.status(500).json({ detail: ProductsManager.errorMessages.serverError })
 	}
 })
@@ -43,6 +45,7 @@ router.post('/', validateProduct, async (req, res) => {
 		req.io.emit('product added', addedProduct)
 		return res.status(201).json({ status: 'success', addedProduct })
 	} catch (err) {
+		console.log(err);
 		res.status(500).json({ status: 'error', detail: ProductsManager.errorMessages.serverError })
 	}
 })
@@ -56,6 +59,7 @@ router.delete('/:pid', validatePid, async (req, res) => {
 		}
 		return res.status(200).json({ status: 'success', deletedProduct })
 	} catch (err) {
+		console.log(err);
 		res.status(500).json({ status: 'error', detail: ProductsManager.errorMessages.serverError })
 	}
 })
@@ -70,6 +74,7 @@ router.put('/:pid', validatePid, validateProduct, async (req, res) => {
 		}
 		return res.status(200).json({ status: 'success', updatedProduct })
 	} catch (err) {
+		console.log(err);
 		res.status(500).json({ status: 'error', detail: 'Error del servidor' })
 	}
 })

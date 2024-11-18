@@ -10,6 +10,15 @@ export async function validateCartExists(req, res, next) {
 	next();
 }
 
+export async function validateCartExistsView(req, res, next) {
+	const { cid } = req.params;
+	const cart = await CartsManager.getCartById(cid)
+	if (!cart) {
+		return res.status(404).render('error', { error: CartsManager.errorMessages.cartNotFound, code: 404 });
+	}
+	next();
+}
+
 export async function validateProductInCart(req, res, next) {
 	const { cid, pid } = req.params
 	const cart = await CartsManager.getCartById(cid)
@@ -26,6 +35,11 @@ export async function validateQuantity(req, res, next) {
 	}
 	if (isNaN(quantity)) {
 		return res.status(400).json({ status: 'error', detail: 'quantity must be a number' })
+	}
+	const { pid } = req.params
+	const product = await ProductsManager.getProductById(pid)
+	if (product.stock < quantity) {
+		return res.status(400).json({ status: 'error', detail: ProductsManager.errorMessages.productOutOfStock })
 	}
 	next()
 }
