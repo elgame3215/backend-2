@@ -53,6 +53,7 @@ socket.on('product added', product => {
 });
 
 socket.on('invalid product', message => {
+	console.log(message);
 	Toastify({
 		text: message,
 		duration: 3000,
@@ -62,8 +63,19 @@ socket.on('invalid product', message => {
 	}).showToast();
 })
 
-function deleteProduct(e) {
-	socket.emit('deleteProduct', e.target.id);
+async function deleteProduct(e) {
+	const response = await fetch(`http://localhost:8080/api/products/${e.target.id}`,
+		{method: 'DELETE'}
+	)
+	if (response.status != 200) {
+		return Toastify({
+			text: 'Error al eliminar el producto',
+			duration: 3000,
+			gravity: 'bottom',
+			backgroundColor: '#B30010',
+			stopOnFocus: true
+		}).showToast();
+	}
 	productsContainer.removeChild(e.target.parentNode);
 	Toastify({
 		text: 'Producto eliminado',

@@ -46,6 +46,7 @@ router.post('/', validateProduct, async (req, res) => {
 		return res.status(201).json({ status: 'success', addedProduct })
 	} catch (err) {
 		console.log(err);
+		req.io.emit('invalid product', err.message)
 		res.status(500).json({ status: 'error', detail: ProductsManager.errorMessages.serverError })
 	}
 })

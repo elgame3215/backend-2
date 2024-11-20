@@ -1,5 +1,4 @@
 import express from 'express'
-import { ProductsManager } from "./dao/Mongo/Product-Manager-Mongo.js";
 import { router as productsRouter } from "./routes/ProductsRouter.js";
 import { router as cartsRouter } from "./routes/CartsRouter.js";
 import { router as viewsRouter } from "./routes/viewsRouter.js"
@@ -35,20 +34,6 @@ app.use(
 	productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/products', viewsRouter)
-
-io.on('connection', socket => {
-	socket.on('new product', async product => {
-		const addedProduct = await ProductsManager.addProduct(product);
-		if (!operation.succeed) {
-			socket.emit('invalid product', operation.detail)
-			return
-		}
-		io.emit('product added', addedProduct)
-	})
-	socket.on('deleteProduct', pid => {
-		ProductsManager.deleteProductById(pid)
-	})
-})
 
 const connectDB = async () => {
 	try {
