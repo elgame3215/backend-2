@@ -55,6 +55,7 @@ body {
 
 .product-info {
 	padding: 12px;
+	height: 200px;
 	text-align: center;
 }
 
@@ -75,12 +76,12 @@ body {
 .product-category {
 	font-size: 0.9em;
 	color: #666;
-	margin-bottom: 20px;
+	margin-bottom: 15px;
 }
 
 .product-button {
 	display: inline-block;
-	padding: 10px 20px;
+	padding: 10px;
 	background-color: #007bff;
 	color: #fff;
 	text-decoration: none;

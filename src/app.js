@@ -29,7 +29,7 @@ app.use(
 	'/api/products',
 	(req, res, next) => {
 		req.io = io
-		next()
+		return next()
 	},
 	productsRouter);
 app.use('/api/carts', cartsRouter);

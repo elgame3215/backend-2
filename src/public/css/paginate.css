@@ -55,12 +55,13 @@
 
 .add-button {
 	max-width: 80%;
+	height: 40px;
 	justify-self: center;
 	margin-bottom: 15%;
 	background-color: #007bff;
 	color: white;
 	border: none;
-	padding: 10px 15px;
+	padding: 10px;
 	cursor: pointer;
 	font-size: 14px;
 	border-radius: 4px;
