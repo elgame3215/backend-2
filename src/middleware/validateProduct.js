@@ -11,7 +11,6 @@ export async function validateProduct(req, res, next) {
 		await ProductValidator.validateCode(product);
 		return next();
 	} catch (err) {
-		console.log(err);
 		req.io.emit('invalid product', err.message)
 		return res.status(400).json({ status: 'error', detail: err.message })
 	}
