@@ -28,7 +28,7 @@ Trae la informacion del producto correspondiente al id recibido por :pid, siempr
 
 * POST http://localhost:8080/api/products
 
-Permite dar de alta un nuevo producto, cuya informacion se incluirá en el body de la petición.Es necesario que la información del producto sea correcta de acuerdo a los requerimientos.
+Permite dar de alta un nuevo producto, cuya informacion se incluirá en el body de la petición.Es necesario que la información del producto sea correcta de acuerdo a las restricciones.
 
 * DELETE http://localhost:8080/api/products/:pid
 
@@ -36,7 +36,7 @@ Da de baja el producto correspondiente al id recibido por :pid, siempre que haya
 
 * PUT http://localhost:8080/api/products/:pid
 
-Modifica la información del producto correspondiente al id recibido por :pid, siempre que haya uno y la nueva información, que se incluirá en el body de la petición, sea correcta de acuerdo a los requerimientos.
+Modifica la información del producto correspondiente al id recibido por :pid, siempre que haya uno y la nueva información, que se incluirá en el body de la petición, sea correcta de acuerdo a las restricciones.
 
 ### carts API
 La ruta /api/carts permite crear, eliminar y modificar carritos de compra de la base de datos mediante los siguientes endpoints:
@@ -82,7 +82,7 @@ También cuenta con un botón que dirige al usuario a la vista de su carrito, qu
 * GET http://localhost:8080/products/realtimeproducts
 
 Lista los productos dados de alta igual que el endpoint anterior, además de proveer un formulario mediante el cual se pueden dar de alta productos. Además, cada producto puede ser eliminado desde la interfaz.
-También acepta los parámetros `limit`, `page`, `sort`, `query`
+También acepta los parámetros `limit`, `page`, `sort`, `query`.
 
 * GET http://localhost:8080/products/carts/:cid
 
