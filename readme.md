@@ -84,8 +84,8 @@ El formato del body debe ser el siguiente:
 ``` JS
 [
 	{
-		"product": id,					// id del producto cuya cantidad de unidades se desea modificar
-		"quantity": cantidad_de_unidades	// cantidad de unidades a establecer para el producto
+		product: id,			// id del producto cuya cantidad de unidades se desea modificar
+		quantity: cantidad_de_unidades	// cantidad de unidades a establecer para el producto
 	}
 ]
 ```
@@ -134,11 +134,11 @@ Lista únicamente los productos agregados al carrito correspondiente al id recib
 * Para ser considerado válido, un producto debe tener el siguiente formato:
 ``` JS
 {
-		"title": "Manzanas",			// título del producto
-		"description": "Manzanas rojas, 1kg",	// breve descripción del producto
-		"code": "M001",				// código alfanumérico, único en el sistema
-		"price": 2500,			// precio numérico del producto, no menor a cero
-		"stock": 250,				// cantidad de unidades disponibles del producto, no menor a cero
-		"category": "Frutas"			// categoría/clasificación del producto
+	title: "Manzanas",			// título del producto
+	description: "Manzanas rojas, 1kg",	// breve descripción del producto
+	code: "M001",				// código alfanumérico, único en el sistema
+	price: 2500,					// precio numérico del producto, no menor a cero
+	stock: 250,				// cantidad de unidades disponibles del producto, no menor a cero
+	category: "Frutas"			// categoría/clasificación del producto
 }
 ```
