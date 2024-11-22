@@ -64,10 +64,18 @@ export async function validateBodyPids(req, res, next) {
 		const product = await ProductsManager.getProductById(p.product)
 		if (!product) {
 			return res.status(404).json({
-				status: 'error', detail: ProductsManager.errorMessages.productNotFound,
+				status: 'error',
+				detail: ProductsManager.errorMessages.productNotFound,
 				idNotFound: p.product
 			})
 		}
-	};
+		if (product.stock < p.quantity) {
+			return res.status(404).json({
+				status: 'error',
+				detail: ProductsManager.errorMessages.productOutOfStock,
+				idOutOfStock: p.product
+			})
+		};
+	}
 	return next()
 }
