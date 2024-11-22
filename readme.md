@@ -6,7 +6,7 @@ Para inicializar el proyecto es necesario clonar el repositorio a tu sistema loc
 ```bash
 git clone https://github.com/elgame3215/backend-1
 ```
-Una vez tengas el proyecto en tu sistema local, deberás instalar las dependencias necesarias usando el comando `npm install` desde el directorio del repositorio. Luego de esto, el proyecto estará listo para ser levantado con el comando `npm start`
+Una vez tengas el proyecto en tu sistema local, deberás instalar las dependencias necesarias usando el comando `npm install` desde el directorio del repositorio. Luego de esto, el proyecto estará listo para ser levantado con el comando `npm start`. El programa se alojará en el puerto 8080, por lo que es necesario que dicho puerto se encuentre libre al momento de levantar el proyecto.
 
 ## Funcionalidades
 La interfaz que brinda el proyecto se divide en tres rutas:
