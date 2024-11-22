@@ -18,32 +18,32 @@ La interfaz que brinda el proyecto se divide en tres rutas:
 La ruta /api/products permite agregar, eliminar y modificar productos de la base de datos mediante los siguientes endpoints:
 
 ```
-* GET http://localhost:8080/api/products
+GET http://localhost:8080/api/products
 ```
 
 Lista todos los productos dados de alta mediante paginación.
 Acepta los parámetros: `limit` (limite de productos por página), `page` (numero de página a solicitar), `sort` (permite ordenar los productos por precio con "asc" o "desc"), `query` (permite filtrar los productos por la categoria que reciba).
 
 ```
-* GET http://localhost:8080/api/products/:pid
+GET http://localhost:8080/api/products/:pid
 ```
 
 Trae la información del producto correspondiente al id recibido por :pid, siempre que haya uno.
 
 ```
-* POST http://localhost:8080/api/products
+POST http://localhost:8080/api/products
 ```
 
 Permite dar de alta un nuevo producto, cuya información se incluirá en el body de la petición. Es necesario que la información del producto sea correcta de acuerdo a las restricciones.
 
 ```
-* DELETE http://localhost:8080/api/products/:pid
+DELETE http://localhost:8080/api/products/:pid
 ```
 
 Da de baja el producto correspondiente al id recibido por :pid, siempre que haya uno.
 
 ```
-* PUT http://localhost:8080/api/products/:pid
+PUT http://localhost:8080/api/products/:pid
 ```
 
 Modifica la información del producto correspondiente al id recibido por :pid, siempre que haya uno y la nueva información, que se incluirá en el body de la petición, sea correcta de acuerdo a las restricciones.
@@ -52,36 +52,36 @@ Modifica la información del producto correspondiente al id recibido por :pid, s
 La ruta /api/carts permite crear, eliminar y modificar carritos de compra de la base de datos mediante los siguientes endpoints:
 
 ```
-* GET http://localhost:8080/api/carts/:cid
+GET http://localhost:8080/api/carts/:cid
 ```
 
 Trae los productos del carrito correspondiente al id recibido por :cid, siempre que haya un carrito con ese id.
 
 ```
-* POST http://localhost:8080/api/products
+POST http://localhost:8080/api/products
 ```
 
 Permite dar de alta un nuevo carrito, inicialmente vacío.
 
 ```
-* POST http://localhost:8080/api/carts/:cid/product/:pid
+POST http://localhost:8080/api/carts/:cid/product/:pid
 ```
 
 Agrega una unidad del producto correspondiente al id recibido por :pid al carrito con el id recibido por :cid, siempre que haya un carrito y un producto con esos id, y que el stock del producto sea mayor que la cantidad de unidades del mismo producto en el carrito.
 
 ```
-* DELETE http://localhost:8080/api/carts/:cid/product/:pid
+DELETE http://localhost:8080/api/carts/:cid/product/:pid
 ```
 
 Elimina del carrito correspondiente al id recibido por :cid el producto con el id recibido por :pid, siempre que haya un carrito con ese id, y contenga al producto en cuestión.
 
 ```
-* PUT http://localhost:8080/api/carts/:cid
+PUT http://localhost:8080/api/carts/:cid
 ```
 
 Reemplaza la lista de productos del carrito correspondiente al id recibido por :cid por la lista recibida por el body de la petición. Siempre que haya un carrito con el id dado, un producto para cada id recibido y cada producto cuente con un stock no menor a la cantidad demandada del mismo.
 El formato del body debe ser el siguiente:
-``` JSON
+``` JS
 [
 	{
 		"product": id,					// id del producto cuya cantidad de unidades se desea modificar
@@ -91,13 +91,13 @@ El formato del body debe ser el siguiente:
 ```
 
 ```
-* PUT http://localhost:8080/api/carts/:cid/product/:pid
+PUT http://localhost:8080/api/carts/:cid/product/:pid
 ```
 
 Modifica la cantidad de unidades del producto correspondiente al id recibido por :pid en el carrito con el id recibido por :cid, siempre y cuando exista un carrito con ese id, incluya al producto con el id dado y dicho producto cuente con un stock no menor a la cantidad demandada del mismo.
 
 ```
-* DELETE http://localhost:8080/api/carts/:cid
+DELETE http://localhost:8080/api/carts/:cid
 ```
 
 Elimina todos los productos del carrito correspondiente al id recibido por :cid, siempre que haya un carrito con ese id.
@@ -106,7 +106,7 @@ Elimina todos los productos del carrito correspondiente al id recibido por :cid,
 La ruta /products entrega una serie de interfaces visuales que le permiten al usuario tanto dar de alta/baja productos en el sistema, como visualizar productos y agregarlos o quitarlos de su carrito mediante los siguientes endpoints:
 
 ```
-* GET http://localhost:8080/products
+GET http://localhost:8080/products
 ```
 
 Lista todos los productos dados de alta mediante paginación.
@@ -115,14 +115,14 @@ Cada producto brinda la posibilidad de ser añadido al carrito del usuario, siem
 También cuenta con un botón que dirige al usuario a la vista de su carrito, que es creado y asignado al usuario la primera vez que entra a la página.
 
 ```
-* GET http://localhost:8080/products/realtimeproducts
+GET http://localhost:8080/products/realtimeproducts
 ```
 
 Lista los productos dados de alta igual que el endpoint anterior, además de proveer un formulario mediante el cual se pueden dar de alta productos. Además, cada producto puede ser eliminado desde la interfaz.
 También acepta los parámetros `limit`, `page`, `sort`, `query`.
 
 ```
-* GET http://localhost:8080/products/carts/:cid
+GET http://localhost:8080/products/carts/:cid
 ```
 
 Lista únicamente los productos agregados al carrito correspondiente al id recibido por :cid, permitiendo eliminar a cada uno del carrito (no del sistema).
@@ -132,7 +132,7 @@ Lista únicamente los productos agregados al carrito correspondiente al id recib
 * Todas las rutas que requieran tanto un :pid como un :cid, deben recibir como argumento en cada parámetro una cadena hexadecimal de 24 digitos.
 
 * Para ser considerado válido, un producto debe tener el siguiente formato:
-```JSON
+``` JS
 {
 		"title": "Manzanas",			// título del producto
 		"description": "Manzanas rojas, 1kg",	// breve descripción del producto
