@@ -10,7 +10,6 @@ export const router = Router()
 
 let peticiones = 0;
 router.get('/', validateQuery, async (req, res) => {
-	console.log('peticion:', ++peticiones);
 	let response = {};
 	let { limit, page, sort, query } = req.query
 	page = page ?? 1

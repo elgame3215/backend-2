@@ -53,7 +53,6 @@ socket.on('product added', product => {
 });
 
 socket.on('invalid product', message => {
-	console.log(message);
 	Toastify({
 		text: message,
 		duration: 3000,

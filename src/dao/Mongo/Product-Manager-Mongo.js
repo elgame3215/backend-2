@@ -14,7 +14,6 @@ export class ProductsManager {
 				sort: sorter
 			}
 		);
-		console.log(products);
 		return products
 	};
 
