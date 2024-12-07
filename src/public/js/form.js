@@ -20,7 +20,7 @@ submit.addEventListener('click', async e => {
 	await fetch('http://localhost:8080/api/products',
 		{
 			method: 'POST',
-			headers: {'Content-Type': 'application/json'},
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(data)
 		}
 	)
@@ -64,7 +64,7 @@ socket.on('invalid product', message => {
 
 async function deleteProduct(e) {
 	const response = await fetch(`http://localhost:8080/api/products/${e.target.id}`,
-		{method: 'DELETE'}
+		{ method: 'DELETE' }
 	)
 	if (response.status != 200) {
 		return Toastify({
