@@ -115,7 +115,7 @@ Cada producto brinda la posibilidad de ser añadido al carrito del usuario, siem
 También cuenta con un botón que dirige al usuario a la vista de su carrito, que es creado y asignado al usuario la primera vez que entra a la página.
 
 ```
-GET http://localhost:8080/products/realtimeproducts
+GET http://localhost:8080/realtimeproducts
 ```
 
 Lista los productos dados de alta igual que el endpoint anterior, además de proveer un formulario mediante el cual se pueden dar de alta productos. Además, cada producto puede ser eliminado del sistema desde la interfaz.

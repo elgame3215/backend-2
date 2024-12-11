@@ -51,7 +51,7 @@ app.use(
 	},
 	productsRouter);
 app.use('/api/carts', cartsRouter);
-app.use('/products', viewsRouter);
+app.use('/', viewsRouter);
 app.use('/user', userRouter);
 
 	(async () => {

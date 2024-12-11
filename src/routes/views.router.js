@@ -8,7 +8,7 @@ import { validateCartExistsView } from "../middleware/validateCart.js";
 
 export const router = Router()
 
-router.get('/', validateQuery, async (req, res) => {
+router.get('/products', validateQuery, async (req, res) => {
 	const { limit, page, sort, query } = req.query
 	try {
 		const response = await ProductsManager.getProducts(limit, page, sort, query)
@@ -32,7 +32,7 @@ router.get('/realtimeproducts', validateQuery, async (req, res) => {
 	}
 })
 
-router.get('/carts/:cid', validateCid, validateCartExistsView, async (req, res) => {
+router.get('/products/carts/:cid', validateCid, validateCartExistsView, async (req, res) => {
 	const { cid } = req.params
 	try {
 		const cart = await CartsManager.getCartById(cid)
