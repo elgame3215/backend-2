@@ -1,17 +1,17 @@
-import { PORT, MONGO_CLUSTER_URL, SECRET } from "./config.js"
-import { router as productsRouter } from "./routes/product.router.js";
-import { router as cartsRouter } from "./routes/cart.router.js";
-import { router as viewsRouter } from "./routes/views.router.js"
-import { router as userRouter } from "./routes/user.router.js"
-import express from 'express'
-import session from "express-session";
-import mongoose from 'mongoose';
-import Handlebars from "handlebars"
-import cookieParser from 'cookie-parser'
-import { Server } from 'socket.io';
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
+import cookieParser from 'cookie-parser'
 import { engine } from "express-handlebars";
+import express from 'express'
 import FileStore from 'session-file-store';
+import Handlebars from "handlebars"
+import mongoose from 'mongoose';
+import { Server } from 'socket.io';
+import session from "express-session";
+import { router as cartsRouter } from "./routes/cart.router.js"; // eslint-disable-line sort-imports
+import { router as productsRouter } from "./routes/product.router.js";
+import { router as viewsRouter } from "./routes/views.router.js"
+import { router as userRouter } from "./routes/user.router.js" // eslint-disable-line sort-imports
+import { MONGO_CLUSTER_URL, PORT, SECRET } from "./config.js"
 
 const fileStore = FileStore(session);
 
@@ -38,6 +38,7 @@ app.set('view engine', 'handlebars')
 app.set('views', './src/views')
 
 const server = app.listen(PORT, () => {
+	// eslint-disable-next-line no-console
 	console.log(`Server up on http://localhost:${PORT}`);
 })
 
@@ -54,16 +55,17 @@ app.use('/api/carts', cartsRouter);
 app.use('/', viewsRouter);
 app.use('/user', userRouter);
 
-	(async () => {
-		try {
-			await mongoose.connect(
-				MONGO_CLUSTER_URL,
-				{
-					dbName: "ecommerce"
-				}
-			)
-			console.log(`DB connected`)
-		} catch (error) {
-			console.log(`Error connecting to DB: ${error.message}`)
-		}
-	})();
+(async () => {
+	try {
+		await mongoose.connect(
+			MONGO_CLUSTER_URL,
+			{
+				dbName: "ecommerce"
+			}
+		)
+		// eslint-disable-next-line no-console
+		console.log(`DB connected`)
+	} catch (error) {
+		console.error(`Error connecting to DB: ${error.message}`)
+	}
+})();

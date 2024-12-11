@@ -8,6 +8,7 @@ function parseFormData(formData) {
 	return data;
 }
 
+// eslint-disable-next-line no-undef
 const socket = io()
 const submit = document.getElementById('submit');
 const productsContainer = document.querySelector('.products-container')

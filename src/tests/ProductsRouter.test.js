@@ -1,6 +1,6 @@
-import { describe, expect, expectTypeOf, it } from "vitest";
-import { ProductValidator } from "../utils/Product-Validator.js";
 import { ProductController } from "../dao/controllers/Product-Manager-Mongo.js";
+import { ProductValidator } from "../utils/Product-Validator.js";
+import { describe, expect, expectTypeOf, it } from "vitest";
 let usedCode;
 const validProduct = {
 	title: "s",

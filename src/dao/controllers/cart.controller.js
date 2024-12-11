@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
 import { cartModel } from "../models/cart.model.js";
+import mongoose from "mongoose";
 
 export class CartController {
 	static async addCart() {

@@ -1,7 +1,7 @@
+import { CartController } from "../dao/controllers/cart.controller.js";
 import { isValidObjectId } from "mongoose";
 import { ProductController } from "../dao/controllers/product.controller.js";
-import { ProductValidator } from "../utils/Product-Validator.js";
-import { CartController } from "../dao/controllers/cart.controller.js";
+import { ProductValidator } from "../utils/product.validator.js";
 
 export async function validateProduct(req, res, next) {
 	const product = req.body

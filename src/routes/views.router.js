@@ -1,10 +1,10 @@
-import { Router } from "express";
-import { ProductController } from "../dao/controllers/product.controller.js";
-import { formatResponse } from "../utils/queryProcess.js";
-import { validateQuery } from "../middleware/validateQuery.js";
 import { CartController } from "../dao/controllers/cart.controller.js";
-import { validateCid } from "../middleware/validateMongoIDs.js";
+import { formatResponse } from "../utils/query.process.js";
+import { ProductController } from "../dao/controllers/product.controller.js";
+import { Router } from "express";
 import { validateCartExistsView } from "../middleware/validateCart.js";
+import { validateCid } from "../middleware/validateMongoIDs.js";
+import { validateQuery } from "../middleware/validateQuery.js";
 
 export const router = Router()
 
@@ -15,7 +15,7 @@ router.get('/products', validateQuery, async (req, res) => {
 		formatResponse(response, limit, page, sort, query)
 		res.status(200).render('products', { response })
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		res.status(500).render('error', { error: 'Error del servidor', code: 500 })
 	}
 })
@@ -27,7 +27,7 @@ router.get('/realtimeproducts', validateQuery, async (req, res) => {
 		formatResponse(response, limit, page, sort, query)
 		res.status(200).render('realTimeProducts', { response })
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		res.status(500).render('error', { error: 'Error del servidor', code: 500 })
 	}
 })
@@ -39,7 +39,7 @@ router.get('/products/carts/:cid', validateCid, validateCartExistsView, async (r
 		const { products } = cart
 		res.status(200).render('cart', { products, cid })
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		res.status(500).render('error', { error: 'Error del servidor', code: 500 })
 	}
 })

@@ -37,8 +37,8 @@ export class ProductValidator {
 		}
 	}
 	static errorMessages = {
-		emptyCamp: "Todos los campos obligatorios deben estar completos",
 		duplicatedCode: "Código ya existente",
+		emptyCamp: "Todos los campos obligatorios deben estar completos",
 		missingCamp: "Campos faltantes",
 		negativeValues: "Precio y stock no admiten valores negativos"
 	}
