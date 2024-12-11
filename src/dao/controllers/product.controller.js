@@ -1,6 +1,6 @@
 import { productModel } from "../models/product.model.js"
 
-export class ProductsManager {
+export class ProductController {
 	static async getProducts(limit = 10, page = 1, sort, query) {
 		const regExp = new RegExp(`\\b${query}\\b`, 'i')
 		const filter = query ? { category: { $regex: regExp } } : {};

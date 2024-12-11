@@ -1,4 +1,4 @@
-import { ProductsManager } from "../dao/Mongo/product.manager.js";
+import { ProductController } from "../dao/controllers/product.controller.js";
 
 export class ProductValidator {
 	static #requiredKeys = [
@@ -30,7 +30,7 @@ export class ProductValidator {
 
 	static async validateCode(product) {
 		const { code } = product;
-		const response = await ProductsManager.getProducts(1e12)
+		const response = await ProductController.getProducts(1e12)
 		const { docs: products } = response
 		if (products.find(p => p.code == code)) {
 			throw new Error(this.errorMessages.duplicatedCode);

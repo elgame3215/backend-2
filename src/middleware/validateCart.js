@@ -1,31 +1,31 @@
-import { CartsManager } from "../dao/Mongo/cart.manager.js";
-import { ProductsManager } from "../dao/Mongo/product.manager.js";
+import { CartController } from "../dao/controllers/cart.controller.js";
+import { ProductController } from "../dao/controllers/product.controller.js";
 
 export async function validateCartExists(req, res, next) {
 	const { cid } = req.params;
-	const cart = await CartsManager.getCartById(cid)
+	const cart = await CartController.getCartById(cid)
 	if (!cart) {
-		return res.status(404).json({ status: 'error', detail: CartsManager.errorMessages.cartNotFound });
+		return res.status(404).json({ status: 'error', detail: CartController.errorMessages.cartNotFound });
 	}
-	next();
+	return next();
 }
 
 export async function validateCartExistsView(req, res, next) {
 	const { cid } = req.params;
-	const cart = await CartsManager.getCartById(cid)
+	const cart = await CartController.getCartById(cid)
 	if (!cart) {
-		return res.status(404).render('error', { error: CartsManager.errorMessages.cartNotFound, code: 404 });
+		return res.status(404).render('error', { error: CartController.errorMessages.cartNotFound, code: 404 });
 	}
-	next();
+	return next();
 }
 
 export async function validateProductInCart(req, res, next) {
 	const { cid, pid } = req.params
-	const cart = await CartsManager.getCartById(cid)
+	const cart = await CartController.getCartById(cid)
 	if (!cart.products.find(p => p.product._id == pid)) {
-		return res.status(404).json({ status: 'error', detail: ProductsManager.errorMessages.productNotFound })
+		return res.status(404).json({ status: 'error', detail: ProductController.errorMessages.productNotFound })
 	}
-	next()
+	return next()
 }
 
 export async function validateQuantity(req, res, next) {
@@ -37,9 +37,9 @@ export async function validateQuantity(req, res, next) {
 		return res.status(400).json({ status: 'error', detail: 'quantity must be a number' })
 	}
 	const { pid } = req.params
-	const product = await ProductsManager.getProductById(pid)
+	const product = await ProductController.getProductById(pid)
 	if (product.stock < quantity) {
-		return res.status(400).json({ status: 'error', detail: ProductsManager.errorMessages.productOutOfStock })
+		return res.status(400).json({ status: 'error', detail: ProductController.errorMessages.productOutOfStock })
 	}
-	next()
+	return next()
 }

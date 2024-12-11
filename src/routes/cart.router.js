@@ -1,4 +1,4 @@
-import { CartsManager } from "../dao/Mongo/cart.manager.js";
+import { CartController } from "../dao/controllers/cart.controller.js";
 import { Router } from "express";
 import { validateCid, validatePid } from "../middleware/validateMongoIDs.js";
 import { validateCartExists, validateProductInCart, validateQuantity } from "../middleware/validateCart.js";
@@ -8,10 +8,10 @@ export const router = Router()
 
 router.post('/', async (req, res) => {
 	try {
-		const addedCart = await CartsManager.addCart();
+		const addedCart = await CartController.addCart();
 		return res.status(201).json({ status: 'success', addedCart })
 	} catch (err) {
-		return res.status(500).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+		return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
 	}
 });
 
@@ -21,13 +21,13 @@ router.get(
 	async (req, res) => {
 		const { cid } = req.params;
 		try {
-			const cart = await CartsManager.getCartById(cid);
+			const cart = await CartController.getCartById(cid);
 			if (!cart) {
-				return res.status(404).json({ status: 'error', detail: CartsManager.errorMessages.cartNotFound })
+				return res.status(404).json({ status: 'error', detail: CartController.errorMessages.cartNotFound })
 			}
 			return res.status(200).json(cart.products)
 		} catch (err) {
-			return res.status(500).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
 		}
 	})
 
@@ -40,10 +40,10 @@ router.post(
 	async (req, res) => {
 		const { cid, pid } = req.params
 		try {
-			const updatedCart = await CartsManager.addProductToCart(pid, cid)
+			const updatedCart = await CartController.addProductToCart(pid, cid)
 			return res.status(200).json({ status: 'success', updatedCart })
 		} catch (err) {
-			return res.status(500).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
 		}
 	})
 
@@ -56,10 +56,10 @@ router.delete(
 	async (req, res) => {
 		const { cid, pid } = req.params
 		try {
-			const updatedCart = await CartsManager.deleteProductFromCart(pid, cid)
+			const updatedCart = await CartController.deleteProductFromCart(pid, cid)
 			return res.status(200).json({ status: 'success', updatedCart })
 		} catch (err) {
-			return res.status(500).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
 		}
 	})
 
@@ -72,10 +72,10 @@ router.put(
 		const productList = req.body
 		const { cid } = req.params
 		try {
-			const updatedCart = await CartsManager.updateCartProducts(cid, productList)
+			const updatedCart = await CartController.updateCartProducts(cid, productList)
 			return res.status(200).json({ status: 'success', updatedCart })
 		} catch (err) {
-			return res.status(500).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
 		}
 	})
 
@@ -90,10 +90,10 @@ router.put(
 		const { cid, pid } = req.params
 		const { quantity } = req.body
 		try {
-			const updatedCart = await CartsManager.updateProductQuantity(cid, pid, quantity)
+			const updatedCart = await CartController.updateProductQuantity(cid, pid, quantity)
 			res.status(200).json({ status: 'success', updatedCart })
 		} catch (err) {
-			res.status(500).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+			res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
 		}
 	})
 
@@ -104,9 +104,9 @@ router.delete(
 	async (req, res) => {
 		const { cid } = req.params
 		try {
-			const updatedCart = await CartsManager.clearCart(cid)
+			const updatedCart = await CartController.clearCart(cid)
 			res.status(200).json({ status: 'success', updatedCart })
 		} catch (err) {
-			res.status(200).json({ status: 'error', detail: CartsManager.errorMessages.serverError })
+			res.status(200).json({ status: 'error', detail: CartController.errorMessages.serverError })
 		}
 	})

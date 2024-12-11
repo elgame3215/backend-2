@@ -1,6 +1,6 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 import { ProductValidator } from "../utils/Product-Validator.js";
-import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
+import { ProductController } from "../dao/controllers/Product-Manager-Mongo.js";
 let usedCode;
 const validProduct = {
 	title: "s",
@@ -191,7 +191,7 @@ describe('GET /products/:pid not found id', async () => {
 		expect(response.status).toBe(404)
 	})
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
+		expect(data.detail).toBe(ProductController.errorMessages.productNotFound)
 	})
 })
 
@@ -261,7 +261,7 @@ describe('PUT /products/:pid invalid id', async () => {
 		expect(response.status).toBe(404)
 	})
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
+		expect(data.detail).toBe(ProductController.errorMessages.productNotFound)
 	})
 })
 
@@ -318,6 +318,6 @@ describe('DELETE /products/:pid invalid id', async () => {
 		expect(response.status).toBe(404)
 	})
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
+		expect(data.detail).toBe(ProductController.errorMessages.productNotFound)
 	})
 })

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { cartModel } from "../models/cart.model.js";
 
-export class CartsManager {
+export class CartController {
 	static async addCart() {
 		let addedCart = { products: [] }
 		addedCart = await cartModel.create(addedCart);

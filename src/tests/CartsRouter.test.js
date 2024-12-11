@@ -1,6 +1,6 @@
 import { describe, it, expect, expectTypeOf, assert } from "vitest";
-import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
-import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
+import { CartController } from "../dao/controllers/Cart-Manager-Mongo.js";
+import { ProductController } from "../dao/controllers/Product-Manager-Mongo.js";
 import { randomCode } from "./ProductsRouter.test.js";
 let usedCid;
 const validProduct = {
@@ -60,7 +60,7 @@ describe('GET /carts/:cid invalid id', async () => {
 		expect(response.status).toBe(404)
 	})
 	it('Error message should be cart not found', () => {
-		expect(data.detail).toBe(CartsManager.errorMessages.cartNotFound)
+		expect(data.detail).toBe(CartController.errorMessages.cartNotFound)
 	})
 })
 
@@ -96,7 +96,7 @@ describe('POST /:cid/product/:pid no stock', async () => {
 		expect(response.status).toBe(400)
 	})
 	it('Error message should be product out of stock', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.productOutOfStock)
+		expect(data.detail).toBe(ProductController.errorMessages.productOutOfStock)
 	})
 })
 
@@ -126,7 +126,7 @@ describe('POST /:cid/product/:pid invalid cid', async () => {
 		expect(response.status).toBe(404)
 	})
 	it('Error message should be cart not found', () => {
-		expect(data.detail).toBe(CartsManager.errorMessages.cartNotFound)
+		expect(data.detail).toBe(CartController.errorMessages.cartNotFound)
 	})
 })
 
@@ -139,7 +139,7 @@ describe('POST /:cid/product/:pid invalid pid', async () => {
 		expect(response.status).toBe(404)
 	})
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.productNotFound)
+		expect(data.detail).toBe(ProductController.errorMessages.productNotFound)
 	})
 })
 
@@ -170,7 +170,7 @@ describe('PUT /:cid/product/:pid no stock', async () => {
 		expect(response.status).toBe(400)
 	})
 	it('Error message should be product out of stock', () => {
-		expect(data.detail).toBe(ProductsManager.errorMessages.productOutOfStock)
+		expect(data.detail).toBe(ProductController.errorMessages.productOutOfStock)
 	})
 })
 
