@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { ProductValidator } from "../../utils/Product-Validator.js";
+import { productModel } from "../models/product.model.js";
 
 export class ProductsManager {
 	static #nextId;

@@ -1,10 +1,10 @@
-import { productModel } from "../models/Product-Model.js"
+import { productModel } from "../models/product.model.js"
 
 export class ProductsManager {
 	static async getProducts(limit = 10, page = 1, sort, query) {
 		const regExp = new RegExp(`\\b${query}\\b`, 'i')
-		let filter = query ? { category: { $regex: regExp } } : {};
-		let sorter = sort ? { price: sort } : {};
+		const filter = query ? { category: { $regex: regExp } } : {};
+		const sorter = sort ? { price: sort } : {};
 		const products = await productModel.paginate(
 			filter,
 			{

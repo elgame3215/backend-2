@@ -1,7 +1,7 @@
 import { isValidObjectId } from "mongoose";
-import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
+import { ProductsManager } from "../dao/Mongo/product.manager.js";
 import { ProductValidator } from "../utils/Product-Validator.js";
-import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
+import { CartsManager } from "../dao/Mongo/cart.manager.js";
 
 export async function validateProduct(req, res, next) {
 	const product = req.body

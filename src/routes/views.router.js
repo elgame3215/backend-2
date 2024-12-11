@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
+import { ProductsManager } from "../dao/Mongo/product.manager.js";
 import { formatResponse } from "../utils/queryProcess.js";
 import { validateQuery } from "../middleware/validateQuery.js";
-import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
+import { CartsManager } from "../dao/Mongo/cart.manager.js";
 import { validateCid } from "../middleware/validateMongoIDs.js";
 import { validateCartExistsView } from "../middleware/validateCart.js";
 
 export const router = Router()
 
 router.get('/', validateQuery, async (req, res) => {
-	let { limit, page, sort, query } = req.query
+	const { limit, page, sort, query } = req.query
 	try {
 		const response = await ProductsManager.getProducts(limit, page, sort, query)
 		formatResponse(response, limit, page, sort, query)
@@ -22,7 +22,7 @@ router.get('/', validateQuery, async (req, res) => {
 
 router.get('/realtimeproducts', validateQuery, async (req, res) => {
 	try {
-		let { limit, page, sort, query } = req.query
+		const { limit, page, sort, query } = req.query
 		const response = await ProductsManager.getProducts(limit, page, sort, query)
 		formatResponse(response, limit, page, sort, query)
 		res.status(200).render('realTimeProducts', { response })

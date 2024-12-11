@@ -1,4 +1,4 @@
-import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
+import { ProductsManager } from "../dao/Mongo/product.manager.js";
 
 export class ProductValidator {
 	static #requiredKeys = [

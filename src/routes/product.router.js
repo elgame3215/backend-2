@@ -1,4 +1,4 @@
-import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
+import { ProductsManager } from "../dao/Mongo/product.manager.js";
 import { Router } from "express";
 import { validatePid } from "../middleware/validateMongoIDs.js";
 import { formatResponse } from "../utils/queryProcess.js";
@@ -8,7 +8,6 @@ import { validateQuery } from "../middleware/validateQuery.js";
 
 export const router = Router()
 
-let peticiones = 0;
 router.get('/', validateQuery, async (req, res) => {
 	let response = {};
 	let { limit, page, sort, query } = req.query
@@ -41,7 +40,7 @@ router.get('/:pid', validatePid, async (req, res) => {
 router.post('/', validateProduct, async (req, res) => {
 	const newProduct = req.body
 	try {
-		let addedProduct = await ProductsManager.addProduct(newProduct)
+		const addedProduct = await ProductsManager.addProduct(newProduct)
 		req.io.emit('product added', addedProduct)
 		return res.status(201).json({ status: 'success', addedProduct })
 	} catch (err) {

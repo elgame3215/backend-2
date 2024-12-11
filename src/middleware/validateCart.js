@@ -1,5 +1,5 @@
-import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
-import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
+import { CartsManager } from "../dao/Mongo/cart.manager.js";
+import { ProductsManager } from "../dao/Mongo/product.manager.js";
 
 export async function validateCartExists(req, res, next) {
 	const { cid } = req.params;

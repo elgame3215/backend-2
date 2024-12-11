@@ -2,7 +2,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import { ProductValidator } from "../utils/Product-Validator.js";
 import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
 let usedCode;
-let validProduct = {
+const validProduct = {
 	title: "s",
 	description: "d",
 	price: 2,
@@ -12,14 +12,14 @@ let validProduct = {
 	stock: 25,
 	category: "d",
 }
-let response = await fetch('http://localhost:8080/api/products', {
+const response = await fetch('http://localhost:8080/api/products', {
 	method: 'POST',
 	headers: {
 		'Content-Type': 'application/json'
 	},
 	body: JSON.stringify(validProduct)
 })
-let product = await response.json()
+const product = await response.json()
 let usedId = product._id
 
 
@@ -40,8 +40,8 @@ describe('POST /products valid', async () => {
 		stock: 25,
 		category: "d",
 	}
-	let endpoint = 'http://localhost:8080/api/products';
-	let response = await fetch(endpoint, {
+	const endpoint = 'http://localhost:8080/api/products';
+	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -60,8 +60,8 @@ describe('POST /products valid', async () => {
 	it('Product should have id', () => {
 		expect(Object.hasOwn(addedProduct, 'id'))
 	})
-	let response2 = await fetch(`${endpoint}/?limit=999999`)
-	let { payload: products } = await response2.json()
+	const response2 = await fetch(`${endpoint}/?limit=999999`)
+	const { payload: products } = await response2.json()
 	it('Id should be unique', () => {
 		expect(products.filter(p => p._id == addedProduct._id).length).toBe(1)
 	})
@@ -297,13 +297,13 @@ describe('PUT /products/:pid invalid values', async () => {
 
 describe('DELETE /products/:pid valid', async () => {
 	const endpoint = `http://localhost:8080/api/products/${usedId}`;
-	let response = await fetch(endpoint, { method: 'DELETE' })
+	const response = await fetch(endpoint, { method: 'DELETE' })
 
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200)
 	})
 
-	let response2 = await fetch(endpoint)
+	const response2 = await fetch(endpoint)
 	it('Product is not aviable after delete', () => {
 		expect(response2.status).toBe(404)
 	})
@@ -311,7 +311,7 @@ describe('DELETE /products/:pid valid', async () => {
 
 describe('DELETE /products/:pid invalid id', async () => {
 	const endpoint = 'http://localhost:8080/api/products/673134ab2628f9f38050b816';
-	let response = await fetch(endpoint, { method: 'DELETE' })
+	const response = await fetch(endpoint, { method: 'DELETE' })
 	const data = await response.json()
 
 	it('Should have status 404', () => {

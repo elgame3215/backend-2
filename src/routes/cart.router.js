@@ -1,4 +1,4 @@
-import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
+import { CartsManager } from "../dao/Mongo/cart.manager.js";
 import { Router } from "express";
 import { validateCid, validatePid } from "../middleware/validateMongoIDs.js";
 import { validateCartExists, validateProductInCart, validateQuantity } from "../middleware/validateCart.js";

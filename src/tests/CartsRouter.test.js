@@ -3,7 +3,7 @@ import { CartsManager } from "../dao/Mongo/Cart-Manager-Mongo.js";
 import { ProductsManager } from "../dao/Mongo/Product-Manager-Mongo.js";
 import { randomCode } from "./ProductsRouter.test.js";
 let usedCid;
-let validProduct = {
+const validProduct = {
 	title: "s",
 	description: "d",
 	price: 2,
@@ -13,14 +13,14 @@ let validProduct = {
 	stock: 25,
 	category: "d",
 }
-let response = await fetch('http://localhost:8080/api/products', {
+const response = await fetch('http://localhost:8080/api/products', {
 	method: 'POST',
 	headers: {
 		'Content-Type': 'application/json'
 	},
 	body: JSON.stringify(validProduct)
 })
-let data = await response.json()
+const data = await response.json()
 let usedPid = data.addedProduct._id
 
 
