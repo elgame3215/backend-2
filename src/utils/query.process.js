@@ -4,8 +4,8 @@ export function setLinks(response, endpoint, prevPage, nextPage, params) {
 }
 
 export function setCamps(response) {
-	response.status = 'success'
-	response.payload = response.docs
+	response.status = 'success';
+	response.payload = response.docs;
 	delete response.docs;
 	delete response.totalDocs;
 	delete response.limit;

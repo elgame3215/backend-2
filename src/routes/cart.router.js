@@ -1,18 +1,18 @@
 import { CartController } from "../dao/controllers/cart.controller.js";
 import { Router } from "express";
-import { validateBodyPids, validateProductIsAviable } from "../middleware/validateProduct.js";
-import { validateCartExists, validateProductInCart, validateQuantity } from "../middleware/validateCart.js";
-import { validateCid, validatePid } from "../middleware/validateMongoIDs.js";
+import { validateBodyPids, validateProductIsAviable } from "../middleware/product.validate.js";
+import { validateCartExists, validateProductInCart, validateQuantity } from "../middleware/cart.validate.js";
+import { validateCid, validatePid } from "../middleware/mongoID.validate.js";
 
-export const router = Router()
+export const router = Router();
 
 router.post('/', async (req, res) => {
 	try {
 		const addedCart = await CartController.addCart();
-		return res.status(201).json({ status: 'success', addedCart })
+		return res.status(201).json({ status: 'success', addedCart });
 	} catch (err) {
-		console.error(err)
-		return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
+		console.error(err);
+		return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
 	}
 });
 
@@ -24,14 +24,14 @@ router.get(
 		try {
 			const cart = await CartController.getCartById(cid);
 			if (!cart) {
-				return res.status(404).json({ status: 'error', detail: CartController.errorMessages.cartNotFound })
+				return res.status(404).json({ status: 'error', detail: CartController.errorMessages.cartNotFound });
 			}
-			return res.status(200).json(cart.products)
+			return res.status(200).json(cart.products);
 		} catch (err) {
-			console.error(err)
-			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
+			console.error(err);
+			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
 		}
-	})
+	});
 
 router.post(
 	'/:cid/product/:pid',
@@ -40,15 +40,15 @@ router.post(
 	validateCartExists,
 	validateProductIsAviable,
 	async (req, res) => {
-		const { cid, pid } = req.params
+		const { cid, pid } = req.params;
 		try {
-			const updatedCart = await CartController.addProductToCart(pid, cid)
-			return res.status(200).json({ status: 'success', updatedCart })
+			const updatedCart = await CartController.addProductToCart(pid, cid);
+			return res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
-			console.error(err)
-			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
+			console.error(err);
+			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
 		}
-	})
+	});
 
 router.delete(
 	'/:cid/product/:pid',
@@ -57,15 +57,15 @@ router.delete(
 	validateCartExists,
 	validateProductInCart,
 	async (req, res) => {
-		const { cid, pid } = req.params
+		const { cid, pid } = req.params;
 		try {
-			const updatedCart = await CartController.deleteProductFromCart(pid, cid)
-			return res.status(200).json({ status: 'success', updatedCart })
+			const updatedCart = await CartController.deleteProductFromCart(pid, cid);
+			return res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
-			console.error(err)
-			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
+			console.error(err);
+			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
 		}
-	})
+	});
 
 router.put(
 	'/:cid',
@@ -73,16 +73,16 @@ router.put(
 	validateCartExists,
 	validateBodyPids,
 	async (req, res) => {
-		const productList = req.body
-		const { cid } = req.params
+		const productList = req.body;
+		const { cid } = req.params;
 		try {
-			const updatedCart = await CartController.updateCartProducts(cid, productList)
-			return res.status(200).json({ status: 'success', updatedCart })
+			const updatedCart = await CartController.updateCartProducts(cid, productList);
+			return res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
-			console.error(err)
-			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
+			console.error(err);
+			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
 		}
-	})
+	});
 
 router.put(
 	'/:cid/product/:pid',
@@ -92,28 +92,28 @@ router.put(
 	validateProductInCart,
 	validateQuantity,
 	async (req, res) => {
-		const { cid, pid } = req.params
-		const { quantity } = req.body
+		const { cid, pid } = req.params;
+		const { quantity } = req.body;
 		try {
-			const updatedCart = await CartController.updateProductQuantity(cid, pid, quantity)
-			res.status(200).json({ status: 'success', updatedCart })
+			const updatedCart = await CartController.updateProductQuantity(cid, pid, quantity);
+			res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
-			console.error(err)
-			res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError })
+			console.error(err);
+			res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
 		}
-	})
+	});
 
 router.delete(
 	'/:cid',
 	validateCid,
 	validateCartExists,
 	async (req, res) => {
-		const { cid } = req.params
+		const { cid } = req.params;
 		try {
-			const updatedCart = await CartController.clearCart(cid)
-			res.status(200).json({ status: 'success', updatedCart })
+			const updatedCart = await CartController.clearCart(cid);
+			res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
-			console.error(err)
-			res.status(200).json({ status: 'error', detail: CartController.errorMessages.serverError })
+			console.error(err);
+			res.status(200).json({ status: 'error', detail: CartController.errorMessages.serverError });
 		}
-	})
+	});

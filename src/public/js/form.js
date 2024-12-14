@@ -9,12 +9,12 @@ function parseFormData(formData) {
 }
 
 // eslint-disable-next-line no-undef
-const socket = io()
+const socket = io();
 const submit = document.getElementById('submit');
-const productsContainer = document.querySelector('.products-container')
+const productsContainer = document.querySelector('.products-container');
 
 submit.addEventListener('click', async e => {
-	e.preventDefault()
+	e.preventDefault();
 	const form = document.getElementById('form');
 	const formData = new FormData(form);
 	const data = parseFormData(formData);
@@ -24,8 +24,8 @@ submit.addEventListener('click', async e => {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(data)
 		}
-	)
-})
+	);
+});
 
 socket.on('product added', product => {
 	const newProductEl = `
@@ -40,10 +40,10 @@ socket.on('product added', product => {
 			<button class="delete-button" id="${product._id}">Eliminar</button>
 		</div>
 		`;
-	productsContainer.insertAdjacentHTML('beforeend', newProductEl)
+	productsContainer.insertAdjacentHTML('beforeend', newProductEl);
 	const deleteButton = document.getElementById(product._id);
 	deleteButton.addEventListener('click', deleteProduct);
-	document.querySelectorAll('.form-group input, textarea').forEach(n => n.value = '')
+	document.querySelectorAll('.form-group input, textarea').forEach(n => n.value = '');
 	Toastify({
 		text: 'Producto agregado',
 		duration: 3000,
@@ -61,12 +61,12 @@ socket.on('invalid product', message => {
 		backgroundColor: '#B30010',
 		stopOnFocus: true,
 	}).showToast();
-})
+});
 
 async function deleteProduct(e) {
 	const response = await fetch(`http://localhost:8080/api/products/${e.target.id}`,
 		{ method: 'DELETE' }
-	)
+	);
 	if (response.status != 200) {
 		return Toastify({
 			text: 'Error al eliminar el producto',

@@ -1,17 +1,17 @@
-let userCartId = localStorage.getItem('userCartId')
-const myCartButton = document.getElementById('my-cart-button')
+let userCartId = localStorage.getItem('userCartId');
+const myCartButton = document.getElementById('my-cart-button');
 if (!userCartId) {
 	fetch('http://localhost:8080/api/carts', { method: 'POST' })
 	.then(response => response.json())
 	.then(data => {
-		userCartId = data.addedCart._id
-		localStorage.setItem('userCartId', userCartId)
-		myCartButton.href = `/products/carts/${userCartId}`
-	})
+		userCartId = data.addedCart._id;
+		localStorage.setItem('userCartId', userCartId);
+		myCartButton.href = `/products/carts/${userCartId}`;
+	});
 }
-myCartButton.href = `/products/carts/${userCartId}`
+myCartButton.href = `/products/carts/${userCartId}`;
 
-const addToCartButtons = document.querySelectorAll('.add-button')
+const addToCartButtons = document.querySelectorAll('.add-button');
 for (let i = 0; i < addToCartButtons.length; i++) {
 	const addButton = addToCartButtons[i];
 	addButton.addEventListener('click', async e => {
@@ -35,6 +35,6 @@ for (let i = 0; i < addToCartButtons.length; i++) {
 						stopOnFocus: true
 					}).showToast();
 				}
-			})
-	})
+			});
+	});
 }
