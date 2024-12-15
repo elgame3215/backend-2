@@ -1,14 +1,23 @@
-import { UserController } from "../dao/controllers/user.controller";
+import { UserController } from "../dao/controllers/user.controller.js";
 
-export function validateEmail(req, res, next) {
+export async function validateEmail(req, res, next) {
 	const { email } = req.body;
 	const regEx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	if (!regEx.test(email)) {
 		return res.status(401).json({ status: "error", detail: "invalid email" });
 	}
-	const userExists = UserController.findUserByEmail(email);
-	if (!userExists) {
-		return res.status(401).json({ status: "error", detail: "user not found" })
+	const userExists = await UserController.findUserByEmail(email);
+	if (userExists) {
+		return res.status(401).json({ status: "error", detail: UserController.errorMessages.registeredEmail });
+	}
+	return next();
+}
+
+export function validatePassword(req, res, next) {
+	const { password } = req.body;
+	const regEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+	if (!regEx.test(password)) {
+		return res.status(401).json({ status: "error", detail: "password too weak" });
 	}
 	return next();
 }

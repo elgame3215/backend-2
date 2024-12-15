@@ -7,10 +7,10 @@ import Handlebars from "handlebars";
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import session from "express-session";
-import { router as cartsRouter } from "./routes/cart.router.js"; // eslint-disable-line sort-imports
-import { router as productsRouter } from "./routes/product.router.js";
-import { router as viewsRouter } from "./routes/views.router.js";
-import { router as userRouter } from "./routes/sessions.router.js"; // eslint-disable-line sort-imports
+import { router as cartsRouter } from "./routes/cart.routes.js"; // eslint-disable-line sort-imports
+import { router as productsRouter } from "./routes/product.routes.js";
+import { router as viewsRouter } from "./routes/views.routes.js";
+import { router as userRouter } from "./routes/sessions.routes.js"; // eslint-disable-line sort-imports
 import { MONGO_CLUSTER_URL, PORT, SECRET } from "./config.js";
 
 const fileStore = FileStore(session);

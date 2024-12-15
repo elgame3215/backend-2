@@ -33,7 +33,7 @@ router.get('/:pid', validatePid, async (req, res) => {
 		res.status(200).json(product);
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ detail: ProductController.errorMessages.serverError });
+		res.status(500).json({ status: "error", detail: ProductController.errorMessages.serverError });
 	}
 });
 
@@ -75,7 +75,7 @@ router.put('/:pid', validatePid, validateProduct, async (req, res) => {
 		return res.status(200).json({ status: 'success', updatedProduct });
 	} catch (err) {
 		console.error(err);
-		res.status(500).json({ status: 'error', detail: 'Error del servidor' });
+		res.status(500).json({ status: 'error', detail: ProductController.errorMessages.serverError });
 	}
 });
 

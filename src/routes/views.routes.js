@@ -16,7 +16,7 @@ router.get('/products', validateQuery, async (req, res) => {
 		res.status(200).render('products', { response });
 	} catch (err) {
 		console.error(err);
-		res.status(500).render('error', { error: 'Error del servidor', code: 500 });
+		res.status(500).render('error', { error: ProductController.errorMessages.serverError, code: 500 });
 	}
 });
 
@@ -28,7 +28,7 @@ router.get('/realtimeproducts', validateQuery, async (req, res) => {
 		res.status(200).render('realTimeProducts', { response });
 	} catch (err) {
 		console.error(err);
-		res.status(500).render('error', { error: 'Error del servidor', code: 500 });
+		res.status(500).render('error', { error: ProductController.errorMessages.serverError, code: 500 });
 	}
 });
 
@@ -40,6 +40,6 @@ router.get('/products/carts/:cid', validateCid, validateCartExistsView, async (r
 		res.status(200).render('cart', { products, cid });
 	} catch (err) {
 		console.error(err);
-		res.status(500).render('error', { error: 'Error del servidor', code: 500 });
+		res.status(500).render('error', { error: ProductController.errorMessages.serverError, code: 500 });
 	}
 });

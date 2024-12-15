@@ -7,8 +7,13 @@ export class UserController {
 	}
 
 	static async findUserByEmail(email) {
-		return await userModel.find({
+		return await userModel.findOne({
 			email: email
 		});
 	}
+
+	static errorMessages = {
+		serverError: "Error del servidor",
+		registeredEmail: "La dirección email ya está asociada a una cuenta"
+	};
 }
