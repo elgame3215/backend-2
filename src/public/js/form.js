@@ -18,13 +18,11 @@ submit.addEventListener('click', async e => {
 	const form = document.getElementById('form');
 	const formData = new FormData(form);
 	const data = parseFormData(formData);
-	await fetch('http://localhost:8080/api/products',
-		{
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(data)
-		}
-	);
+	await fetch('http://localhost:8080/api/products', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data),
+	});
 });
 
 socket.on('product added', product => {
@@ -43,13 +41,15 @@ socket.on('product added', product => {
 	productsContainer.insertAdjacentHTML('beforeend', newProductEl);
 	const deleteButton = document.getElementById(product._id);
 	deleteButton.addEventListener('click', deleteProduct);
-	document.querySelectorAll('.form-group input, textarea').forEach(n => n.value = '');
+	document
+		.querySelectorAll('.form-group input, textarea')
+		.forEach(n => (n.value = ''));
 	Toastify({
 		text: 'Producto agregado',
 		duration: 3000,
 		gravity: 'bottom',
 		backgroundColor: '#007BFF',
-		stopOnFocus: true
+		stopOnFocus: true,
 	}).showToast();
 });
 
@@ -64,7 +64,8 @@ socket.on('invalid product', message => {
 });
 
 async function deleteProduct(e) {
-	const response = await fetch(`http://localhost:8080/api/products/${e.target.id}`,
+	const response = await fetch(
+		`http://localhost:8080/api/products/${e.target.id}`,
 		{ method: 'DELETE' }
 	);
 	if (response.status != 200) {
@@ -73,7 +74,7 @@ async function deleteProduct(e) {
 			duration: 3000,
 			gravity: 'bottom',
 			backgroundColor: '#B30010',
-			stopOnFocus: true
+			stopOnFocus: true,
 		}).showToast();
 	}
 	productsContainer.removeChild(e.target.parentNode);
@@ -82,6 +83,6 @@ async function deleteProduct(e) {
 		duration: 3000,
 		gravity: 'bottom',
 		backgroundColor: '#007BFF',
-		stopOnFocus: true
+		stopOnFocus: true,
 	}).showToast();
-};
+}

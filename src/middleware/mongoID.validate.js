@@ -1,4 +1,4 @@
-import { isValidObjectId } from "mongoose";
+import { isValidObjectId } from 'mongoose';
 
 export function validateCid(req, res, next) {
 	const { cid } = req.params;
@@ -14,7 +14,3 @@ export function validatePid(req, res, next) {
 	}
 	next();
 }
-
-
-
-

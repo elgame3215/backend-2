@@ -1,4 +1,4 @@
-import { ProductController } from "../dao/controllers/product.controller.js";
+import { ProductController } from '../dao/controllers/product.controller.js';
 
 export class ProductValidator {
 	static #requiredKeys = [
@@ -7,7 +7,7 @@ export class ProductValidator {
 		'code',
 		'price',
 		'stock',
-		'category'
+		'category',
 	];
 	static validateKeys(product) {
 		const keys = Object.keys(product);
@@ -37,9 +37,9 @@ export class ProductValidator {
 		}
 	}
 	static errorMessages = {
-		duplicatedCode: "Código ya existente",
-		emptyCamp: "Todos los campos obligatorios deben estar completos",
-		missingCamp: "Campos faltantes",
-		negativeValues: "Precio y stock no admiten valores negativos"
+		duplicatedCode: 'Código ya existente',
+		emptyCamp: 'Todos los campos obligatorios deben estar completos',
+		missingCamp: 'Campos faltantes',
+		negativeValues: 'Precio y stock no admiten valores negativos',
 	};
 }

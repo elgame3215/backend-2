@@ -1,20 +1,27 @@
 # Ecommerce backend
+
 Este proyecto brinda una posible implementación del backend de un ecommerce, que permite gestionar, registrar, modificar y eliminar productos, además de brindar al usuario la posibilidad de buscar, filtrar y agregar a su carrito los productos dados de alta en el sistema.
 
 ## Inicialización
+
 Para inicializar el proyecto es necesario clonar el repositorio a tu sistema local. Podés hacerlo mediante el siguiente comando, desde el directorio en el que quieras clonar el proyecto:
+
 ```bash
 git clone https://github.com/elgame3215/backend-1
 ```
+
 Una vez tengas el proyecto en tu sistema local, deberás instalar las dependencias necesarias usando el comando `npm install` desde el directorio del repositorio. Luego de esto, el proyecto estará listo para ser levantado con el comando `npm start`. El programa se alojará en el puerto 8080, por lo que es necesario que dicho puerto se encuentre libre al momento de levantar el proyecto.
 
 ## Funcionalidades
+
 La interfaz que brinda el proyecto se divide en tres rutas:
-* [products API](#products-API)
-* [carts API](#carts-API)
-* [products UI](#products-UI)
+
+- [products API](#products-API)
+- [carts API](#carts-API)
+- [products UI](#products-UI)
 
 ### products API
+
 La ruta /api/products permite agregar, eliminar y modificar productos de la base de datos mediante los siguientes endpoints:
 
 ```
@@ -49,6 +56,7 @@ PUT http://localhost:8080/api/products/:pid
 Modifica la información del producto correspondiente al id recibido por :pid, siempre que haya uno y la nueva información, que se incluirá en el body de la petición, sea correcta de acuerdo a las [restricciones](#restricciones).
 
 ### carts API
+
 La ruta /api/carts permite crear, eliminar y modificar carritos de compra de la base de datos mediante los siguientes endpoints:
 
 ```
@@ -81,7 +89,8 @@ PUT http://localhost:8080/api/carts/:cid
 
 Reemplaza la lista de productos del carrito correspondiente al id recibido por :cid por la lista recibida por el body de la petición. Siempre que haya un carrito con el id dado, un producto para cada id recibido y cada producto cuente con un stock no menor a la cantidad demandada del mismo.
 El formato del body debe ser el siguiente:
-``` JS
+
+```JS
 [
 	{
 		product: id,			// id del producto cuya cantidad de unidades se desea modificar
@@ -103,6 +112,7 @@ DELETE http://localhost:8080/api/carts/:cid
 Elimina todos los productos del carrito correspondiente al id recibido por :cid, siempre que haya un carrito con ese id.
 
 ### products UI
+
 La ruta /products entrega una serie de interfaces visuales que le permiten al usuario tanto dar de alta/baja productos en el sistema, como visualizar productos y agregarlos o quitarlos de su carrito mediante los siguientes endpoints:
 
 ```
@@ -129,10 +139,11 @@ Lista únicamente los productos agregados al carrito correspondiente al id recib
 
 ## Restricciones
 
-* Todas las rutas que requieran tanto un :pid como un :cid, deben recibir como argumento en cada parámetro una cadena hexadecimal de 24 digitos.
+- Todas las rutas que requieran tanto un :pid como un :cid, deben recibir como argumento en cada parámetro una cadena hexadecimal de 24 digitos.
 
-* Para ser considerado válido, un producto debe tener el siguiente formato:
-``` JS
+- Para ser considerado válido, un producto debe tener el siguiente formato:
+
+```JS
 {
 	title: "Manzanas",			// título del producto
 	description: "Manzanas rojas, 1kg",	// breve descripción del producto

@@ -1,8 +1,15 @@
-import { CartController } from "../dao/controllers/cart.controller.js";
-import { Router } from "express";
-import { validateBodyPids, validateProductIsAviable } from "../middleware/product.validate.js";
-import { validateCartExists, validateProductInCart, validateQuantity } from "../middleware/cart.validate.js";
-import { validateCid, validatePid } from "../middleware/mongoID.validate.js";
+import { CartController } from '../dao/controllers/cart.controller.js';
+import { Router } from 'express';
+import {
+	validateBodyPids,
+	validateProductIsAviable,
+} from '../middleware/product.validate.js';
+import {
+	validateCartExists,
+	validateProductInCart,
+	validateQuantity,
+} from '../middleware/cart.validate.js';
+import { validateCid, validatePid } from '../middleware/mongoID.validate.js';
 
 export const router = Router();
 
@@ -12,26 +19,32 @@ router.post('/', async (req, res) => {
 		return res.status(201).json({ status: 'success', addedCart });
 	} catch (err) {
 		console.error(err);
-		return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
+		return res.status(500).json({
+			status: 'error',
+			detail: CartController.errorMessages.serverError,
+		});
 	}
 });
 
-router.get(
-	'/:cid',
-	validateCid,
-	async (req, res) => {
-		const { cid } = req.params;
-		try {
-			const cart = await CartController.getCartById(cid);
-			if (!cart) {
-				return res.status(404).json({ status: 'error', detail: CartController.errorMessages.cartNotFound });
-			}
-			return res.status(200).json(cart.products);
-		} catch (err) {
-			console.error(err);
-			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
+router.get('/:cid', validateCid, async (req, res) => {
+	const { cid } = req.params;
+	try {
+		const cart = await CartController.getCartById(cid);
+		if (!cart) {
+			return res.status(404).json({
+				status: 'error',
+				detail: CartController.errorMessages.cartNotFound,
+			});
 		}
-	});
+		return res.status(200).json(cart.products);
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			status: 'error',
+			detail: CartController.errorMessages.serverError,
+		});
+	}
+});
 
 router.post(
 	'/:cid/product/:pid',
@@ -46,9 +59,13 @@ router.post(
 			return res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
 			console.error(err);
-			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
+			return res.status(500).json({
+				status: 'error',
+				detail: CartController.errorMessages.serverError,
+			});
 		}
-	});
+	}
+);
 
 router.delete(
 	'/:cid/product/:pid',
@@ -63,9 +80,13 @@ router.delete(
 			return res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
 			console.error(err);
-			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
+			return res.status(500).json({
+				status: 'error',
+				detail: CartController.errorMessages.serverError,
+			});
 		}
-	});
+	}
+);
 
 router.put(
 	'/:cid',
@@ -76,13 +97,20 @@ router.put(
 		const productList = req.body;
 		const { cid } = req.params;
 		try {
-			const updatedCart = await CartController.updateCartProducts(cid, productList);
+			const updatedCart = await CartController.updateCartProducts(
+				cid,
+				productList
+			);
 			return res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
 			console.error(err);
-			return res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
+			return res.status(500).json({
+				status: 'error',
+				detail: CartController.errorMessages.serverError,
+			});
 		}
-	});
+	}
+);
 
 router.put(
 	'/:cid/product/:pid',
@@ -95,25 +123,32 @@ router.put(
 		const { cid, pid } = req.params;
 		const { quantity } = req.body;
 		try {
-			const updatedCart = await CartController.updateProductQuantity(cid, pid, quantity);
+			const updatedCart = await CartController.updateProductQuantity(
+				cid,
+				pid,
+				quantity
+			);
 			res.status(200).json({ status: 'success', updatedCart });
 		} catch (err) {
 			console.error(err);
-			res.status(500).json({ status: 'error', detail: CartController.errorMessages.serverError });
+			res.status(500).json({
+				status: 'error',
+				detail: CartController.errorMessages.serverError,
+			});
 		}
-	});
+	}
+);
 
-router.delete(
-	'/:cid',
-	validateCid,
-	validateCartExists,
-	async (req, res) => {
-		const { cid } = req.params;
-		try {
-			const updatedCart = await CartController.clearCart(cid);
-			res.status(200).json({ status: 'success', updatedCart });
-		} catch (err) {
-			console.error(err);
-			res.status(200).json({ status: 'error', detail: CartController.errorMessages.serverError });
-		}
-	});
+router.delete('/:cid', validateCid, validateCartExists, async (req, res) => {
+	const { cid } = req.params;
+	try {
+		const updatedCart = await CartController.clearCart(cid);
+		res.status(200).json({ status: 'success', updatedCart });
+	} catch (err) {
+		console.error(err);
+		res.status(200).json({
+			status: 'error',
+			detail: CartController.errorMessages.serverError,
+		});
+	}
+});

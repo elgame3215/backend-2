@@ -1,5 +1,5 @@
-import { cartModel } from "../models/cart.model.js";
-import mongoose from "mongoose";
+import { cartModel } from '../models/cart.model.js';
+import mongoose from 'mongoose';
 
 export class CartController {
 	static async addCart() {
@@ -21,24 +21,28 @@ export class CartController {
 		} else {
 			cart.products.push({ product: pid, quantity: 1 });
 		}
-		const updatedCart = await cartModel.findByIdAndUpdate(cid, cart, { new: true });
+		const updatedCart = await cartModel.findByIdAndUpdate(cid, cart, {
+			new: true,
+		});
 		return updatedCart;
 	}
 
 	static async deleteProductFromCart(pid, cid) {
-		const updatedCart = await cartModel.findByIdAndUpdate(cid,
+		const updatedCart = await cartModel.findByIdAndUpdate(
+			cid,
 			{
-				$pull: { products: { product: pid } }
+				$pull: { products: { product: pid } },
 			},
 			{
-				new: true
+				new: true,
 			}
 		);
 		return updatedCart;
 	}
 
 	static async updateCartProducts(cid, productList) {
-		const updatedCart = await cartModel.findByIdAndUpdate(cid,
+		const updatedCart = await cartModel.findByIdAndUpdate(
+			cid,
 			{ products: productList },
 			{ new: true }
 		);
@@ -47,23 +51,25 @@ export class CartController {
 
 	static async updateProductQuantity(cid, pid, quantity) {
 		const objPid = new mongoose.Types.ObjectId(pid);
-		const updatedProduct = await cartModel.findByIdAndUpdate(cid,
+		const updatedProduct = await cartModel.findByIdAndUpdate(
+			cid,
 			{ 'products.$[product].quantity': quantity },
 			{
-				arrayFilters: [{ "product.product": objPid }],
-				new: true
+				arrayFilters: [{ 'product.product': objPid }],
+				new: true,
 			}
 		);
 		return updatedProduct;
 	}
 
 	static async clearCart(cid) {
-		const updatedCart = await cartModel.findByIdAndUpdate(cid,
+		const updatedCart = await cartModel.findByIdAndUpdate(
+			cid,
 			{
-				products: []
+				products: [],
 			},
 			{
-				new: true
+				new: true,
 			}
 		);
 		return updatedCart;
@@ -72,6 +78,6 @@ export class CartController {
 	static errorMessages = {
 		cartNotFound: 'Carrito no encontrado',
 		serverError: 'Error del servidor',
-		nonNumericId: 'El/Los ID deben ser numéricos'
+		nonNumericId: 'El/Los ID deben ser numéricos',
 	};
 }

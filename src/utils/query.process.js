@@ -1,6 +1,10 @@
 export function setLinks(response, endpoint, prevPage, nextPage, params) {
-	response.prevLink = response.hasPrevPage ? `${endpoint}?page=${prevPage}&${params}` : null;
-	response.nextLink = response.hasNextPage ? `${endpoint}?page=${nextPage}&${params}` : null;
+	response.prevLink = response.hasPrevPage
+		? `${endpoint}?page=${prevPage}&${params}`
+		: null;
+	response.nextLink = response.hasNextPage
+		? `${endpoint}?page=${nextPage}&${params}`
+		: null;
 }
 
 export function setCamps(response) {

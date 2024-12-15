@@ -20,7 +20,6 @@ if (!nextPage) {
 }
 nextPageUrl.searchParams.set('page', nextPage);
 
-
 const lastPageUrl = new URL(window.location.href);
 const lastPage = lastPageButton.attributes.getNamedItem('page').value;
 lastPageUrl.searchParams.set('page', lastPage);

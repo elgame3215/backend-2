@@ -1,30 +1,27 @@
-import { CartController } from "../dao/controllers/Cart-Manager-Mongo.js";
-import { ProductController } from "../dao/controllers/Product-Manager-Mongo.js";
-import { randomCode } from "./ProductsRouter.test.js";
-import { assert, describe, expect, expectTypeOf, it } from "vitest";
+import { CartController } from '../dao/controllers/Cart-Manager-Mongo.js';
+import { ProductController } from '../dao/controllers/Product-Manager-Mongo.js';
+import { randomCode } from './ProductsRouter.test.js';
+import { assert, describe, expect, expectTypeOf, it } from 'vitest';
 let usedCid;
 const validProduct = {
-	title: "s",
-	description: "d",
+	title: 's',
+	description: 'd',
 	price: 2,
-	thumbnail: "",
+	thumbnail: '',
 	status: true,
 	code: randomCode(),
 	stock: 25,
-	category: "d",
+	category: 'd',
 };
 const response = await fetch('http://localhost:8080/api/products', {
 	method: 'POST',
 	headers: {
-		'Content-Type': 'application/json'
+		'Content-Type': 'application/json',
 	},
-	body: JSON.stringify(validProduct)
+	body: JSON.stringify(validProduct),
 });
 const data = await response.json();
 let usedPid = data.addedProduct._id;
-
-
-
 
 describe('POST /carts valid', async () => {
 	const endpoint = 'http://localhost:8080/api/carts';
@@ -36,7 +33,6 @@ describe('POST /carts valid', async () => {
 		expect(response.status).toBe(201);
 	});
 });
-
 
 describe('GET /carts/:cid valid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
@@ -73,20 +69,24 @@ describe('POST /:cid/product/:pid valid', async () => {
 		expect(response.status).toBe(200);
 	});
 	it('Cart products should contain product id', () => {
-		assert.isTrue((data.updatedCart.products).some(p => p.product == usedpid));
+		assert.isTrue(data.updatedCart.products.some(p => p.product == usedpid));
 	});
 });
 
 describe('POST /:cid/product/:pid no stock', async () => {
-	usedPid = (await (await fetch('http://localhost:8080/api/products', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			...validProduct,
-			stock: 0,
-			code: randomCode()
-		})
-	})).json()).addedProduct._id;
+	usedPid = (
+		await (
+			await fetch('http://localhost:8080/api/products', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					...validProduct,
+					stock: 0,
+					code: randomCode(),
+				}),
+			})
+		).json()
+	).addedProduct._id;
 
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, { method: 'POST' });
@@ -102,19 +102,19 @@ describe('POST /:cid/product/:pid no stock', async () => {
 
 describe('POST /:cid/product/:pid invalid cid', async () => {
 	const validProduct = {
-		title: "s",
-		description: "d",
+		title: 's',
+		description: 'd',
 		price: 0,
-		thumbnail: "",
+		thumbnail: '',
 		status: true,
 		code: randomCode(),
 		stock: 25,
-		category: "d",
+		category: 'd',
 	};
 	const response1 = await fetch('http://localhost:8080/api/products', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(validProduct)
+		body: JSON.stringify(validProduct),
 	});
 	const { addedProduct } = await response1.json();
 
@@ -144,28 +144,34 @@ describe('POST /:cid/product/:pid invalid pid', async () => {
 });
 
 describe('PUT /:cid/product/:pid no stock', async () => {
-	usedPid = (await (await fetch('http://localhost:8080/api/products', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			...validProduct,
-			stock: 10,
-			code: randomCode()
-		})
-	})).json()).addedProduct._id;
+	usedPid = (
+		await (
+			await fetch('http://localhost:8080/api/products', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					...validProduct,
+					stock: 10,
+					code: randomCode(),
+				}),
+			})
+		).json()
+	).addedProduct._id;
 
-	await fetch(`http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`, {method: 'POST'});
+	await fetch(`http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`, {
+		method: 'POST',
+	});
 
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
-			quantity: 25
-		})
+			quantity: 25,
+		}),
 	});
 	const data = await response.json();
-	
+
 	it('Should have status 400', () => {
 		expect(response.status).toBe(400);
 	});
@@ -176,24 +182,28 @@ describe('PUT /:cid/product/:pid no stock', async () => {
 
 describe('PUT /:cid valid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
-	const products = JSON.stringify([{
-		quantity: 10,
-		product: usedPid
-	}]);
+	const products = JSON.stringify([
+		{
+			quantity: 10,
+			product: usedPid,
+		},
+	]);
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
-		body: products
+		body: products,
 	});
 	const data = await response.json();
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200);
 	});
 	it('Products have been updated', () => {
-		expect(data.updatedCart.products.map(p => {
-			const { quantity, product } = p;
-			return { quantity, product };
-		})).toEqual(JSON.parse(products));
+		expect(
+			data.updatedCart.products.map(p => {
+				const { quantity, product } = p;
+				return { quantity, product };
+			})
+		).toEqual(JSON.parse(products));
 	});
 });
 
@@ -204,7 +214,7 @@ describe('PUT /:cid/products/:pid', async () => {
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
-		body: products
+		body: products,
 	});
 	const data = await response.json();
 
@@ -212,7 +222,9 @@ describe('PUT /:cid/products/:pid', async () => {
 		expect(response.status).toBe(200);
 	});
 	it('Quantity should be updated', () => {
-		expect(data.updatedCart.products.find(p => p.product == usedPid).quantity).toBe(quantity);
+		expect(
+			data.updatedCart.products.find(p => p.product == usedPid).quantity
+		).toBe(quantity);
 	});
 });
 
@@ -220,7 +232,7 @@ describe('DELETE /:cid/product/:pid valid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, { method: 'DELETE' });
 	const data = await response.json();
-	
+
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200);
 	});
@@ -228,7 +240,6 @@ describe('DELETE /:cid/product/:pid valid', async () => {
 		expect(data.updatedCart.products.find(p => p._id == usedPid)).toBeFalsy();
 	});
 });
-
 
 describe('DELETE api/carts/:cid', async () => {
 	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
@@ -241,5 +252,4 @@ describe('DELETE api/carts/:cid', async () => {
 	it('Cart must be empty', () => {
 		expect(data.updatedCart.products.length).toBe(0);
 	});
-
 });

@@ -1,58 +1,55 @@
-import { ProductController } from "../dao/controllers/Product-Manager-Mongo.js";
-import { ProductValidator } from "../utils/Product-Validator.js";
-import { describe, expect, expectTypeOf, it } from "vitest";
+import { ProductController } from '../dao/controllers/Product-Manager-Mongo.js';
+import { ProductValidator } from '../utils/Product-Validator.js';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 let usedCode;
 const validProduct = {
-	title: "s",
-	description: "d",
+	title: 's',
+	description: 'd',
 	price: 2,
-	thumbnail: "",
+	thumbnail: '',
 	status: true,
 	code: randomCode(),
 	stock: 25,
-	category: "d",
+	category: 'd',
 };
 const response = await fetch('http://localhost:8080/api/products', {
 	method: 'POST',
 	headers: {
-		'Content-Type': 'application/json'
+		'Content-Type': 'application/json',
 	},
-	body: JSON.stringify(validProduct)
+	body: JSON.stringify(validProduct),
 });
 const product = await response.json();
 let usedId = product._id;
-
 
 export function randomCode() {
 	return String(Math.round(Math.random() * 9999999));
 }
 
-
 describe('POST /products valid', async () => {
 	usedCode = randomCode();
 	const validProduct = {
-		title: "s",
-		description: "d",
+		title: 's',
+		description: 'd',
 		price: 2,
-		thumbnail: "",
+		thumbnail: '',
 		status: true,
 		code: usedCode,
 		stock: 25,
-		category: "d",
+		category: 'd',
 	};
 	const endpoint = 'http://localhost:8080/api/products';
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(validProduct)
+		body: JSON.stringify(validProduct),
 	});
 
 	const data = await response.json();
 	const { addedProduct } = data;
 	usedId = addedProduct._id;
-
 
 	it('Should have status 201', () => {
 		expect(response.status).toBe(201);
@@ -68,24 +65,24 @@ describe('POST /products valid', async () => {
 });
 describe('POST /products with empty camp', async () => {
 	const emptyCampProduct = {
-		title: "",
+		title: '',
 		description: 'producto sin titulo',
 		price: 0,
-		thumbnail: "",
+		thumbnail: '',
 		status: true,
 		code: randomCode(),
 		stock: 25,
-		category: "d",
-		asdad: "",
-		id: 6
+		category: 'd',
+		asdad: '',
+		id: 6,
 	};
 	const endpoint = 'http://localhost:8080/api/products';
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(emptyCampProduct)
+		body: JSON.stringify(emptyCampProduct),
 	});
 	const data = await response.json();
 	it('Should have status 400', () => {
@@ -100,21 +97,21 @@ describe('POST /products with missing camp', async () => {
 	const missingCampProduct = {
 		description: 'hola',
 		price: 0,
-		thumbnail: "",
+		thumbnail: '',
 		status: true,
-		code: "asddsa",
+		code: 'asddsa',
 		stock: 25,
-		category: "d",
-		asdad: "",
-		id: 6
+		category: 'd',
+		asdad: '',
+		id: 6,
 	};
 	const endpoint = 'http://localhost:8080/api/products';
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(missingCampProduct)
+		body: JSON.stringify(missingCampProduct),
 	});
 	const data = await response.json();
 
@@ -131,21 +128,21 @@ describe('POST /products with duplicated code', async () => {
 		title: 's',
 		description: 'hola',
 		price: 0,
-		thumbnail: "",
+		thumbnail: '',
 		status: true,
 		code: usedCode,
 		stock: 25,
-		category: "d",
-		asdad: "",
-		id: 6
+		category: 'd',
+		asdad: '',
+		id: 6,
 	};
 	const endpoint = 'http://localhost:8080/api/products';
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(duplicatedCodeProduct)
+		body: JSON.stringify(duplicatedCodeProduct),
 	});
 	const data = await response.json();
 
@@ -178,7 +175,6 @@ describe('GET /products/:pid valid', async () => {
 	});
 
 	it('Product id is id requested', () => {
-
 		expect(product._id).toBe(usedId);
 	});
 });
@@ -195,32 +191,29 @@ describe('GET /products/:pid not found id', async () => {
 	});
 });
 
-
 describe('PUT /products/:pid valid', async () => {
-
 	const validProduct = {
-		title: "a",
-		description: "b",
+		title: 'a',
+		description: 'b',
 		price: 0,
-		thumbnail: "",
+		thumbnail: '',
 		status: true,
 		code: randomCode(),
 		stock: 30,
-		category: "c",
-		id: -1
+		category: 'c',
+		id: -1,
 	};
 	const endpoint = `http://localhost:8080/api/products/${usedId}`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(validProduct)
+		body: JSON.stringify(validProduct),
 	});
 
 	const { updatedProduct } = await response.json();
 	const { _id } = updatedProduct;
-
 
 	it('Should have status 200', () => {
 		expect(response.status).toBe(200);
@@ -238,23 +231,23 @@ describe('PUT /products/:pid valid', async () => {
 
 describe('PUT /products/:pid invalid id', async () => {
 	const invalidIdProduct = {
-		title: "a",
-		description: "b",
+		title: 'a',
+		description: 'b',
 		price: 0,
-		thumbnail: "",
+		thumbnail: '',
 		status: true,
 		code: randomCode(),
 		stock: 30,
-		category: "c",
-		id: -1
+		category: 'c',
+		id: -1,
 	};
 	const endpoint = `http://localhost:8080/api/products/673261c2a615becb487f1fe2`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(invalidIdProduct)
+		body: JSON.stringify(invalidIdProduct),
 	});
 	const data = await response.json();
 	it('Should have status 404', () => {
@@ -267,23 +260,23 @@ describe('PUT /products/:pid invalid id', async () => {
 
 describe('PUT /products/:pid invalid values', async () => {
 	const invalidIdProduct = {
-		title: "",
-		description: "b",
+		title: '',
+		description: 'b',
 		price: 0,
-		thumbnail: "",
+		thumbnail: '',
 		status: true,
 		code: 912,
 		stock: 30,
-		category: "c",
-		id: -1
+		category: 'c',
+		id: -1,
 	};
 	const endpoint = `http://localhost:8080/api/products/${usedId}`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify(invalidIdProduct)
+		body: JSON.stringify(invalidIdProduct),
 	});
 	const data = await response.json();
 
@@ -310,7 +303,8 @@ describe('DELETE /products/:pid valid', async () => {
 });
 
 describe('DELETE /products/:pid invalid id', async () => {
-	const endpoint = 'http://localhost:8080/api/products/673134ab2628f9f38050b816';
+	const endpoint =
+		'http://localhost:8080/api/products/673134ab2628f9f38050b816';
 	const response = await fetch(endpoint, { method: 'DELETE' });
 	const data = await response.json();
 

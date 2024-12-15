@@ -1,7 +1,7 @@
-import { CartController } from "../dao/controllers/cart.controller.js";
-import { isValidObjectId } from "mongoose";
-import { ProductController } from "../dao/controllers/product.controller.js";
-import { ProductValidator } from "../utils/product.validator.js";
+import { CartController } from '../dao/controllers/cart.controller.js';
+import { isValidObjectId } from 'mongoose';
+import { ProductController } from '../dao/controllers/product.controller.js';
+import { ProductValidator } from '../utils/product.validator.js';
 
 export async function validateProduct(req, res, next) {
 	const product = req.body;
@@ -20,10 +20,16 @@ export async function validateProductIsAviable(req, res, next) {
 	const { cid, pid } = req.params;
 	const product = await ProductController.getProductById(pid);
 	if (!product) {
-		return res.status(404).json({ status: 'error', detail: ProductController.errorMessages.productNotFound });
+		return res.status(404).json({
+			status: 'error',
+			detail: ProductController.errorMessages.productNotFound,
+		});
 	}
 	if (product.stock == 0) {
-		return res.status(400).json({ status: 'error', detail: ProductController.errorMessages.productOutOfStock });
+		return res.status(400).json({
+			status: 'error',
+			detail: ProductController.errorMessages.productOutOfStock,
+		});
 	}
 	const cart = await CartController.getCartById(cid);
 	const productInCart = cart.products.find(p => p.product._id == pid);
@@ -31,7 +37,10 @@ export async function validateProductIsAviable(req, res, next) {
 		return next();
 	}
 	if (product.stock <= productInCart.quantity) {
-		return res.status(400).json({ status: 'error', detail: ProductController.errorMessages.productOutOfStock });
+		return res.status(400).json({
+			status: 'error',
+			detail: ProductController.errorMessages.productOutOfStock,
+		});
 	}
 	return next();
 }
@@ -43,21 +52,26 @@ export async function validateBodyPids(req, res, next) {
 	}
 	for (const p of productList) {
 		if (!(Object.hasOwn(p, 'product') && Object.hasOwn(p, 'quantity'))) {
-			return res.status(400).json({ status: 'error', detail: 'invalid format', invalidProduct: p });
+			return res
+				.status(400)
+				.json({ status: 'error', detail: 'invalid format', invalidProduct: p });
 		}
 		if (!isValidObjectId(p.product)) {
 			return res.status(400).json({
-				status: 'error', detail: `invalid pid: ${p.product}`
+				status: 'error',
+				detail: `invalid pid: ${p.product}`,
 			});
 		}
 		if (isNaN(p.quantity)) {
 			return res.status(400).json({
-				status: 'error', detail: `product: ${p.product} quantity must be a number`
+				status: 'error',
+				detail: `product: ${p.product} quantity must be a number`,
 			});
 		}
 		if (p.quantity < 1) {
 			return res.status(400).json({
-				status: 'error', detail: `product: ${p.product} quantity must be at least 1`
+				status: 'error',
+				detail: `product: ${p.product} quantity must be at least 1`,
 			});
 		}
 		const product = await ProductController.getProductById(p.product);
@@ -65,16 +79,16 @@ export async function validateBodyPids(req, res, next) {
 			return res.status(404).json({
 				status: 'error',
 				detail: ProductController.errorMessages.productNotFound,
-				idNotFound: p.product
+				idNotFound: p.product,
 			});
 		}
 		if (product.stock < p.quantity) {
 			return res.status(404).json({
 				status: 'error',
 				detail: ProductController.errorMessages.productOutOfStock,
-				idOutOfStock: p.product
+				idOutOfStock: p.product,
 			});
-		};
+		}
 	}
 	return next();
 }

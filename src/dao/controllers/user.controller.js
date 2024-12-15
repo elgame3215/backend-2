@@ -1,4 +1,4 @@
-import { userModel } from "../models/user.model.js";
+import { userModel } from '../models/user.model.js';
 
 export class UserController {
 	static async registerUser(user) {
@@ -8,12 +8,12 @@ export class UserController {
 
 	static async findUserByEmail(email) {
 		return await userModel.findOne({
-			email: email
+			email: email,
 		});
 	}
 
 	static errorMessages = {
-		serverError: "Error del servidor",
-		registeredEmail: "La dirección email ya está asociada a una cuenta"
+		serverError: 'Error del servidor',
+		registeredEmail: 'La dirección email ya está asociada a una cuenta',
 	};
 }

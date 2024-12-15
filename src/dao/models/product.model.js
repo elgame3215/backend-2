@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import paginate from "mongoose-paginate-v2";
+import mongoose from 'mongoose';
+import paginate from 'mongoose-paginate-v2';
 
 const productSchema = new mongoose.Schema(
 	{
@@ -14,12 +14,12 @@ const productSchema = new mongoose.Schema(
 		category: String,
 		status: {
 			type: Boolean,
-			default: true
-		}
+			default: true,
+		},
 	},
 	{
 		strict: false,
-		collection: 'products'
+		collection: 'products',
 	}
 );
 

@@ -1,17 +1,17 @@
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 import cookieParser from 'cookie-parser';
-import { engine } from "express-handlebars";
+import { engine } from 'express-handlebars';
 import express from 'express';
 import FileStore from 'session-file-store';
-import Handlebars from "handlebars";
+import Handlebars from 'handlebars';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
-import session from "express-session";
-import { router as cartsRouter } from "./routes/cart.routes.js"; // eslint-disable-line sort-imports
-import { router as productsRouter } from "./routes/product.routes.js";
-import { router as viewsRouter } from "./routes/views.routes.js";
-import { router as userRouter } from "./routes/sessions.routes.js"; // eslint-disable-line sort-imports
-import { MONGO_CLUSTER_URL, PORT, SECRET } from "./config.js";
+import session from 'express-session';
+import { router as cartsRouter } from './routes/cart.routes.js'; // eslint-disable-line sort-imports
+import { router as productsRouter } from './routes/product.routes.js';
+import { router as viewsRouter } from './routes/views.routes.js';
+import { router as userRouter } from './routes/sessions.routes.js'; // eslint-disable-line sort-imports
+import { MONGO_CLUSTER_URL, PORT, SECRET } from './config.js';
 
 const fileStore = FileStore(session);
 
@@ -27,13 +27,16 @@ app.use(
 		store: new fileStore({
 			path: './sessions',
 			ttl: 60,
-			retries: 0
+			retries: 0,
 		}),
 	})
 );
-app.engine('handlebars', engine({
-	handlebars: allowInsecurePrototypeAccess(Handlebars) // brujeria de handlebars
-}));
+app.engine(
+	'handlebars',
+	engine({
+		handlebars: allowInsecurePrototypeAccess(Handlebars), // brujeria de handlebars
+	})
+);
 app.set('view engine', 'handlebars');
 app.set('views', './src/views');
 
@@ -50,19 +53,17 @@ app.use(
 		req.io = io;
 		return next();
 	},
-	productsRouter);
+	productsRouter
+);
 app.use('/api/carts', cartsRouter);
 app.use('/', viewsRouter);
 app.use('/api/sessions', userRouter);
 
 (async () => {
 	try {
-		await mongoose.connect(
-			MONGO_CLUSTER_URL,
-			{
-				dbName: "ecommerce"
-			}
-		);
+		await mongoose.connect(MONGO_CLUSTER_URL, {
+			dbName: 'ecommerce',
+		});
 		// eslint-disable-next-line no-console
 		console.log(`DB connected`);
 	} catch (error) {

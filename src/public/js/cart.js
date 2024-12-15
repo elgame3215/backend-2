@@ -11,17 +11,24 @@ const removeButtons = document.querySelectorAll('.remove-button');
 for (let i = 0; i < removeButtons.length; i++) {
 	const button = removeButtons[i];
 	button.addEventListener('click', async e => {
-		fetch(`http://localhost:8080/api/carts/${userCartId}/product/${e.target.id}`, { method: 'DELETE' })
+		fetch(
+			`http://localhost:8080/api/carts/${userCartId}/product/${e.target.id}`,
+			{ method: 'DELETE' }
+		)
 			.then(response => response.json())
 			.then(data => {
 				Toastify({
-					text: data.status == 'success' ? 'Producto eliminado del carrito' : 'Error al eliminar el producto del carrito',
+					text:
+						data.status == 'success'
+							? 'Producto eliminado del carrito'
+							: 'Error al eliminar el producto del carrito',
 					duration: 3000,
 					gravity: 'bottom',
 					backgroundColor: '#007BFF',
-					stopOnFocus: true
+					stopOnFocus: true,
 				}).showToast();
-				data.status == 'success' && e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+				data.status == 'success' &&
+					e.target.parentNode.parentNode.removeChild(e.target.parentNode);
 			});
 	});
 }
