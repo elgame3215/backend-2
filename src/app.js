@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(
 	session({
 		secret: SECRET,
-		saveUninitialized: false,
+		saveUninitialized: true,
 		resave: false,
 		store: new fileStore({
 			path: './sessions',

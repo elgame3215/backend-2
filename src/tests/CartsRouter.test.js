@@ -1,5 +1,5 @@
-import { CartController } from '../dao/controllers/Cart-Manager-Mongo.js';
-import { ProductController } from '../dao/controllers/Product-Manager-Mongo.js';
+import { CartController } from '../dao/controllers/cart.controller.js';
+import { ProductController } from '../dao/controllers/product.controller.js';
 import { randomCode } from './ProductsRouter.test.js';
 import { assert, describe, expect, expectTypeOf, it } from 'vitest';
 let usedCid;

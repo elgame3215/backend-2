@@ -15,5 +15,6 @@ export class UserController {
 	static errorMessages = {
 		serverError: 'Error del servidor',
 		registeredEmail: 'La dirección email ya está asociada a una cuenta',
+		loginError: 'Credenciales inválidas',
 	};
 }

@@ -26,3 +26,11 @@ export function validatePassword(req, res, next) {
 	}
 	return next();
 }
+
+export function validateName(req, res, next) {
+	const { name } = req.body;
+	if (!name.trim()) {
+		return res.status(401).json({ status: 'error', detail: 'missing camps' });
+	}
+	return next();
+}
