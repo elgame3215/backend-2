@@ -22,12 +22,9 @@ for (let i = 0; i < removeButtons.length; i++) {
 						data.status == 'success'
 							? 'Producto eliminado del carrito'
 							: 'Error al eliminar el producto del carrito',
-							duration: 3000,
-							gravity: 'bottom',
-							backgroundColor:
-							data.status == 'success'
-								? '#007BFF'
-								: '#B30010',
+					duration: 3000,
+					gravity: 'bottom',
+					backgroundColor: data.status == 'success' ? '#007BFF' : '#B30010',
 					stopOnFocus: true,
 				}).showToast();
 				data.status == 'success' &&
