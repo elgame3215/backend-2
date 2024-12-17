@@ -28,6 +28,7 @@ app.use(
 			path: './sessions',
 			ttl: 60,
 			retries: 0,
+			maxAge: 9999
 		}),
 	})
 );

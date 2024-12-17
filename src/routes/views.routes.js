@@ -67,3 +67,8 @@ router.get(
 		}
 	}
 );
+
+router.get('/login', async (req, res) => {
+	const message = req.session.messages?.pop();
+	res.render('login', { message });
+});

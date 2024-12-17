@@ -1,33 +1,57 @@
-import { comparePassword } from "./hash.js";
-import { Strategy } from "passport-local";
-import { UserController } from "../dao/controllers/user.controller.js";
+import { Strategy } from 'passport-local';
+import { UserController } from '../dao/controllers/user.controller.js';
+import { comparePassword, hashPassword } from './hash.js';
 
 export function initializePassport(passport) {
-  passport.use(
-    "login",
-    new Strategy(
-      {
-        usernameField: "email",
-      },
-      async function (email, password, done) {
+	passport.use(
+		'login',
+		new Strategy(
+			{
+				usernameField: 'email',
+				passwordField: 'password',
+			},
+			async function (email, password, done) {
 				const user = await UserController.findUserByEmail(email);
-        if (!user) {
+				if (!user || !(await comparePassword(password, user.password))) {
+					return done(null, false, {
+						message: UserController.errorMessages.loginError,
+					});
+				}
+				return done(null, user);
+			}
+		)
+	);
+	passport.use(
+		'register',
+		new Strategy(
+			{
+				usernameField: 'email',
+				passwordField: 'password',
+				passReqToCallback: true,
+			},
+			async function (req, email, password, done) {
+				const { name, rol } = req.body;
+				const user = await UserController.findUserByEmail(email);
+				if (user) {
 					return done(null, false);
-        }
-        if (!(await comparePassword(password, user.password))) {
-          return done(null, false);
-        }
-        return done(null, user);
-      },
-    ),
-  );
+				}
+				const newUser = UserController.registerUser({
+					name,
+					email,
+					password: await hashPassword(password),
+					rol,
+				});
+				return done(null, newUser);
+			}
+		)
+	);
+
 	passport.serializeUser((user, done) => {
-    done(null, user._id);
-  });
+		done(null, user._id);
+	});
 
-  passport.deserializeUser(async (id, done) => {
-    const user = await UserController.findById(id);
-    done(null, user);
-  });
+	passport.deserializeUser(async (id, done) => {
+		const user = await UserController.findById(id);
+		done(null, user);
+	});
 }
-

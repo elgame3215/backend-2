@@ -1,0 +1,70 @@
+<link
+	rel='stylesheet'
+	type='text/css'
+	href='https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css'
+/>
+<script
+	type='text/javascript'
+	src='https://cdn.jsdelivr.net/npm/toastify-js'
+></script>
+
+<div class='login-container'>
+	<h2>Iniciar Sesión</h2>
+	<!-- Formulario de inicio de sesión -->
+	<form action='/api/sessions/login' method='POST'>
+		<input
+			type='text'
+			name='email'
+			placeholder='Email'
+			class='input-field'
+			required
+		/>
+		<input
+			type='password'
+			name='password'
+			placeholder='Contraseña'
+			class='input-field'
+			required
+		/>
+		<button type='submit' class='btn'>Iniciar sesión</button>
+	</form>
+
+	<!-- Botón de GitHub -->
+	<button class='btn btn-github' onclick="window.location.href='/auth/github'">
+		Iniciar sesión con GitHub
+	</button>
+
+	<!-- Enlace para registrarse -->
+	<p class='register-link'>
+		¿No tienes cuenta?
+		<a href='/register'>Regístrate aquí</a>
+	</p>
+</div>
+
+{{#if message}}
+	<script>
+		Toastify({ text: "{{message}}", duration: 3000, gravity: 'bottom',
+		backgroundColor: '#007BFF', stopOnFocus: true, }).showToast();
+	</script>
+{{/if}}
+
+<style>
+	/* Estilos globales */ * { margin: 0; padding: 0; box-sizing: border-box;
+	font-family: Arial, sans-serif; } body { display: flex; justify-content:
+	center; align-items: center; height: 100vh; background-color: #f4f4f9; } /*
+	Contenedor principal */ .login-container { background-color: #fff; padding:
+	2rem; width: 350px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0,
+	0.2); text-align: center; } .login-container h2 { margin-bottom: 1.5rem;
+	color: #333; } /* Campos de entrada */ .input-field { width: 100%; padding:
+	0.8rem; margin: 0.5rem 0; border: 1px solid #ccc; border-radius: 5px;
+	font-size: 1rem; } .input-field:focus { outline: none; border-color: #007bff;
+	} /* Botón principal */ .btn { width: 100%; padding: 0.8rem; margin-top: 1rem;
+	background-color: #007bff; color: white; border: none; border-radius: 5px;
+	font-size: 1rem; cursor: pointer; transition: background-color 0.3s; }
+	.btn:hover { background-color: #0056b3; } /* Botón GitHub */ .btn-github {
+	background-color: #333; margin-top: 0.5rem; } .btn-github:hover {
+	background-color: #000; } /* Enlace de registro */ .register-link { display:
+	block; margin-top: 1rem; font-size: 0.9rem; } .register-link a { color:
+	#007bff; text-decoration: none; } .register-link a:hover { text-decoration:
+	underline; }
+</style>
