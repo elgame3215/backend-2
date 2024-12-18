@@ -55,10 +55,9 @@ socket.on('invalid product', message => {
 });
 
 async function deleteProduct(e) {
-	const response = await fetch(
-		`http://${domain}/api/products/${e.target.id}`,
-		{ method: 'DELETE' }
-	);
+	const response = await fetch(`http://${domain}/api/products/${e.target.id}`, {
+		method: 'DELETE',
+	});
 	if (response.status != 200) {
 		return Toastify({
 			text: 'Error al eliminar el producto',

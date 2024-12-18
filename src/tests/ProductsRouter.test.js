@@ -304,8 +304,7 @@ describe('DELETE /products/:pid valid', async () => {
 });
 
 describe('DELETE /products/:pid invalid id', async () => {
-	const endpoint =
-		`http://${domain}/api/products/673134ab2628f9f38050b816`;
+	const endpoint = `http://${domain}/api/products/673134ab2628f9f38050b816`;
 	const response = await fetch(endpoint, { method: 'DELETE' });
 	const data = await response.json();
 

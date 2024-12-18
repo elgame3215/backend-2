@@ -44,7 +44,12 @@ export function validateSession(req, res, next) {
 
 export function validateSessionApi(req, res, next) {
 	if (!req.session.user) {
-		return res.status(401).json({status: 'error', detail: UserController.errorMessages.unauthorized});
+		return res
+			.status(401)
+			.json({
+				status: 'error',
+				detail: UserController.errorMessages.unauthorized,
+			});
 	}
 	return next();
 }

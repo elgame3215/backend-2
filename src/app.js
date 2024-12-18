@@ -8,6 +8,8 @@ import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import session from 'express-session';
 import { router as cartsRouter } from './routes/cart.routes.js'; // eslint-disable-line sort-imports
+import { initializePassport } from './utils/passport.config.js';
+import passport from 'passport';
 import { router as productsRouter } from './routes/product.routes.js';
 import { router as viewsRouter } from './routes/views.routes.js';
 import { router as userRouter } from './routes/sessions.routes.js'; // eslint-disable-line sort-imports
@@ -18,6 +20,7 @@ const fileStore = FileStore(session);
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 app.use(cookieParser());
 app.use(
 	session({
@@ -31,14 +34,19 @@ app.use(
 		}),
 	})
 );
+
+app.set('view engine', 'handlebars');
+app.set('views', './src/views');
 app.engine(
 	'handlebars',
 	engine({
 		handlebars: allowInsecurePrototypeAccess(Handlebars), // brujeria de handlebars
 	})
 );
-app.set('view engine', 'handlebars');
-app.set('views', './src/views');
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 const server = app.listen(PORT, () => {
 	// eslint-disable-next-line no-console
@@ -56,7 +64,12 @@ app.use(
 	productsRouter
 );
 app.use('/api/carts', cartsRouter);
-app.use('/', viewsRouter);
+app.use('/', (req, res, next) => {
+	if (req.isUnauthenticated()) {
+		res.clearCookie('authStatus');
+	}
+	return next();
+}, viewsRouter);
 app.use('/api/sessions', userRouter);
 
 (async () => {

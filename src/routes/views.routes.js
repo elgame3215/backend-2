@@ -2,10 +2,7 @@ import { CartController } from '../dao/controllers/cart.controller.js';
 import { formatResponse } from '../utils/query.process.js';
 import { ProductController } from '../dao/controllers/product.controller.js';
 import { Router } from 'express';
-import { validateCartExistsView } from '../middleware/cart.validate.js';
-import { validateCid } from '../middleware/mongoID.validate.js';
 import { validateQuery } from '../middleware/query.validate.js';
-import passport from 'passport';
 import { validateSession } from '../middleware/user.validate.js';
 
 export const router = Router();

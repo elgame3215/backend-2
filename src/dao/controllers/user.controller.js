@@ -12,10 +12,14 @@ export class UserController {
 		});
 	}
 
+	static async findUserById(id) {
+		return await userModel.findById(id);
+	}
+
 	static errorMessages = {
 		serverError: 'Error del servidor',
 		registeredEmail: 'La dirección email ya está asociada a una cuenta',
 		loginError: 'Credenciales inválidas',
-		unauthorized: 'Usuario no autorizado'
+		unauthorized: 'Usuario no autorizado',
 	};
 }

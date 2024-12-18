@@ -9,10 +9,11 @@
 
 <body>
 	<nav>
-		<a href='/products' class='product-button'>home</a>
+		<a href='/products' class='product-btn'>home</a>
 		<div class='account-options-container'>
-			<p id='username'>username</p>
-			<button class='product-button' id='logout-btn'>log out</button>
+			<p id='username'></p>
+			<button class='product-btn' id='logout-btn'>log out</button>
+			<a class="product-btn" href="/login" id="login-btn">log in</a>
 		</div>
 	</nav>
 	<style>
@@ -41,12 +42,42 @@
 			flex-direction: row;
 			align-items: center;
 		}
+
+		.account-options-container * {
+			display: none;
+		}
 	</style>
 	<script>
+		function getCookie(cname) {
+			// cuantos programadores hacen falta para averiguar el valor de una cookie??
+			let name = cname + "=";
+			let decodedCookie = decodeURIComponent(document.cookie);
+			let ca = decodedCookie.split(';');
+			for (let i = 0; i < ca.length; i++) {
+				let c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1);
+				}
+				if (c.indexOf(name) == 0) {
+					return c.substring(name.length, c.length);
+				}
+			}
+			return "";
+		}
+		const loginBtn = document.getElementById('login-btn')
 		const logoutBtn = document.getElementById('logout-btn');
-		logoutBtn.addEventListener('click', e => {
-			fetch(`http://${domain}/api/sessions/logout`, { method: 'POST' })
-		})
+		const usernameP = document.getElementById('username');
+		if (getCookie('authStatus')) {
+			logoutBtn.style.display = 'flex';
+			usernameP.style.display = 'flex';
+			usernameP.textContent = getCookie('username');
+			logoutBtn.addEventListener('click', e => {
+				fetch(`http://${domain}/api/sessions/logout`, { method: 'POST' })
+				window.location.reload();
+			})
+		} else {
+			loginBtn.style.display = 'flex';
+		}
 	</script>
 	{{{body}}}
 </body>

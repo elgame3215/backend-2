@@ -1,8 +1,9 @@
+import passport from 'passport';
 import { Strategy } from 'passport-local';
 import { UserController } from '../dao/controllers/user.controller.js';
 import { comparePassword, hashPassword } from './hash.js';
 
-export function initializePassport(passport) {
+export function initializePassport() {
 	passport.use(
 		'login',
 		new Strategy(
@@ -51,7 +52,7 @@ export function initializePassport(passport) {
 	});
 
 	passport.deserializeUser(async (id, done) => {
-		const user = await UserController.findById(id);
+		const user = await UserController.findUserById(id);
 		done(null, user);
 	});
 }

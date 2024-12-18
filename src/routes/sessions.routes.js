@@ -1,6 +1,5 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
 import { hashPassword } from '../utils/hash.js';
-import { initializePassport } from '../utils/passport.config.js';
 import passport from 'passport';
 import { Router } from 'express';
 import { UserController } from '../dao/controllers/user.controller.js';
@@ -10,9 +9,7 @@ import {
 	validatePassword,
 } from './../middleware/user.validate.js';
 
-initializePassport(passport);
 export const router = Router();
-
 router.post(
 	'/login',
 	passport.authenticate('login', {
@@ -30,9 +27,11 @@ router.post(
 			email: req.user.email,
 			cart: req.user.cart,
 		};
+		res.cookie('username', req.user.name);
+		res.cookie('authStatus', 1);
 		return res
-			.status(200)
-			.json({ status: 'success', detail: 'user logged in' });
+		.status(200)
+		.json({ status: 'success', detail: 'user logged in' });
 	}
 );
 router.post(
@@ -64,6 +63,7 @@ router.post(
 );
 
 router.post('/logout', async (req, res) => {
+	res.clearCookie('authStatus');
 	req.session.destroy();
 	res.status(200).json({ status: 'success', detail: 'user logged out' });
 });

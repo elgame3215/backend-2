@@ -3,10 +3,9 @@ const addToCartButtons = document.querySelectorAll('.add-button');
 for (let i = 0; i < addToCartButtons.length; i++) {
 	const addButton = addToCartButtons[i];
 	addButton.addEventListener('click', async e => {
-		fetch(
-			`http://${domain}/api/carts/mycart/product/${e.target.id}`,
-			{ method: 'POST' }
-		)
+		fetch(`http://${domain}/api/carts/mycart/product/${e.target.id}`, {
+			method: 'POST',
+		})
 			.then(response => {
 				if (response.status === 401) {
 					window.location.href = `http://${domain}/login`;
