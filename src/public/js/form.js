@@ -1,13 +1,4 @@
-function parseFormData(formData) {
-	const data = {};
-	formData.entries().forEach(e => {
-		const key = e[0];
-		const value = e[1];
-		data[key] = value;
-	});
-	return data;
-}
-
+const domain = window.location.host;
 // eslint-disable-next-line no-undef
 const socket = io();
 const submit = document.getElementById('submit');
@@ -18,7 +9,7 @@ submit.addEventListener('click', async e => {
 	const form = document.getElementById('form');
 	const formData = new FormData(form);
 	const data = parseFormData(formData);
-	await fetch('http://localhost:8080/api/products', {
+	await fetch(`http://${domain}/api/products`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(data),
@@ -65,7 +56,7 @@ socket.on('invalid product', message => {
 
 async function deleteProduct(e) {
 	const response = await fetch(
-		`http://localhost:8080/api/products/${e.target.id}`,
+		`http://${domain}/api/products/${e.target.id}`,
 		{ method: 'DELETE' }
 	);
 	if (response.status != 200) {

@@ -1,6 +1,7 @@
 import { ProductController } from '../dao/controllers/product.controller.js';
 import { ProductValidator } from '../utils/product.validator.js';
 import { describe, expect, expectTypeOf, it } from 'vitest';
+const domain = 'localhost:8080';
 let usedCode;
 const validProduct = {
 	title: 's',
@@ -12,7 +13,7 @@ const validProduct = {
 	stock: 25,
 	category: 'd',
 };
-const response = await fetch('http://localhost:8080/api/products', {
+const response = await fetch(`http://${domain}/api/products`, {
 	method: 'POST',
 	headers: {
 		'Content-Type': 'application/json',
@@ -38,7 +39,7 @@ describe('POST /products valid', async () => {
 		stock: 25,
 		category: 'd',
 	};
-	const endpoint = 'http://localhost:8080/api/products';
+	const endpoint = `http://${domain}/api/products`;
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
@@ -76,7 +77,7 @@ describe('POST /products with empty camp', async () => {
 		asdad: '',
 		id: 6,
 	};
-	const endpoint = 'http://localhost:8080/api/products';
+	const endpoint = `http://${domain}/api/products`;
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
@@ -105,7 +106,7 @@ describe('POST /products with missing camp', async () => {
 		asdad: '',
 		id: 6,
 	};
-	const endpoint = 'http://localhost:8080/api/products';
+	const endpoint = `http://${domain}/api/products`;
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
@@ -136,7 +137,7 @@ describe('POST /products with duplicated code', async () => {
 		asdad: '',
 		id: 6,
 	};
-	const endpoint = 'http://localhost:8080/api/products';
+	const endpoint = `http://${domain}/api/products`;
 	const response = await fetch(endpoint, {
 		method: 'POST',
 		headers: {
@@ -155,7 +156,7 @@ describe('POST /products with duplicated code', async () => {
 });
 
 describe('GET /products', async () => {
-	const endpoint = 'http://localhost:8080/api/products';
+	const endpoint = `http://${domain}/api/products`;
 	const response = await fetch(endpoint);
 	const data = await response.json();
 	it('Should have status 200', () => {
@@ -167,7 +168,7 @@ describe('GET /products', async () => {
 });
 
 describe('GET /products/:pid valid', async () => {
-	const endpoint = `http://localhost:8080/api/products/${usedId}`;
+	const endpoint = `http://${domain}/api/products/${usedId}`;
 	const response = await fetch(endpoint);
 	const product = await response.json();
 	it('Should have status 200', () => {
@@ -180,7 +181,7 @@ describe('GET /products/:pid valid', async () => {
 });
 
 describe('GET /products/:pid not found id', async () => {
-	const endpoint = `http://localhost:8080/api/products/000000000000000000000000`;
+	const endpoint = `http://${domain}/api/products/000000000000000000000000`;
 	const response = await fetch(endpoint);
 	const data = await response.json();
 	it('Should have status 404', () => {
@@ -203,7 +204,7 @@ describe('PUT /products/:pid valid', async () => {
 		category: 'c',
 		id: -1,
 	};
-	const endpoint = `http://localhost:8080/api/products/${usedId}`;
+	const endpoint = `http://${domain}/api/products/${usedId}`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: {
@@ -241,7 +242,7 @@ describe('PUT /products/:pid invalid id', async () => {
 		category: 'c',
 		id: -1,
 	};
-	const endpoint = `http://localhost:8080/api/products/673261c2a615becb487f1fe2`;
+	const endpoint = `http://${domain}/api/products/673261c2a615becb487f1fe2`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: {
@@ -270,7 +271,7 @@ describe('PUT /products/:pid invalid values', async () => {
 		category: 'c',
 		id: -1,
 	};
-	const endpoint = `http://localhost:8080/api/products/${usedId}`;
+	const endpoint = `http://${domain}/api/products/${usedId}`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: {
@@ -289,7 +290,7 @@ describe('PUT /products/:pid invalid values', async () => {
 });
 
 describe('DELETE /products/:pid valid', async () => {
-	const endpoint = `http://localhost:8080/api/products/${usedId}`;
+	const endpoint = `http://${domain}/api/products/${usedId}`;
 	const response = await fetch(endpoint, { method: 'DELETE' });
 
 	it('Should have status 200', () => {
@@ -304,7 +305,7 @@ describe('DELETE /products/:pid valid', async () => {
 
 describe('DELETE /products/:pid invalid id', async () => {
 	const endpoint =
-		'http://localhost:8080/api/products/673134ab2628f9f38050b816';
+		`http://${domain}/api/products/673134ab2628f9f38050b816`;
 	const response = await fetch(endpoint, { method: 'DELETE' });
 	const data = await response.json();
 

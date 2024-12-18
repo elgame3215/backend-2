@@ -16,5 +16,6 @@ export class UserController {
 		serverError: 'Error del servidor',
 		registeredEmail: 'La dirección email ya está asociada a una cuenta',
 		loginError: 'Credenciales inválidas',
+		unauthorized: 'Usuario no autorizado'
 	};
 }

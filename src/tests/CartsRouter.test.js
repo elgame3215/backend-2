@@ -2,6 +2,7 @@ import { CartController } from '../dao/controllers/cart.controller.js';
 import { ProductController } from '../dao/controllers/product.controller.js';
 import { randomCode } from './ProductsRouter.test.js';
 import { assert, describe, expect, expectTypeOf, it } from 'vitest';
+const ${domain} = 'localhost:8080';
 let usedCid;
 const validProduct = {
 	title: 's',
@@ -13,7 +14,7 @@ const validProduct = {
 	stock: 25,
 	category: 'd',
 };
-const response = await fetch('http://localhost:8080/api/products', {
+const response = await fetch(`http://${domain}/api/products`, {
 	method: 'POST',
 	headers: {
 		'Content-Type': 'application/json',
@@ -24,7 +25,7 @@ const data = await response.json();
 let usedPid = data.addedProduct._id;
 
 describe('POST /carts valid', async () => {
-	const endpoint = 'http://localhost:8080/api/carts';
+	const endpoint = `http://${domain}/api/carts`;
 	const response = await fetch(endpoint, { method: 'POST' });
 	const data = await response.json();
 	usedCid = data.addedCart._id;
@@ -35,7 +36,7 @@ describe('POST /carts valid', async () => {
 });
 
 describe('GET /carts/:cid valid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}`;
 	const response = await fetch(endpoint);
 	const data = await response.json();
 
@@ -48,7 +49,7 @@ describe('GET /carts/:cid valid', async () => {
 });
 //
 describe('GET /carts/:cid invalid id', async () => {
-	const endpoint = 'http://localhost:8080/api/carts/6732d40735244dfefccf24a2';
+	const endpoint = `http://${domain}/api/carts/6732d40735244dfefccf24a2`;
 	const response = await fetch(endpoint);
 	const data = await response.json();
 
@@ -61,7 +62,7 @@ describe('GET /carts/:cid invalid id', async () => {
 });
 
 describe('POST /:cid/product/:pid valid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, { method: 'POST' });
 	const data = await response.json();
 	const usedpid = usedPid;
@@ -76,7 +77,7 @@ describe('POST /:cid/product/:pid valid', async () => {
 describe('POST /:cid/product/:pid no stock', async () => {
 	usedPid = (
 		await (
-			await fetch('http://localhost:8080/api/products', {
+			await fetch(`http://${domain}/api/products`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -88,7 +89,7 @@ describe('POST /:cid/product/:pid no stock', async () => {
 		).json()
 	).addedProduct._id;
 
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, { method: 'POST' });
 	const data = await response.json();
 
@@ -111,14 +112,14 @@ describe('POST /:cid/product/:pid invalid cid', async () => {
 		stock: 25,
 		category: 'd',
 	};
-	const response1 = await fetch('http://localhost:8080/api/products', {
+	const response1 = await fetch(`http://${domain}/api/products`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(validProduct),
 	});
 	const { addedProduct } = await response1.json();
 
-	const endpoint = `http://localhost:8080/api/carts/6732d40735244dfefccf24a5/product/${addedProduct._id}`;
+	const endpoint = `http://${domain}/api/carts/6732d40735244dfefccf24a5/product/${addedProduct._id}`;
 	const response = await fetch(endpoint, { method: 'POST' });
 	const data = await response.json();
 
@@ -131,7 +132,7 @@ describe('POST /:cid/product/:pid invalid cid', async () => {
 });
 
 describe('POST /:cid/product/:pid invalid pid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/000000000000000000000000`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}/product/000000000000000000000000`;
 	const response = await fetch(endpoint, { method: 'POST' });
 	const data = await response.json();
 
@@ -146,7 +147,7 @@ describe('POST /:cid/product/:pid invalid pid', async () => {
 describe('PUT /:cid/product/:pid no stock', async () => {
 	usedPid = (
 		await (
-			await fetch('http://localhost:8080/api/products', {
+			await fetch(`http://${domain}/api/products`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -158,11 +159,11 @@ describe('PUT /:cid/product/:pid no stock', async () => {
 		).json()
 	).addedProduct._id;
 
-	await fetch(`http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`, {
+	await fetch(`http://${domain}/api/carts/${usedCid}/product/${usedPid}`, {
 		method: 'POST',
 	});
 
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
@@ -181,7 +182,7 @@ describe('PUT /:cid/product/:pid no stock', async () => {
 });
 
 describe('PUT /:cid valid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}`;
 	const products = JSON.stringify([
 		{
 			quantity: 10,
@@ -208,7 +209,7 @@ describe('PUT /:cid valid', async () => {
 });
 
 describe('PUT /:cid/products/:pid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}/product/${usedPid}`;
 	const quantity = 10;
 	const products = JSON.stringify({ quantity });
 	const response = await fetch(endpoint, {
@@ -229,7 +230,7 @@ describe('PUT /:cid/products/:pid', async () => {
 });
 
 describe('DELETE /:cid/product/:pid valid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}/product/${usedPid}`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}/product/${usedPid}`;
 	const response = await fetch(endpoint, { method: 'DELETE' });
 	const data = await response.json();
 
@@ -242,7 +243,7 @@ describe('DELETE /:cid/product/:pid valid', async () => {
 });
 
 describe('DELETE api/carts/:cid', async () => {
-	const endpoint = `http://localhost:8080/api/carts/${usedCid}`;
+	const endpoint = `http://${domain}/api/carts/${usedCid}`;
 	const response = await fetch(endpoint, { method: 'DELETE' });
 	const data = await response.json();
 

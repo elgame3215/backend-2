@@ -1,5 +1,6 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
 import { Router } from 'express';
+import { validateSessionApi } from '../middleware/user.validate.js';
 import {
 	validateBodyPids,
 	validateProductIsAviable,
@@ -47,13 +48,14 @@ router.get('/:cid', validateCid, async (req, res) => {
 });
 
 router.post(
-	'/:cid/product/:pid',
-	validateCid,
+	'/mycart/product/:pid',
+	validateSessionApi,
 	validatePid,
 	validateCartExists,
 	validateProductIsAviable,
 	async (req, res) => {
-		const { cid, pid } = req.params;
+		const { pid } = req.params;
+		const cid = req.session.user.cart;
 		try {
 			const updatedCart = await CartController.addProductToCart(pid, cid);
 			return res.status(200).json({ status: 'success', updatedCart });
@@ -68,13 +70,14 @@ router.post(
 );
 
 router.delete(
-	'/:cid/product/:pid',
-	validateCid,
+	'/mycart/product/:pid',
+	validateSessionApi,
 	validatePid,
 	validateCartExists,
 	validateProductInCart,
 	async (req, res) => {
-		const { cid, pid } = req.params;
+		const { pid } = req.params;
+		const cid = req.session.user.cart;
 		try {
 			const updatedCart = await CartController.deleteProductFromCart(pid, cid);
 			return res.status(200).json({ status: 'success', updatedCart });

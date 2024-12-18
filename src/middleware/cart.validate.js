@@ -2,7 +2,7 @@ import { CartController } from '../dao/controllers/cart.controller.js';
 import { ProductController } from '../dao/controllers/product.controller.js';
 
 export async function validateCartExists(req, res, next) {
-	const { cid } = req.params;
+	const cid = req.session.user.cart;
 	const cart = await CartController.getCartById(cid);
 	if (!cart) {
 		return res.status(404).json({
@@ -14,7 +14,7 @@ export async function validateCartExists(req, res, next) {
 }
 
 export async function validateCartExistsView(req, res, next) {
-	const { cid } = req.params;
+	const cid = req.session.user.cart;
 	const cart = await CartController.getCartById(cid);
 	if (!cart) {
 		return res.status(404).render('error', {
@@ -26,7 +26,8 @@ export async function validateCartExistsView(req, res, next) {
 }
 
 export async function validateProductInCart(req, res, next) {
-	const { cid, pid } = req.params;
+	const { pid } = req.params;
+	const cid = req.session.user.cart;
 	const cart = await CartController.getCartById(cid);
 	if (!cart.products.find(p => p.product._id == pid)) {
 		return res.status(404).json({

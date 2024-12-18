@@ -5,6 +5,8 @@ import { Router } from 'express';
 import { validateCartExistsView } from '../middleware/cart.validate.js';
 import { validateCid } from '../middleware/mongoID.validate.js';
 import { validateQuery } from '../middleware/query.validate.js';
+import passport from 'passport';
+import { validateSession } from '../middleware/user.validate.js';
 
 export const router = Router();
 
@@ -48,27 +50,32 @@ router.get('/realtimeproducts', validateQuery, async (req, res) => {
 	}
 });
 
-router.get(
-	'/products/carts/:cid',
-	validateCid,
-	validateCartExistsView,
-	async (req, res) => {
-		const { cid } = req.params;
-		try {
-			const cart = await CartController.getCartById(cid);
-			const { products } = cart;
-			res.status(200).render('cart', { products, cid });
-		} catch (err) {
-			console.error(err);
-			res.status(500).render('error', {
-				error: ProductController.errorMessages.serverError,
-				code: 500,
-			});
-		}
+router.get('/mycart', validateSession, async (req, res) => {
+	const cartId = req.session.user.cart;
+	try {
+		const cart = await CartController.getCartById(cartId);
+		const { products } = cart;
+		res.status(200).render('cart', { products, cartId });
+	} catch (err) {
+		console.error(err);
+		res.status(500).render('error', {
+			error: ProductController.errorMessages.serverError,
+			code: 500,
+		});
 	}
-);
+});
 
 router.get('/login', async (req, res) => {
-	const message = req.session.messages?.pop();
-	res.render('login', { message });
+	if (req.session.user) {
+		res.redirect('/');
+	}
+	res.render('login');
+});
+
+router.get('/register', async (req, res) => {
+	res.render('register');
+});
+
+router.get('/*', (req, res) => {
+	return res.redirect('/products');
 });

@@ -22,13 +22,12 @@ app.use(cookieParser());
 app.use(
 	session({
 		secret: SECRET,
-		saveUninitialized: true,
+		saveUninitialized: false,
 		resave: false,
 		store: new fileStore({
 			path: './sessions',
 			ttl: 60,
 			retries: 0,
-			maxAge: 9999
 		}),
 	})
 );

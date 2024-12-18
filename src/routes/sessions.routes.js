@@ -1,3 +1,4 @@
+import { CartController } from '../dao/controllers/cart.controller.js';
 import { hashPassword } from '../utils/hash.js';
 import { initializePassport } from '../utils/passport.config.js';
 import passport from 'passport';
@@ -15,7 +16,6 @@ export const router = Router();
 router.post(
 	'/login',
 	passport.authenticate('login', {
-		failureRedirect: '/login',
 		failureMessage: true,
 	}),
 	(req, res) => {
@@ -28,8 +28,11 @@ router.post(
 		req.session.user = {
 			name: req.user.name,
 			email: req.user.email,
+			cart: req.user.cart,
 		};
-		return res.status(200).redirect('/products');
+		return res
+			.status(200)
+			.json({ status: 'success', detail: 'user logged in' });
 	}
 );
 router.post(
@@ -41,11 +44,13 @@ router.post(
 		const { name, email, password, rol } = req.body;
 		const hashedPassword = await hashPassword(password);
 		try {
+			const newCart = await CartController.addCart();
 			const newUser = await UserController.registerUser({
 				name,
 				email,
 				password: hashedPassword,
 				rol,
+				cart: newCart._id,
 			});
 			return res.status(201).json({ status: 'success', newUser });
 		} catch (err) {

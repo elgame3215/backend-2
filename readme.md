@@ -132,10 +132,10 @@ Lista los productos dados de alta igual que el endpoint anterior, además de pro
 También acepta los parámetros `limit`, `page`, `sort`, `query`.
 
 ```
-GET http://localhost:8080/products/carts/:cid
+GET http://localhost:8080/mycart
 ```
 
-Lista únicamente los productos agregados al carrito correspondiente al id recibido por :cid, permitiendo eliminar a cada uno del carrito (no del sistema).
+Lista únicamente los productos agregados al carrito correspondiente al usuario que solicita la vista, permitiendo eliminar a cada uno del carrito (no del sistema).
 
 ## Restricciones
 

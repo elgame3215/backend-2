@@ -1,11 +1,54 @@
 <html lang='en'>
-	<head>
-		<meta charset='UTF-8' />
-		<meta name='viewport' content='width=device-width, initial-scale=1.0' />
-		<link rel='stylesheet' href='./../../css/styles.css' />
-		<title>e-commerce</title>
-	</head>
-	<body>
-		{{{body}}}
-	</body>
+
+<head>
+	<meta charset='UTF-8' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+	<link rel='stylesheet' href='./../../css/styles.css' />
+	<title>e-commerce</title>
+</head>
+
+<body>
+	<nav>
+		<a href='/products' class='product-button'>home</a>
+		<div class='account-options-container'>
+			<p id='username'>username</p>
+			<button class='product-button' id='logout-btn'>log out</button>
+		</div>
+	</nav>
+	<style>
+		nav {
+			display: flex;
+			position: fixed;
+			top: 0;
+			width: 100vw;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		a,
+		button {
+			border:
+				none;
+		}
+
+		nav * {
+			margin: 10px;
+		}
+
+		.account-options-container {
+			display:
+				flex;
+			flex-direction: row;
+			align-items: center;
+		}
+	</style>
+	<script>
+		const logoutBtn = document.getElementById('logout-btn');
+		logoutBtn.addEventListener('click', e => {
+			fetch(`http://${domain}/api/sessions/logout`, { method: 'POST' })
+		})
+	</script>
+	{{{body}}}
+</body>
+
 </html>
