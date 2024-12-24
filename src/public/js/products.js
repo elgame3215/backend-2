@@ -1,4 +1,3 @@
-const domain = window.location.host;
 const addToCartButtons = document.querySelectorAll('.add-button');
 for (let i = 0; i < addToCartButtons.length; i++) {
 	const addButton = addToCartButtons[i];

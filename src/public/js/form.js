@@ -1,4 +1,3 @@
-const domain = window.location.host;
 // eslint-disable-next-line no-undef
 const socket = io();
 const submit = document.getElementById('submit');

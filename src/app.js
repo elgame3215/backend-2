@@ -8,12 +8,12 @@ import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import session from 'express-session';
 import { router as cartsRouter } from './routes/cart.routes.js'; // eslint-disable-line sort-imports
-import { initializePassport } from './utils/passport.config.js';
+import { initializePassport } from './config/passport.config.js';
 import passport from 'passport';
 import { router as productsRouter } from './routes/product.routes.js';
 import { router as viewsRouter } from './routes/views.routes.js';
 import { router as userRouter } from './routes/sessions.routes.js'; // eslint-disable-line sort-imports
-import { MONGO_CLUSTER_URL, PORT, SECRET } from './config.js';
+import { MONGO_CLUSTER_URL, PORT, SECRET } from './config/config.js';
 
 const fileStore = FileStore(session);
 

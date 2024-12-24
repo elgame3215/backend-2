@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 
 export class CartController {
 	static async addCart() {
-		let addedCart = { products: [] };
-		addedCart = await cartModel.create(addedCart);
+		const products = { products: [] };
+		const addedCart = await cartModel.create(products);
 		return addedCart;
 	}
 

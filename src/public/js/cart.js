@@ -1,4 +1,3 @@
-const domain = window.location.host;
 const removeButtons = document.querySelectorAll('.remove-button');
 for (let i = 0; i < removeButtons.length; i++) {
 	const button = removeButtons[i];

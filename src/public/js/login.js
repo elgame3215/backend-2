@@ -3,7 +3,6 @@ formELement.addEventListener('submit', e => {
 	e.preventDefault();
 	const formData = new FormData(formELement);
 	const data = parseFormData(formData);
-	const domain = window.location.host;
 	fetch(`http://${domain}/api/sessions/login`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },

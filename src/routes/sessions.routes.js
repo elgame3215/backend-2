@@ -1,7 +1,6 @@
-import { CartController } from '../dao/controllers/cart.controller.js';
-import { hashPassword } from '../utils/hash.js';
 import passport from 'passport';
 import { Router } from 'express';
+import { setLoginCookies } from '../utils/login.cookies.js';
 import { UserController } from '../dao/controllers/user.controller.js';
 import {
 	validateEmail,
@@ -27,8 +26,7 @@ router.post(
 			email: req.user.email,
 			cart: req.user.cart,
 		};
-		res.cookie('username', req.user.name);
-		res.cookie('authStatus', 1);
+		setLoginCookies(req, res);
 		return res
 		.status(200)
 		.json({ status: 'success', detail: 'user logged in' });
@@ -39,26 +37,22 @@ router.post(
 	validateName,
 	validateEmail,
 	validatePassword,
+	passport.authenticate('register'),
 	async (req, res) => {
-		const { name, email, password, rol } = req.body;
-		const hashedPassword = await hashPassword(password);
-		try {
-			const newCart = await CartController.addCart();
-			const newUser = await UserController.registerUser({
-				name,
-				email,
-				password: hashedPassword,
-				rol,
-				cart: newCart._id,
-			});
-			return res.status(201).json({ status: 'success', newUser });
-		} catch (err) {
-			console.error(err);
-			res.status(500).json({
+		if (!req.user) {
+			return res.status(500).json({
 				status: 'error',
 				error: UserController.errorMessages.serverError,
 			});
 		}
+		const { name, email, cart } = req.user;
+		req.session.user = {
+			name,
+			email,
+			cart,
+		};
+		setLoginCookies(req, res);
+		return res.status(201).json({ status: 'success', detail: 'registro exitoso', newUser: req.user });
 	}
 );
 

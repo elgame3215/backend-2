@@ -4,6 +4,8 @@
 	<meta charset='UTF-8' />
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 	<link rel='stylesheet' href='./../../css/styles.css' />
+	<link rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css' />
+	<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/toastify-js'></script>
 	<title>e-commerce</title>
 </head>
 
@@ -28,8 +30,9 @@
 
 		a,
 		button {
-			border:
-				none;
+			border: none;
+			font-size: 16px;
+			line-height: 1;
 		}
 
 		nav * {
@@ -48,6 +51,7 @@
 		}
 	</style>
 	<script>
+		const domain = window.location.host;
 		function getCookie(cname) {
 			// cuantos programadores hacen falta para averiguar el valor de una cookie??
 			let name = cname + "=";
@@ -70,7 +74,7 @@
 		if (getCookie('authStatus')) {
 			logoutBtn.style.display = 'flex';
 			usernameP.style.display = 'flex';
-			usernameP.textContent = getCookie('username');
+			usernameP.textContent = `Bienvenido, ${getCookie('username')}`;
 			logoutBtn.addEventListener('click', e => {
 				fetch(`http://${domain}/api/sessions/logout`, { method: 'POST' })
 				window.location.reload();

@@ -22,7 +22,7 @@ export function validatePassword(req, res, next) {
 	if (!regEx.test(password)) {
 		return res
 			.status(401)
-			.json({ status: 'error', detail: 'password too weak' });
+			.json({ status: 'error', detail: 'contraseña muy débil' });
 	}
 	return next();
 }
