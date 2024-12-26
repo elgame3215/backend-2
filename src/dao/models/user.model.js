@@ -12,11 +12,13 @@ const userSchema = new mongoose.Schema({
 	},
 	password: {
 		type: String,
-		required: true,
+	},
+	githubId: {
+		type: String,
+		unique: true
 	},
 	rol: {
 		type: String,
-		required: true,
 		default: 'user',
 	},
 	cart: {

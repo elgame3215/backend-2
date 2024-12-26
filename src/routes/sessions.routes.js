@@ -27,9 +27,10 @@ router.post(
 			cart: req.user.cart,
 		};
 		setLoginCookies(req, res);
-		return res
-		.status(200)
-		.json({ status: 'success', detail: 'user logged in' });
+		return res.status(200).json({
+			status: 'success',
+			detail: `sesión iniciada como ${req.user.name}`,
+		});
 	}
 );
 router.post(
@@ -52,12 +53,33 @@ router.post(
 			cart,
 		};
 		setLoginCookies(req, res);
-		return res.status(201).json({ status: 'success', detail: 'registro exitoso', newUser: req.user });
+		return res.status(201).json({
+			status: 'success',
+			detail: 'registro exitoso',
+			newUser: req.user,
+		});
 	}
 );
 
 router.post('/logout', async (req, res) => {
-	res.clearCookie('authStatus');
 	req.session.destroy();
-	res.status(200).json({ status: 'success', detail: 'user logged out' });
+	res.clearCookie('authStatus');
+	res.status(200).json({ status: 'success', detail: 'sesión cerrada' });
 });
+
+router.post('github', passport.authenticate('github'), {
+	scope: ['user:email'],
+});
+
+router.post(
+	'github-callback',
+	passport.authenticate('github'),
+	async (req, res) => {
+		if (!req.user) {
+			return res.status(401).json({
+				status: 'error',
+				detail: 'error al iniciar sesión con Github',
+			});
+		}
+	}
+);

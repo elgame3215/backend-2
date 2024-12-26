@@ -1,6 +1,7 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
 import GitHubStrategy from 'passport-github2';
 import passport from 'passport';
+import {PORT} from './config.js';
 import { Strategy } from 'passport-local';
 import { UserController } from '../dao/controllers/user.controller.js';
 import { comparePassword, hashPassword } from './../utils/hash.js';
@@ -52,6 +53,7 @@ export function initializePassport() {
 		)
 	);
 
+	// VARIABLES DE ENTORNO
 	const GITHUB_CLIENT_ID = 'Iv23lic2BRheNPmq977w';
 	const GITHUB_CLIENT_SECRET = 'EL_SEÑOR_DE_LA_NOCHE123';
 
@@ -61,10 +63,11 @@ export function initializePassport() {
 			{
 				clientID: GITHUB_CLIENT_ID,
 				clientSecret: GITHUB_CLIENT_SECRET,
-				callbackURL: 'http://localhost:8080/api/sessions/github-callback',
+				callbackURL: `http://localhost:${PORT}/api/sessions/github-callback`,
 			},
 			async (accessToken, refreshToken, profile, done) => {
-
+				console.log(profile);
+				// const user = UserController.findUserByEmail()
 			}
 		)
 	);
