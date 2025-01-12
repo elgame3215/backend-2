@@ -73,6 +73,6 @@ router.get('/register', async (req, res) => {
 	res.render('register');
 });
 
-router.get('/*', (req, res) => {
-	return res.redirect('/products');
+router.get('/', (req, res) => {
+	res.redirect('/products');
 });

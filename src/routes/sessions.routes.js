@@ -67,19 +67,17 @@ router.post('/logout', async (req, res) => {
 	res.status(200).json({ status: 'success', detail: 'sesión cerrada' });
 });
 
-router.post('github', passport.authenticate('github'), {
-	scope: ['user:email'],
-});
+router.get('/github', passport.authenticate('github'));
 
-router.post(
-	'github-callback',
+router.get(
+	'/github-callback',
 	passport.authenticate('github'),
 	async (req, res) => {
 		if (!req.user) {
-			return res.status(401).json({
-				status: 'error',
-				detail: 'error al iniciar sesión con Github',
-			});
+			return res.redirect('/login');
 		}
+		req.session.user = req.user;
+		setLoginCookies(req, res);
+		res.redirect('/');
 	}
 );

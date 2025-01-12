@@ -1,7 +1,7 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
 import GitHubStrategy from 'passport-github2';
 import passport from 'passport';
-import {PORT} from './config.js';
+import { PORT } from './config.js';
 import { Strategy } from 'passport-local';
 import { UserController } from '../dao/controllers/user.controller.js';
 import { comparePassword, hashPassword } from './../utils/hash.js';
@@ -55,7 +55,7 @@ export function initializePassport() {
 
 	// VARIABLES DE ENTORNO
 	const GITHUB_CLIENT_ID = 'Iv23lic2BRheNPmq977w';
-	const GITHUB_CLIENT_SECRET = 'EL_SEÑOR_DE_LA_NOCHE123';
+	const GITHUB_CLIENT_SECRET = 'ec2b96bd7652c9c574a91c2093d03e6f3cb5f34f';
 
 	passport.use(
 		'github',
@@ -64,10 +64,22 @@ export function initializePassport() {
 				clientID: GITHUB_CLIENT_ID,
 				clientSecret: GITHUB_CLIENT_SECRET,
 				callbackURL: `http://localhost:${PORT}/api/sessions/github-callback`,
+				scope: ['user:email'],
 			},
 			async (accessToken, refreshToken, profile, done) => {
-				console.log(profile);
-				// const user = UserController.findUserByEmail()
+				const email = profile.emails[0].value;
+				const user = await UserController.findUserByEmail(email);
+				if (user) {
+					return done(null, user);
+				}
+				const newCart = await CartController.addCart();
+				const newUser = await UserController.registerUser({
+					name: profile._json.name,
+					email,
+					githubId: profile.id,
+					cart: newCart._id,
+				});
+				return done(null, newUser);
 			}
 		)
 	);
