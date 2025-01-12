@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Router } from 'express';
 import { setLoginCookies } from '../utils/login.cookies.js';
+import { setToken } from '../utils/jwt.js';
 import { UserController } from '../dao/controllers/user.controller.js';
 import {
 	validateEmail,
@@ -13,6 +14,7 @@ router.post(
 	'/login',
 	passport.authenticate('login', {
 		failureMessage: true,
+		session: false,
 	}),
 	(req, res) => {
 		if (!req.user) {
@@ -21,11 +23,7 @@ router.post(
 				detail: UserController.errorMessages.loginError,
 			});
 		}
-		req.session.user = {
-			name: req.user.name,
-			email: req.user.email,
-			cart: req.user.cart,
-		};
+		setToken(req, res);
 		setLoginCookies(req, res);
 		return res.status(200).json({
 			status: 'success',
@@ -38,7 +36,7 @@ router.post(
 	validateName,
 	validateEmail,
 	validatePassword,
-	passport.authenticate('register'),
+	passport.authenticate('register', { session: false }),
 	async (req, res) => {
 		if (!req.user) {
 			return res.status(500).json({
@@ -46,12 +44,7 @@ router.post(
 				error: UserController.errorMessages.serverError,
 			});
 		}
-		const { name, email, cart } = req.user;
-		req.session.user = {
-			name,
-			email,
-			cart,
-		};
+		setToken(req, res);
 		setLoginCookies(req, res);
 		return res.status(201).json({
 			status: 'success',
@@ -62,21 +55,22 @@ router.post(
 );
 
 router.post('/logout', async (req, res) => {
-	req.session.destroy();
 	res.clearCookie('authStatus');
+	res.clearCookie('token');
+	res.clearCookie('username');
 	res.status(200).json({ status: 'success', detail: 'sesión cerrada' });
 });
 
-router.get('/github', passport.authenticate('github'));
+router.get('/github', passport.authenticate('github', { session: false }));
 
 router.get(
 	'/github-callback',
-	passport.authenticate('github'),
+	passport.authenticate('github', { session: false }),
 	async (req, res) => {
 		if (!req.user) {
 			return res.redirect('/login');
 		}
-		req.session.user = req.user;
+		setToken(req, res);
 		setLoginCookies(req, res);
 		res.redirect('/');
 	}

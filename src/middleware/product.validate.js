@@ -18,7 +18,7 @@ export async function validateProduct(req, res, next) {
 
 export async function validateProductIsAviable(req, res, next) {
 	const { pid } = req.params;
-	const cid = req.session.user.cart;
+	const cid = req.user.cart;
 
 	const product = await ProductController.getProductById(pid);
 	if (!product) {

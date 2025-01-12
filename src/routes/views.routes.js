@@ -1,9 +1,9 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
 import { formatResponse } from '../utils/query.process.js';
+import passport from 'passport';
 import { ProductController } from '../dao/controllers/product.controller.js';
 import { Router } from 'express';
 import { validateQuery } from '../middleware/query.validate.js';
-import { validateSession } from '../middleware/user.validate.js';
 
 export const router = Router();
 
@@ -47,23 +47,27 @@ router.get('/realtimeproducts', validateQuery, async (req, res) => {
 	}
 });
 
-router.get('/mycart', validateSession, async (req, res) => {
-	const cartId = req.session.user.cart;
-	try {
-		const cart = await CartController.getCartById(cartId);
-		const { products } = cart;
-		res.status(200).render('cart', { products, cartId });
-	} catch (err) {
-		console.error(err);
-		res.status(500).render('error', {
-			error: ProductController.errorMessages.serverError,
-			code: 500,
-		});
+router.get(
+	'/mycart',
+	passport.authenticate('jwt', { session: false }),
+	async (req, res) => {
+		const cartId = req.user.cart;
+		try {
+			const cart = await CartController.getCartById(cartId);
+			const { products } = cart;
+			res.status(200).render('cart', { products, cartId });
+		} catch (err) {
+			console.error(err);
+			res.status(500).render('error', {
+				error: ProductController.errorMessages.serverError,
+				code: 500,
+			});
+		}
 	}
-});
+);
 
 router.get('/login', async (req, res) => {
-	if (req.session.user) {
+	if (req.cookies.user) {
 		res.redirect('/');
 	}
 	res.render('login');

@@ -34,22 +34,3 @@ export function validateName(req, res, next) {
 	}
 	return next();
 }
-
-export function validateSession(req, res, next) {
-	if (!req.session.user) {
-		return res.redirect('/login');
-	}
-	return next();
-}
-
-export function validateSessionApi(req, res, next) {
-	if (!req.session.user) {
-		return res
-			.status(401)
-			.json({
-				status: 'error',
-				detail: UserController.errorMessages.unauthorized,
-			});
-	}
-	return next();
-}

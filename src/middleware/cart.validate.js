@@ -1,8 +1,8 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
 import { ProductController } from '../dao/controllers/product.controller.js';
 
-export async function validateCartExists(req, res, next) {
-	const cid = req.session.user.cart;
+export async function validateUserCartExists(req, res, next) {
+	const cid = req.user.cart;
 	const cart = await CartController.getCartById(cid);
 	if (!cart) {
 		return res.status(404).json({
@@ -13,21 +13,33 @@ export async function validateCartExists(req, res, next) {
 	return next();
 }
 
-export async function validateCartExistsView(req, res, next) {
-	const cid = req.session.user.cart;
+export async function validateCartExists(req, res, next) {
+	const { cid } = req.params;
 	const cart = await CartController.getCartById(cid);
 	if (!cart) {
-		return res.status(404).render('error', {
-			error: CartController.errorMessages.cartNotFound,
-			code: 404,
+		return res.status(404).json({
+			status: 'error',
+			detail: CartController.errorMessages.cartNotFound,
+		});
+	}
+	return next();
+}
+
+export async function validateProductInUserCart(req, res, next) {
+	const { pid } = req.params;
+	const cid = req.user.cart;
+	const cart = await CartController.getCartById(cid);
+	if (!cart.products.find(p => p.product._id == pid)) {
+		return res.status(404).json({
+			status: 'error',
+			detail: ProductController.errorMessages.productNotFound,
 		});
 	}
 	return next();
 }
 
 export async function validateProductInCart(req, res, next) {
-	const { pid } = req.params;
-	const cid = req.session.user.cart;
+	const { cid, pid } = req.params;
 	const cart = await CartController.getCartById(cid);
 	if (!cart.products.find(p => p.product._id == pid)) {
 		return res.status(404).json({

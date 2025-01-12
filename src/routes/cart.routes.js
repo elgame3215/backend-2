@@ -1,6 +1,6 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
+import passport from 'passport';
 import { Router } from 'express';
-import { validateSessionApi } from '../middleware/user.validate.js';
 import {
 	validateBodyPids,
 	validateProductIsAviable,
@@ -8,7 +8,9 @@ import {
 import {
 	validateCartExists,
 	validateProductInCart,
+	validateProductInUserCart,
 	validateQuantity,
+	validateUserCartExists,
 } from '../middleware/cart.validate.js';
 import { validateCid, validatePid } from '../middleware/mongoID.validate.js';
 
@@ -49,13 +51,13 @@ router.get('/:cid', validateCid, async (req, res) => {
 
 router.post(
 	'/mycart/product/:pid',
-	validateSessionApi,
+	passport.authenticate('jwt', { session: false }),
 	validatePid,
-	validateCartExists,
+	validateUserCartExists,
 	validateProductIsAviable,
 	async (req, res) => {
 		const { pid } = req.params;
-		const cid = req.session.user.cart;
+		const cid = req.user.cart;
 		try {
 			const updatedCart = await CartController.addProductToCart(pid, cid);
 			return res.status(200).json({ status: 'success', updatedCart });
@@ -71,13 +73,13 @@ router.post(
 
 router.delete(
 	'/mycart/product/:pid',
-	validateSessionApi,
+	passport.authenticate('jwt', { session: false }),
 	validatePid,
-	validateCartExists,
-	validateProductInCart,
+	validateUserCartExists,
+	validateProductInUserCart,
 	async (req, res) => {
 		const { pid } = req.params;
-		const cid = req.session.user.cart;
+		const cid = req.user.cart;
 		try {
 			const updatedCart = await CartController.deleteProductFromCart(pid, cid);
 			return res.status(200).json({ status: 'success', updatedCart });

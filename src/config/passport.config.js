@@ -1,18 +1,20 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
 import GitHubStrategy from 'passport-github2';
+import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
-import { PORT } from './config.js';
-import { Strategy } from 'passport-local';
 import { UserController } from '../dao/controllers/user.controller.js';
 import { comparePassword, hashPassword } from './../utils/hash.js';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
+import { PORT, SECRET } from './config.js';
 
 export function initializePassport() {
 	passport.use(
 		'login',
-		new Strategy(
+		new LocalStrategy(
 			{
 				usernameField: 'email',
 				passwordField: 'password',
+				session: false,
 			},
 			async function (email, password, done) {
 				const user = await UserController.findUserByEmail(email);
@@ -27,11 +29,12 @@ export function initializePassport() {
 	);
 	passport.use(
 		'register',
-		new Strategy(
+		new LocalStrategy(
 			{
 				usernameField: 'email',
 				passwordField: 'password',
 				passReqToCallback: true,
+				session: false,
 			},
 			async function (req, email, password, done) {
 				const { name, rol } = req.body;
@@ -84,6 +87,21 @@ export function initializePassport() {
 		)
 	);
 
+	passport.use(
+		new JwtStrategy(
+			{
+				secretOrKey: SECRET,
+				jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+			},
+			async (jwtPayload, done) => {
+				// VALIDAR PERMISOS DEL USUARIO
+				const { email } = jwtPayload;
+				const user = await UserController.findUserByEmail(email);
+				return done(null, user);
+			}
+		)
+	);
+
 	passport.serializeUser((user, done) => {
 		done(null, user._id);
 	});
@@ -92,4 +110,8 @@ export function initializePassport() {
 		const user = await UserController.findUserById(id);
 		done(null, user);
 	});
+}
+
+function cookieExtractor(req) {
+	return req.cookies?.token ?? null;
 }
