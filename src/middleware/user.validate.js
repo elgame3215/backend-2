@@ -28,9 +28,11 @@ export function validatePassword(req, res, next) {
 }
 
 export function validateName(req, res, next) {
-	const { name } = req.body;
-	if (!name.trim()) {
-		return res.status(401).json({ status: 'error', detail: 'missing camps' });
+	const { firstName, lastName } = req.body;
+	if (!(firstName.trim() && lastName.trim())) {
+		return res
+			.status(401)
+			.json({ status: 'error', detail: 'campos faltantes' });
 	}
 	return next();
 }

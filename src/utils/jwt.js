@@ -4,6 +4,7 @@ import { SECRET } from '../config/config.js';
 export function setToken(req, res) {
 	const payload = {
 		email: req.user.email,
+		rol: req.user.rol,
 	};
 	const token = jwt.sign(payload, SECRET, {
 		expiresIn: '15m',
@@ -11,4 +12,8 @@ export function setToken(req, res) {
 	res.cookie('token', token, {
 		httpOnly: true,
 	});
+}
+
+export function verifyToken(token) {
+	return jwt.verify(token, SECRET);
 }

@@ -1,10 +1,10 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
 import GitHubStrategy from 'passport-github2';
+import { Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
 import { UserController } from '../dao/controllers/user.controller.js';
 import { comparePassword, hashPassword } from './../utils/hash.js';
-import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { PORT, SECRET } from './config.js';
 
 export function initializePassport() {
@@ -19,9 +19,7 @@ export function initializePassport() {
 			async function (email, password, done) {
 				const user = await UserController.findUserByEmail(email);
 				if (!user || !(await comparePassword(password, user.password))) {
-					return done(null, false, {
-						message: UserController.errorMessages.loginError,
-					});
+					return done(null, false);
 				}
 				return done(null, user);
 			}
@@ -37,15 +35,21 @@ export function initializePassport() {
 				session: false,
 			},
 			async function (req, email, password, done) {
-				const { name, rol } = req.body;
-				const user = await UserController.findUserByEmail(email);
-				if (user) {
-					return done(null, false);
+				const { firstName, lastName, rol } = req.body;
+				try {
+					const user = await UserController.findUserByEmail(email);
+					if (user) {
+						return done(null, false);
+					}
+				} catch (err) {
+					console.error(err);
+					return done(err, false);
 				}
 				const newCart = await CartController.addCart();
 				const hashedPassword = await hashPassword(password);
 				const newUser = await UserController.registerUser({
-					name,
+					first_name: firstName, 	// eslint-disable-line camelcase
+					last_name: lastName,		// eslint-disable-line camelcase
 					email,
 					password: hashedPassword,
 					rol,
@@ -88,13 +92,13 @@ export function initializePassport() {
 	);
 
 	passport.use(
+		'jwt',
 		new JwtStrategy(
 			{
 				secretOrKey: SECRET,
-				jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+				jwtFromRequest: cookieExtractor,
 			},
 			async (jwtPayload, done) => {
-				// VALIDAR PERMISOS DEL USUARIO
 				const { email } = jwtPayload;
 				const user = await UserController.findUserByEmail(email);
 				return done(null, user);

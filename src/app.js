@@ -5,12 +5,12 @@ import express from 'express';
 import Handlebars from 'handlebars';
 import mongoose from 'mongoose';
 import { Server } from 'socket.io';
-import { router as cartsRouter } from './routes/cart.routes.js'; // eslint-disable-line sort-imports
+import { cartsRouter } from './routes/cart.routes.js'; // eslint-disable-line sort-imports
 import { initializePassport } from './config/passport.config.js';
 import passport from 'passport';
-import { router as productsRouter } from './routes/product.routes.js';
-import { router as viewsRouter } from './routes/views.routes.js';
-import { router as userRouter } from './routes/sessions.routes.js'; // eslint-disable-line sort-imports
+import { productsRouter } from './routes/product.routes.js';
+import { viewsRouter } from './routes/views.routes.js';
+import { sessionsRouter } from './routes/sessions.routes.js'; // eslint-disable-line sort-imports
 import { MONGO_CLUSTER_URL, PORT } from './config/config.js';
 
 const app = express();
@@ -38,6 +38,10 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server);
 app.use(express.static('./src/public'));
+app.use('/api', (req, res, next) => {
+	req.isApiReq = true;
+	return next();
+});
 app.use(
 	'/api/products',
 	(req, res, next) => {
@@ -48,7 +52,7 @@ app.use(
 );
 app.use('/api/carts', cartsRouter);
 app.use('/', viewsRouter);
-app.use('/api/sessions', userRouter);
+app.use('/api/sessions', sessionsRouter);
 
 (async () => {
 	try {

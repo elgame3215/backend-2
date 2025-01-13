@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-	name: {
+	first_name: {			// eslint-disable-line camelcase
+		type: String,
+		required: true,
+	},
+	last_name: {			// eslint-disable-line camelcase
 		type: String,
 		required: true,
 	},
@@ -16,6 +20,7 @@ const userSchema = new mongoose.Schema({
 	githubId: {
 		type: String,
 		unique: true,
+		sparse: true,
 	},
 	rol: {
 		type: String,

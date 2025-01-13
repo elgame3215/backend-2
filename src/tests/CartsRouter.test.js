@@ -2,7 +2,7 @@ import { CartController } from '../dao/controllers/cart.controller.js';
 import { ProductController } from '../dao/controllers/product.controller.js';
 import { randomCode } from './ProductsRouter.test.js';
 import { assert, describe, expect, expectTypeOf, it } from 'vitest';
-const ${domain} = 'localhost:8080';
+const {domain} = 'localhost:8080';
 let usedCid;
 const validProduct = {
 	title: 's',

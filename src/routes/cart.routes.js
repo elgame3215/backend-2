@@ -1,6 +1,6 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
-import passport from 'passport';
-import { Router } from 'express';
+import { POLICIES } from '../config/config.js';
+import { Router } from './router.js';
 import {
 	validateBodyPids,
 	validateProductIsAviable,
@@ -14,91 +14,69 @@ import {
 } from '../middleware/cart.validate.js';
 import { validateCid, validatePid } from '../middleware/mongoID.validate.js';
 
-export const router = Router();
-
-router.post('/', async (req, res) => {
-	try {
-		const addedCart = await CartController.addCart();
-		return res.status(201).json({ status: 'success', addedCart });
-	} catch (err) {
-		console.error(err);
-		return res.status(500).json({
-			status: 'error',
-			detail: CartController.errorMessages.serverError,
-		});
+class CartsRouter extends Router {
+	constructor() {
+		super();
+		this.customResponses = {
+			...this.customResponses,
+			sendCartNotFound() {
+				return this.status(404).json({
+					status: 'error',
+					detail: 'cart not found',
+				});
+			},
+		};
+		this.init();
 	}
-});
 
-router.get('/:cid', validateCid, async (req, res) => {
-	const { cid } = req.params;
-	try {
-		const cart = await CartController.getCartById(cid);
-		if (!cart) {
-			return res.status(404).json({
-				status: 'error',
-				detail: CartController.errorMessages.cartNotFound,
-			});
-		}
-		return res.status(200).json(cart.products);
-	} catch (err) {
-		console.error(err);
-		return res.status(500).json({
-			status: 'error',
-			detail: CartController.errorMessages.serverError,
-		});
-	}
-});
-
-router.post(
-	'/mycart/product/:pid',
-	passport.authenticate('jwt', { session: false }),
-	validatePid,
-	validateUserCartExists,
-	validateProductIsAviable,
-	async (req, res) => {
-		const { pid } = req.params;
-		const cid = req.user.cart;
+	async createCart(req, res) {
 		try {
-			const updatedCart = await CartController.addProductToCart(pid, cid);
-			return res.status(200).json({ status: 'success', updatedCart });
+			const addedCart = await CartController.addCart();
+			return res.sendResourceCreated({ addedCart });
 		} catch (err) {
 			console.error(err);
-			return res.status(500).json({
-				status: 'error',
-				detail: CartController.errorMessages.serverError,
-			});
+			return res.sendServerError();
 		}
 	}
-);
-
-router.delete(
-	'/mycart/product/:pid',
-	passport.authenticate('jwt', { session: false }),
-	validatePid,
-	validateUserCartExists,
-	validateProductInUserCart,
-	async (req, res) => {
+	async getCart(req, res) {
+		const { cid } = req.params;
+		try {
+			const cart = await CartController.getCartById(cid);
+			if (!cart) {
+				return res.sendCartNotFound();
+			}
+			return res.sendSuccess(cart);
+		} catch (err) {
+			console.error(err);
+			return res.sendServerError();
+		}
+	}
+	async addProduct(req, res) {
+		const { pid } = req.params;
+		const cid = req.user?.cart;
+		if (!cid) {
+			res.sendUnauthorized();
+		}
+		try {
+			const updatedCart = await CartController.addProductToCart(pid, cid);
+			return res.sendSuccess({ updatedCart });
+		} catch (err) {
+			console.error(err);
+			return res.sendServerError();
+		}
+	}
+	async deleteProduct(req, res) {
 		const { pid } = req.params;
 		const cid = req.user.cart;
 		try {
 			const updatedCart = await CartController.deleteProductFromCart(pid, cid);
-			return res.status(200).json({ status: 'success', updatedCart });
+			return res.sendSuccess({ updatedCart });
 		} catch (err) {
 			console.error(err);
-			return res.status(500).json({
-				status: 'error',
-				detail: CartController.errorMessages.serverError,
-			});
+			return res.sendServerError();
 		}
 	}
-);
-
-router.put(
-	'/:cid',
-	validateCid,
-	validateCartExists,
-	validateBodyPids,
-	async (req, res) => {
+	async updateCart(req, res) {
 		const productList = req.body;
 		const { cid } = req.params;
 		try {
@@ -106,25 +84,13 @@ router.put(
 				cid,
 				productList
 			);
-			return res.status(200).json({ status: 'success', updatedCart });
+			return res.sendSuccess({ updatedCart });
 		} catch (err) {
 			console.error(err);
-			return res.status(500).json({
-				status: 'error',
-				detail: CartController.errorMessages.serverError,
-			});
+			return res.sendServerError();
 		}
 	}
-);
-
-router.put(
-	'/:cid/product/:pid',
-	validateCid,
-	validatePid,
-	validateCartExists,
-	validateProductInCart,
-	validateQuantity,
-	async (req, res) => {
+	async updateProductQuantity(req, res) {
 		const { cid, pid } = req.params;
 		const { quantity } = req.body;
 		try {
@@ -133,27 +99,79 @@ router.put(
 				pid,
 				quantity
 			);
-			res.status(200).json({ status: 'success', updatedCart });
+			return res.sendSuccess({ updatedCart });
 		} catch (err) {
 			console.error(err);
-			res.status(500).json({
-				status: 'error',
-				detail: CartController.errorMessages.serverError,
-			});
+			res.sendServerError();
 		}
 	}
-);
-
-router.delete('/:cid', validateCid, validateCartExists, async (req, res) => {
-	const { cid } = req.params;
-	try {
-		const updatedCart = await CartController.clearCart(cid);
-		res.status(200).json({ status: 'success', updatedCart });
-	} catch (err) {
-		console.error(err);
-		res.status(200).json({
-			status: 'error',
-			detail: CartController.errorMessages.serverError,
-		});
+	async clearCart(req, res) {
+		const { cid } = req.params;
+		try {
+			const updatedCart = await CartController.clearCart(cid);
+			return res.sendSuccess({ updatedCart });
+		} catch (err) {
+			console.error(err);
+			res.sendServerError();
+		}
 	}
-});
+
+	init() {
+		this.post('/', [POLICIES.user, POLICIES.admin], this.createCart);
+
+		this.get(
+			'/:cid',
+			[POLICIES.user, POLICIES.admin],
+			validateCid,
+			this.getCart
+		);
+
+		this.post(
+			'/mycart/product/:pid',
+			[POLICIES.user, POLICIES.admin],
+			validatePid,
+			validateUserCartExists,
+			validateProductIsAviable,
+			this.addProduct
+		);
+
+		this.delete(
+			'/mycart/product/:pid',
+			[POLICIES.user, POLICIES.admin],
+			validatePid,
+			validateUserCartExists,
+			validateProductInUserCart,
+			this.deleteProduct
+		);
+
+		this.put(
+			'/:cid',
+			[POLICIES.user, POLICIES.admin],
+			validateCid,
+			validateCartExists,
+			validateBodyPids,
+			this.updateCart
+		);
+
+		this.put(
+			'/:cid/product/:pid',
+			[POLICIES.user, POLICIES.admin],
+			validateCid,
+			validatePid,
+			validateCartExists,
+			validateProductInCart,
+			validateQuantity,
+			this.updateProductQuantity
+		);
+
+		this.delete(
+			'/:cid',
+			[POLICIES.user, POLICIES.admin],
+			validateCid,
+			validateCartExists,
+			this.clearCart
+		);
+	}
+}
+
+export const cartsRouter = new CartsRouter().router;
