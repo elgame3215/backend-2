@@ -28,15 +28,18 @@ export class Router {
 					detail: 'Unauthorized',
 				});
 			},
-			renderUnauthorized() {
-				return this.render('login');
-			},
 			sendInvalidToken() {
 				return this.status(400).json({
 					status: 'error',
 					detail: 'Invalid token provided',
 				});
 			},
+			renderUnauthorized() {
+				return this.render('login');
+			},
+			renderNotFound() {
+				return this.render('error', {error: 'NOT FOUND', code: 404});
+			}
 		};
 	}
 	generateCustomResponses = (req, res, next) => {

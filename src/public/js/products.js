@@ -20,6 +20,9 @@ for (let i = 0; i < addToCartButtons.length; i++) {
 							: 'Error al agregar el producto',
 					duration: 3000,
 					gravity: 'bottom',
+					style: {
+						marginBottom: '30px',
+					},
 					backgroundColor: '#007BFF',
 					stopOnFocus: true,
 				}).showToast();

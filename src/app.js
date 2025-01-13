@@ -1,4 +1,5 @@
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
+import { config } from 'dotenv';
 import cookieParser from 'cookie-parser';
 import { engine } from 'express-handlebars';
 import express from 'express';
@@ -11,14 +12,20 @@ import passport from 'passport';
 import { productsRouter } from './routes/product.routes.js';
 import { viewsRouter } from './routes/views.routes.js';
 import { sessionsRouter } from './routes/sessions.routes.js'; // eslint-disable-line sort-imports
-import { MONGO_CLUSTER_URL, PORT } from './config/config.js';
 
+config();
+
+const { PORT, MONGO_CLUSTER_URL } = process.env;
+
+// EXPRESS
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// COOKIE-PARSER
 app.use(cookieParser());
 
+// HANDLEBARS
 app.set('view engine', 'handlebars');
 app.set('views', './src/views');
 app.engine(
@@ -28,6 +35,7 @@ app.engine(
 	})
 );
 
+// PASSPORT
 initializePassport();
 app.use(passport.initialize());
 

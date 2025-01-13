@@ -90,6 +90,10 @@ class ViewsRouter extends Router {
 		this.get('/', [POLICIES.public], (req, res) => {
 			res.redirect('/products');
 		});
+
+		this.get('/', [POLICIES.public], (req, res) => {
+			res.renderNotFound();
+		});
 	}
 }
 

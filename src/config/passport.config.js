@@ -1,11 +1,13 @@
 import { CartController } from '../dao/controllers/cart.controller.js';
+import { CONFIG } from './config.js';
 import GitHubStrategy from 'passport-github2';
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
 import { UserController } from '../dao/controllers/user.controller.js';
 import { comparePassword, hashPassword } from './../utils/hash.js';
-import { PORT, SECRET } from './config.js';
+
+const { JWT_SECRET, PORT, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = CONFIG;
 
 export function initializePassport() {
 	passport.use(
@@ -48,8 +50,8 @@ export function initializePassport() {
 				const newCart = await CartController.addCart();
 				const hashedPassword = await hashPassword(password);
 				const newUser = await UserController.registerUser({
-					first_name: firstName, 	// eslint-disable-line camelcase
-					last_name: lastName,		// eslint-disable-line camelcase
+					first_name: firstName, // eslint-disable-line camelcase
+					last_name: lastName, // eslint-disable-line camelcase
 					email,
 					password: hashedPassword,
 					rol,
@@ -59,11 +61,6 @@ export function initializePassport() {
 			}
 		)
 	);
-
-	// VARIABLES DE ENTORNO
-	const GITHUB_CLIENT_ID = 'Iv23lic2BRheNPmq977w';
-	const GITHUB_CLIENT_SECRET = 'ec2b96bd7652c9c574a91c2093d03e6f3cb5f34f';
-
 	passport.use(
 		'github',
 		new GitHubStrategy(
@@ -79,9 +76,13 @@ export function initializePassport() {
 				if (user) {
 					return done(null, user);
 				}
+				const fullName = profile.displayName.split(' ');
+				const firstName = fullName[0];
+				const lastName = fullName[fullName.length - 1];	// asumiendo que [profile.displayName] contiene el apellido al final
 				const newCart = await CartController.addCart();
 				const newUser = await UserController.registerUser({
-					name: profile._json.name,
+					first_name: firstName,		// eslint-disable-line camelcase
+					last_name: lastName,			// eslint-disable-line camelcase
 					email,
 					githubId: profile.id,
 					cart: newCart._id,
@@ -95,7 +96,7 @@ export function initializePassport() {
 		'jwt',
 		new JwtStrategy(
 			{
-				secretOrKey: SECRET,
+				secretOrKey: JWT_SECRET,
 				jwtFromRequest: cookieExtractor,
 			},
 			async (jwtPayload, done) => {

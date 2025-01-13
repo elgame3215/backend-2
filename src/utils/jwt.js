@@ -1,12 +1,14 @@
+import { CONFIG } from '../config/config.js';
 import jwt from 'jsonwebtoken';
-import { SECRET } from '../config/config.js';
+
+const { JWT_SECRET } = CONFIG;
 
 export function setToken(req, res) {
 	const payload = {
 		email: req.user.email,
 		rol: req.user.rol,
 	};
-	const token = jwt.sign(payload, SECRET, {
+	const token = jwt.sign(payload, JWT_SECRET, {
 		expiresIn: '15m',
 	});
 	res.cookie('token', token, {
@@ -15,5 +17,5 @@ export function setToken(req, res) {
 }
 
 export function verifyToken(token) {
-	return jwt.verify(token, SECRET);
+	return jwt.verify(token, JWT_SECRET);
 }

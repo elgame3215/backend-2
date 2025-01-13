@@ -1,7 +1,14 @@
-export const MONGO_CLUSTER_URL =
-	'mongodb+srv://backend70335:CoderCoder@cluster0.zwnp1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-export const PORT = 8080;
-export const SECRET = 'EL_SEÑOR_DE_LA_NOCHE123';
+import { config } from "dotenv";
+
+config();
+
+export const CONFIG = {
+	PORT: process.env.PORT,
+	MONGO_CLUSTER_URL: process.env.MONGO_CLUSTER_URL,
+	JWT_SECRET: process.env.JWT_SECRET,
+	GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+	GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+};
 export const POLICIES = {
 	public: 'public',
 	user: 'user',
