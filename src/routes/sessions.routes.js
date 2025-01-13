@@ -2,7 +2,7 @@ import passport from 'passport';
 import { POLICIES } from '../config/config.js';
 import { Router } from './router.js';
 import { setLoginCookies } from '../utils/login.cookies.js';
-import { setToken } from '../utils/jwt.js';
+import { setToken, verifyToken } from '../utils/jwt.js';
 import {
 	validateEmail,
 	validateName,
@@ -113,6 +113,10 @@ class SessionsRouter extends Router {
 				res.redirect('/');
 			}
 		);
+
+		this.get('/current', [POLICIES.user, POLICIES.admin], async (req, res) => {
+			res.sendSuccess(req.user);
+		});
 	}
 }
 const router = new SessionsRouter().router;
