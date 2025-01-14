@@ -26,6 +26,7 @@ class ViewsRouter extends Router {
 			validateQuery,
 			async (req, res) => {
 				const { limit, page, sort, query } = req.query;
+				const { username } = req.query;
 				try {
 					const response = await ProductController.getProducts(
 						limit,
@@ -34,7 +35,7 @@ class ViewsRouter extends Router {
 						query
 					);
 					formatResponse(response, limit, page, sort, query);
-					res.status(200).render('products', { response });
+					res.status(200).render('products', { response, username });
 				} catch (err) {
 					console.error(err);
 					res.renderServerError();

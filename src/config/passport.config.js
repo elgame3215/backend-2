@@ -38,6 +38,7 @@ export function initializePassport() {
 			},
 			async function (req, email, password, done) {
 				const { firstName, lastName, rol } = req.body;
+				const dateBirth = new Date(req.body.dateBirth);
 				try {
 					const user = await UserController.findUserByEmail(email);
 					if (user) {
@@ -49,10 +50,12 @@ export function initializePassport() {
 				}
 				const newCart = await CartController.addCart();
 				const hashedPassword = await hashPassword(password);
+				const age = (new Date() - dateBirth) / 1000 / 60 / 60 / 24 / 365;
 				const newUser = await UserController.registerUser({
 					first_name: firstName, // eslint-disable-line camelcase
 					last_name: lastName, // eslint-disable-line camelcase
 					email,
+					age,
 					password: hashedPassword,
 					rol,
 					cart: newCart._id,
@@ -78,11 +81,11 @@ export function initializePassport() {
 				}
 				const fullName = profile.displayName.split(' ');
 				const firstName = fullName[0];
-				const lastName = fullName[fullName.length - 1];	// asumiendo que [profile.displayName] contiene el apellido al final
+				const lastName = fullName[fullName.length - 1]; // asumiendo que [profile.displayName] contiene el apellido al final
 				const newCart = await CartController.addCart();
 				const newUser = await UserController.registerUser({
-					first_name: firstName,		// eslint-disable-line camelcase
-					last_name: lastName,			// eslint-disable-line camelcase
+					first_name: firstName, 		// eslint-disable-line camelcase
+					last_name: lastName, 			// eslint-disable-line camelcase
 					email,
 					githubId: profile.id,
 					cart: newCart._id,
@@ -101,8 +104,13 @@ export function initializePassport() {
 			},
 			async (jwtPayload, done) => {
 				const { email } = jwtPayload;
-				const user = await UserController.findUserByEmail(email);
-				return done(null, user);
+				try {
+					const user = await UserController.findUserByEmail(email);
+					return done(null, user);
+				} catch (err) {
+					console.error(err);
+					return done(err);
+				}
 			}
 		)
 	);

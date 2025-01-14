@@ -1,4 +1,3 @@
- 
 const socket = io();
 const submit = document.getElementById('submit');
 const productsContainer = document.querySelector('.products-container');

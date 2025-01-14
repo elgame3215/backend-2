@@ -38,8 +38,8 @@ export class Router {
 				return this.render('login');
 			},
 			renderNotFound() {
-				return this.render('error', {error: 'NOT FOUND', code: 404});
-			}
+				return this.render('error', { error: 'NOT FOUND', code: 404 });
+			},
 		};
 	}
 	generateCustomResponses = (req, res, next) => {

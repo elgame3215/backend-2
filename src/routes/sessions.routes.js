@@ -1,8 +1,7 @@
 import passport from 'passport';
 import { POLICIES } from '../config/config.js';
 import { Router } from './router.js';
-import { setLoginCookies } from '../utils/login.cookies.js';
-import { setToken, verifyToken } from '../utils/jwt.js';
+import { setToken } from '../utils/jwt.js';
 import {
 	validateEmail,
 	validateName,
@@ -32,10 +31,18 @@ class SessionsRouter extends Router {
 					detail: 'logout succesfull',
 				});
 			},
-			sendSuccesfullLogin() {
+			sendSuccesfullLogin(payload) {
 				return this.status(200).json({
 					status: 'success',
 					detail: 'login succesfull',
+					payload,
+				});
+			},
+			sendSuccesfullRegister(payload) {
+				return this.status(201).json({
+					status: 'success',
+					detail: 'registro exitoso',
+					payload,
 				});
 			},
 		};
@@ -46,8 +53,7 @@ class SessionsRouter extends Router {
 			return res.sendLoginError();
 		}
 		setToken(req, res);
-		setLoginCookies(req, res);
-		return res.sendSuccesfullLogin();
+		return res.sendSuccesfullLogin({ username: req.user.first_name });
 	}
 	logout(req, res) {
 		res.clearCookie('authStatus');
@@ -60,12 +66,7 @@ class SessionsRouter extends Router {
 			return res.sendExistingEmailError();
 		}
 		setToken(req, res);
-		setLoginCookies(req, res);
-		return res.status(201).json({
-			status: 'success',
-			detail: 'registro exitoso',
-			newUser: req.user,
-		});
+		return res.sendSuccesfullRegister(req.user);
 	}
 	init() {
 		this.post(
@@ -109,8 +110,7 @@ class SessionsRouter extends Router {
 					return res.redirect('/login');
 				}
 				setToken(req, res);
-				setLoginCookies(req, res);
-				res.redirect('/');
+				res.redirect(`/products?username=${req.user.first_name}`);
 			}
 		);
 
