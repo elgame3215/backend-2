@@ -22,7 +22,13 @@ class CartsRouter extends Router {
 			sendCartNotFound() {
 				return this.status(404).json({
 					status: 'error',
-					detail: 'cart not found',
+					detail: 'Carrito no encontrado',
+				});
+			},
+			sendProductNotInCart() {
+				return this.status(404).json({
+					status: 'error',
+					detail: 'El carrito no tiene unidades del producto',
 				});
 			},
 		};

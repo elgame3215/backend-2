@@ -5,10 +5,7 @@ export async function validateUserCartExists(req, res, next) {
 	const cid = req.user.cart;
 	const cart = await CartController.getCartById(cid);
 	if (!cart) {
-		return res.status(404).json({
-			status: 'error',
-			detail: CartController.errorMessages.cartNotFound,
-		});
+		return res.sendCartNotFound();
 	}
 	return next();
 }
@@ -17,35 +14,32 @@ export async function validateCartExists(req, res, next) {
 	const { cid } = req.params;
 	const cart = await CartController.getCartById(cid);
 	if (!cart) {
-		return res.status(404).json({
-			status: 'error',
-			detail: CartController.errorMessages.cartNotFound,
-		});
+		return res.sendCartNotFound();
 	}
 	return next();
 }
 
+function hasProduct(cart, pid) {
+	return cart.products.find(p => p.product._id == pid);
+}
+
 export async function validateProductInUserCart(req, res, next) {
+	// valida que el carrito del usuario autenticado cuente con unidades del producto recibido por parámetro
 	const { pid } = req.params;
 	const cid = req.user.cart;
 	const cart = await CartController.getCartById(cid);
-	if (!cart.products.find(p => p.product._id == pid)) {
-		return res.status(404).json({
-			status: 'error',
-			detail: ProductController.errorMessages.productNotFound,
-		});
+	if (!hasProduct(cart, pid)) {
+		return res.sendProductNotInCart();
 	}
 	return next();
 }
 
 export async function validateProductInCart(req, res, next) {
+	// valida que el carrito recibido por parámetro cuente con unidades del producto recibido por parámetro
 	const { cid, pid } = req.params;
 	const cart = await CartController.getCartById(cid);
-	if (!cart.products.find(p => p.product._id == pid)) {
-		return res.status(404).json({
-			status: 'error',
-			detail: ProductController.errorMessages.productNotFound,
-		});
+	if (!hasProduct(cart, pid)) {
+		return res.sendProductNotInCart();
 	}
 	return next();
 }

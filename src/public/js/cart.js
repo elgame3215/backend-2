@@ -2,12 +2,12 @@ const removeButtons = document.querySelectorAll('.remove-button');
 for (let i = 0; i < removeButtons.length; i++) {
 	const button = removeButtons[i];
 	button.addEventListener('click', async e => {
-		fetch(`http://${domain}/api/carts/mycart/product/${e.target.id}`, {
+		fetch(`/api/carts/mycart/product/${e.target.id}`, {
 			method: 'DELETE',
 		})
 			.then(response => {
 				if (response.status === 401) {
-					window.location.href = `http://${domain}/login`;
+					window.location.href = `/login`;
 				} else {
 					return response.json();
 				}

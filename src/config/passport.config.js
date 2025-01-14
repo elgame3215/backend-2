@@ -7,7 +7,7 @@ import passport from 'passport';
 import { UserController } from '../dao/controllers/user.controller.js';
 import { comparePassword, hashPassword } from './../utils/hash.js';
 
-const { JWT_SECRET, PORT, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = CONFIG;
+const { JWT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = CONFIG;
 
 export function initializePassport() {
 	passport.use(
@@ -42,11 +42,11 @@ export function initializePassport() {
 				try {
 					const user = await UserController.findUserByEmail(email);
 					if (user) {
-						return done(null, false);
+						return done({ error: 'existingEmail' }, false);
 					}
 				} catch (err) {
 					console.error(err);
-					return done(err, false);
+					return done({ error: 'serverError' }, false);
 				}
 				const newCart = await CartController.addCart();
 				const hashedPassword = await hashPassword(password);
@@ -70,7 +70,7 @@ export function initializePassport() {
 			{
 				clientID: GITHUB_CLIENT_ID,
 				clientSecret: GITHUB_CLIENT_SECRET,
-				callbackURL: `http://localhost:${PORT}/api/sessions/github-callback`,
+				callbackURL: `/api/sessions/github-callback`,
 				scope: ['user:email'],
 			},
 			async (accessToken, refreshToken, profile, done) => {
@@ -84,8 +84,8 @@ export function initializePassport() {
 				const lastName = fullName[fullName.length - 1]; // asumiendo que [profile.displayName] contiene el apellido al final
 				const newCart = await CartController.addCart();
 				const newUser = await UserController.registerUser({
-					first_name: firstName, 		// eslint-disable-line camelcase
-					last_name: lastName, 			// eslint-disable-line camelcase
+					first_name: firstName, // eslint-disable-line camelcase
+					last_name: lastName, // eslint-disable-line camelcase
 					email,
 					githubId: profile.id,
 					cart: newCart._id,

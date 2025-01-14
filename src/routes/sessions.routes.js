@@ -3,6 +3,7 @@ import { POLICIES } from '../config/config.js';
 import { Router } from './router.js';
 import { setToken } from '../utils/jwt.js';
 import {
+	validateDateBirth,
 	validateEmail,
 	validateName,
 	validatePassword,
@@ -16,32 +17,38 @@ class SessionsRouter extends Router {
 			sendLoginError() {
 				return this.status(401).json({
 					status: 'error',
-					detail: 'failed to log in, invalid credentials',
+					detail: 'Credenciales inválidas',
 				});
 			},
 			sendExistingEmailError() {
 				return this.status(400).json({
 					status: 'error',
-					detail: 'email already registered',
+					detail: 'Ya existe una cuenta con ese email',
+				});
+			},
+			sendInvalidAgeError() {
+				return this.status(400).json({
+					status: 'error',
+					detail: 'Edad inválida',
 				});
 			},
 			sendSuccesfullLogout() {
 				return this.status(200).json({
 					status: 'success',
-					detail: 'logout succesfull',
+					detail: 'Sesión cerrada',
 				});
 			},
 			sendSuccesfullLogin(payload) {
 				return this.status(200).json({
 					status: 'success',
-					detail: 'login succesfull',
+					detail: 'Sesión iniciada',
 					payload,
 				});
 			},
 			sendSuccesfullRegister(payload) {
 				return this.status(201).json({
 					status: 'success',
-					detail: 'registro exitoso',
+					detail: 'Registro exitoso',
 					payload,
 				});
 			},
@@ -62,11 +69,21 @@ class SessionsRouter extends Router {
 		return res.sendSuccesfullLogout();
 	}
 	register(req, res) {
-		if (!req.user) {
-			return res.sendExistingEmailError();
-		}
-		setToken(req, res);
-		return res.sendSuccesfullRegister(req.user);
+		passport.authenticate('register', { session: false }, (err, user) => {
+			if (err) {
+				switch (err.error) {
+					case 'serverError':
+						return res.sendServerError();
+					case 'existingEmail':
+						return res.sendExistingEmailError();
+					default:
+						return res.sendServerError();
+				}
+			}
+			req.user = user;
+			setToken(req, res);
+			return res.sendSuccesfullRegister({ username: req.user.first_name });
+		})(req, res);
 	}
 	init() {
 		this.post(
@@ -84,7 +101,7 @@ class SessionsRouter extends Router {
 			validateName,
 			validateEmail,
 			validatePassword,
-			passport.authenticate('register', { session: false }),
+			validateDateBirth,
 			this.register
 		);
 
@@ -119,5 +136,5 @@ class SessionsRouter extends Router {
 		});
 	}
 }
-const router = new SessionsRouter().router;
-export const sessionsRouter = router;
+
+export const sessionsRouter = new SessionsRouter().router;

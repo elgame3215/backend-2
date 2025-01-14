@@ -3,7 +3,7 @@ form.addEventListener('submit', e => {
 	e.preventDefault();
 	const formData = new FormData(form);
 	const data = parseFormData(formData);
-	fetch(`http://${domain}/api/sessions/register`, {
+	fetch('/api/sessions/register', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(data),
@@ -18,9 +18,9 @@ form.addEventListener('submit', e => {
 				stopOnFocus: true,
 			}).showToast();
 			if (data.status == 'success') {
-				localStorage.setItem('username', data.payload.first_name);
+				localStorage.setItem('username', data.payload.username);
 				setTimeout(() => {
-					window.location.href = `http://${domain}`;
+					window.location.href = `/`;
 				}, 1500);
 			}
 		});

@@ -7,7 +7,7 @@ submit.addEventListener('click', async e => {
 	const form = document.getElementById('form');
 	const formData = new FormData(form);
 	const data = parseFormData(formData);
-	await fetch(`http://${domain}/api/products`, {
+	await fetch('/api/products', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(data),
@@ -53,7 +53,7 @@ socket.on('invalid product', message => {
 });
 
 async function deleteProduct(e) {
-	const response = await fetch(`http://${domain}/api/products/${e.target.id}`, {
+	const response = await fetch(`/api/products/${e.target.id}`, {
 		method: 'DELETE',
 	});
 	if (response.status != 200) {

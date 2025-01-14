@@ -18,12 +18,12 @@ export function setCamps(response) {
 
 export function formatResponse(response, page, limit, sort, query) {
 	setCamps(response);
-	const endpoint = 'http://localhost:8080/api/products';
+	const endpoint = '/api/products';
 	const prevPage = parseInt(page) - 1;
 	const nextPage = parseInt(page) + 1;
 	const limitParam = limit ? `limit=${limit}` : '';
-	const sortParam = sort ? `&sort=${sort}` : '';
-	const queryParam = query ? `&query=${query}` : '';
-	const params = `${limitParam}${sortParam}${queryParam}`;
+	const sortParam = sort ? `sort=${sort}` : '';
+	const queryParam = query ? `query=${query}` : '';
+	const params = `${limitParam}&${sortParam}&${queryParam}`;
 	setLinks(response, endpoint, prevPage, nextPage, params);
 }

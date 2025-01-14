@@ -4,7 +4,7 @@ formELement.addEventListener('submit', e => {
 	e.preventDefault();
 	const formData = new FormData(formELement);
 	const data = parseFormData(formData);
-	fetch(`http://${domain}/api/sessions/login`, {
+	fetch('/api/sessions/login', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(data),
@@ -24,7 +24,7 @@ formELement.addEventListener('submit', e => {
 		})
 		.then(data => {
 			localStorage.setItem('username', data.payload.username);
-			window.location.href = `http://${domain}`;
+			window.location.href = '/';
 		});
 });
 

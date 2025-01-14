@@ -51,11 +51,10 @@
 		}
 	</style>
 	<script>
-		const domain = window.location.host;
 		const loginBtn = document.getElementById('login-btn')
 		const logoutBtn = document.getElementById('logout-btn');
 		const usernameP = document.getElementById('username');
-		fetch(`http://${domain}/api/sessions/current`)
+		fetch('/api/sessions/current')
 			.then(response => {
 				if(response.status == 200) {
 				logoutBtn.style.display = 'flex';
@@ -68,7 +67,7 @@
 				}
 				usernameP.textContent = `Bienvenido, ${username}`;
 				logoutBtn.addEventListener('click', e => {
-					fetch(`http://${domain}/api/sessions/logout`, { method: 'POST' }).then(resp => {
+					fetch('/api/sessions/logout', { method: 'POST' }).then(resp => {
 						localStorage.removeItem('username');
 						window.location.href = '/';
 					})

@@ -19,7 +19,13 @@ export class Router {
 			sendServerError() {
 				return this.status(500).json({
 					status: 'error',
-					detail: 'Internal server error',
+					detail: 'Error del servidor',
+				});
+			},
+			sendMissingCamps() {
+				return this.status(400).json({
+					status: 'error',
+					detail: 'Campos faltantes',
 				});
 			},
 			sendUnauthorized() {
@@ -31,7 +37,7 @@ export class Router {
 			sendInvalidToken() {
 				return this.status(400).json({
 					status: 'error',
-					detail: 'Invalid token provided',
+					detail: 'Token inválido',
 				});
 			},
 			renderUnauthorized() {
