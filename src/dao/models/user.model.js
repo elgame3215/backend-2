@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
 		unique: true,
 	},
 	password: {
-		type: String,
+		type: String,				// [password] no puede ser requerido porque Github no proporciona la contraseña de sus usuarios
 	},
 	githubId: {
 		type: String,
