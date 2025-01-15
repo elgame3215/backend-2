@@ -1,6 +1,6 @@
 import { userModel } from '../models/user.model.js';
 
-export class UserController {
+export class UsersService {
 	static async registerUser(user) {
 		const newUser = await userModel.create(user);
 		return newUser;

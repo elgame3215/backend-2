@@ -1,10 +1,10 @@
-import { CartController } from '../dao/controllers/cart.controller.js';
+import { CartsService } from '../db/services/cart.service.js';
 import { CONFIG } from './config.js';
 import GitHubStrategy from 'passport-github2';
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
-import { UserController } from '../dao/controllers/user.controller.js';
+import { UsersService } from '../db/services/user.service.js';
 import { comparePassword, hashPassword } from './../utils/hash.js';
 
 const { JWT_SECRET, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = CONFIG;
@@ -19,7 +19,7 @@ export function initializePassport() {
 				session: false,
 			},
 			async function (email, password, done) {
-				const user = await UserController.findUserByEmail(email);
+				const user = await UsersService.findUserByEmail(email);
 				if (!user || !(await comparePassword(password, user.password))) {
 					return done(null, false);
 				}
@@ -40,7 +40,7 @@ export function initializePassport() {
 				const { firstName, lastName, rol } = req.body;
 				const dateBirth = new Date(req.body.dateBirth);
 				try {
-					const user = await UserController.findUserByEmail(email);
+					const user = await UsersService.findUserByEmail(email);
 					if (user) {
 						return done({ error: 'existingEmail' }, false);
 					}
@@ -48,10 +48,10 @@ export function initializePassport() {
 					console.error(err);
 					return done({ error: 'serverError' }, false);
 				}
-				const newCart = await CartController.addCart();
+				const newCart = await CartsService.addCart();
 				const hashedPassword = await hashPassword(password);
 				const age = (new Date() - dateBirth) / 1000 / 60 / 60 / 24 / 365;
-				const newUser = await UserController.registerUser({
+				const newUser = await UsersService.registerUser({
 					first_name: firstName, // eslint-disable-line camelcase
 					last_name: lastName, // eslint-disable-line camelcase
 					email,
@@ -75,15 +75,15 @@ export function initializePassport() {
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				const email = profile.emails[0].value;
-				const user = await UserController.findUserByEmail(email);
+				const user = await UsersService.findUserByEmail(email);
 				if (user) {
 					return done(null, user);
 				}
 				const fullName = profile.displayName.split(' ');
 				const firstName = fullName[0];
 				const lastName = fullName[fullName.length - 1]; // asumiendo que [profile.displayName] contiene el apellido al final
-				const newCart = await CartController.addCart();
-				const newUser = await UserController.registerUser({
+				const newCart = await CartsService.addCart();
+				const newUser = await UsersService.registerUser({
 					first_name: firstName, // eslint-disable-line camelcase
 					last_name: lastName, // eslint-disable-line camelcase
 					email,
@@ -105,7 +105,7 @@ export function initializePassport() {
 			async (jwtPayload, done) => {
 				const { email } = jwtPayload;
 				try {
-					const user = await UserController.findUserByEmail(email);
+					const user = await UsersService.findUserByEmail(email);
 					return done(null, user);
 				} catch (err) {
 					console.error(err);
@@ -120,7 +120,7 @@ export function initializePassport() {
 	});
 
 	passport.deserializeUser(async (id, done) => {
-		const user = await UserController.findUserById(id);
+		const user = await UsersService.findUserById(id);
 		done(null, user);
 	});
 }

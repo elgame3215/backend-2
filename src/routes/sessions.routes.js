@@ -2,6 +2,7 @@ import passport from 'passport';
 import { POLICIES } from '../config/config.js';
 import { Router } from './router.js';
 import { setToken } from '../utils/jwt.js';
+import { UserController } from './../controllers/user.controller.js';
 import {
 	validateDateBirth,
 	validateEmail,
@@ -13,7 +14,6 @@ class SessionsRouter extends Router {
 	constructor() {
 		super();
 		this.customResponses = {
-			...this.customResponses,
 			sendLoginError() {
 				return this.status(401).json({
 					status: 'error',
@@ -52,48 +52,16 @@ class SessionsRouter extends Router {
 					payload,
 				});
 			},
+			...this.customResponses,
 		};
 		this.init();
 	}
-	login(req, res) {
-		if (!req.user) {
-			return res.sendLoginError();
-		}
-		setToken(req, res);
-		return res.sendSuccesfullLogin({ username: req.user.first_name });
-	}
-	logout(req, res) {
-		res.clearCookie('authStatus');
-		res.clearCookie('token');
-		res.clearCookie('username');
-		return res.sendSuccesfullLogout();
-	}
-	register(req, res) {
-		passport.authenticate('register', { session: false }, (err, user) => {
-			if (err) {
-				switch (err.error) {
-					case 'serverError':
-						return res.sendServerError();
-					case 'existingEmail':
-						return res.sendExistingEmailError();
-					default:
-						return res.sendServerError();
-				}
-			}
-			req.user = user;
-			setToken(req, res);
-			return res.sendSuccesfullRegister({ username: req.user.first_name });
-		})(req, res);
-	}
+
 	init() {
 		this.post(
 			'/login',
 			[POLICIES.public],
-			passport.authenticate('login', {
-				failureMessage: true,
-				session: false,
-			}),
-			this.login
+			UserController.login
 		);
 		this.post(
 			'/register',
@@ -102,15 +70,10 @@ class SessionsRouter extends Router {
 			validateEmail,
 			validatePassword,
 			validateDateBirth,
-			this.register
+			UserController.register
 		);
 
-		this.post('/logout', [POLICIES.public], async (req, res) => {
-			res.clearCookie('authStatus');
-			res.clearCookie('token');
-			res.clearCookie('username');
-			res.status(200).json({ status: 'success', detail: 'sesión cerrada' });
-		});
+		this.post('/logout', [POLICIES.public], UserController.logout);
 
 		this.get(
 			'/github',

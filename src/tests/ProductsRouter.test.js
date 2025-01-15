@@ -1,4 +1,4 @@
-import { ProductController } from '../dao/controllers/product.controller.js';
+import { ProductService } from '../db/services/product.service.js';
 import { ProductValidator } from '../utils/product.validator.js';
 import { describe, expect, expectTypeOf, it } from 'vitest';
 const domain = 'localhost:8080';
@@ -188,7 +188,7 @@ describe('GET /products/:pid not found id', async () => {
 		expect(response.status).toBe(404);
 	});
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductController.errorMessages.productNotFound);
+		expect(data.detail).toBe(ProductService.errorMessages.productNotFound);
 	});
 });
 
@@ -255,7 +255,7 @@ describe('PUT /products/:pid invalid id', async () => {
 		expect(response.status).toBe(404);
 	});
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductController.errorMessages.productNotFound);
+		expect(data.detail).toBe(ProductService.errorMessages.productNotFound);
 	});
 });
 
@@ -312,6 +312,6 @@ describe('DELETE /products/:pid invalid id', async () => {
 		expect(response.status).toBe(404);
 	});
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductController.errorMessages.productNotFound);
+		expect(data.detail).toBe(ProductService.errorMessages.productNotFound);
 	});
 });

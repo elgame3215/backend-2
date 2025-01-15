@@ -1,6 +1,6 @@
-import { CartController } from '../dao/controllers/cart.controller.js';
+import { CartsService } from '../db/services/cart.service.js';
 import { isValidObjectId } from 'mongoose';
-import { ProductController } from '../dao/controllers/product.controller.js';
+import { ProductService } from '../db/services/product.service.js';
 import { ProductValidator } from '../utils/product.validator.js';
 
 export async function validateProduct(req, res, next) {
@@ -20,20 +20,20 @@ export async function validateProductIsAviable(req, res, next) {
 	const { pid } = req.params;
 	const cid = req.user.cart;
 
-	const product = await ProductController.getProductById(pid);
+	const product = await ProductService.getProductById(pid);
 	if (!product) {
 		return res.status(404).json({
 			status: 'error',
-			detail: ProductController.errorMessages.productNotFound,
+			detail: ProductService.errorMessages.productNotFound,
 		});
 	}
 	if (product.stock == 0) {
 		return res.status(400).json({
 			status: 'error',
-			detail: ProductController.errorMessages.productOutOfStock,
+			detail: ProductService.errorMessages.productOutOfStock,
 		});
 	}
-	const cart = await CartController.getCartById(cid);
+	const cart = await CartsService.getCartById(cid);
 	const productInCart = cart.products.find(p => p.product._id == pid);
 	if (!productInCart) {
 		return next();
@@ -41,7 +41,7 @@ export async function validateProductIsAviable(req, res, next) {
 	if (product.stock <= productInCart.quantity) {
 		return res.status(400).json({
 			status: 'error',
-			detail: ProductController.errorMessages.productOutOfStock,
+			detail: ProductService.errorMessages.productOutOfStock,
 		});
 	}
 	return next();
@@ -76,18 +76,18 @@ export async function validateBodyPids(req, res, next) {
 				detail: `product: ${p.product} quantity must be at least 1`,
 			});
 		}
-		const product = await ProductController.getProductById(p.product);
+		const product = await ProductService.getProductById(p.product);
 		if (!product) {
 			return res.status(404).json({
 				status: 'error',
-				detail: ProductController.errorMessages.productNotFound,
+				detail: ProductService.errorMessages.productNotFound,
 				idNotFound: p.product,
 			});
 		}
 		if (product.stock < p.quantity) {
 			return res.status(404).json({
 				status: 'error',
-				detail: ProductController.errorMessages.productOutOfStock,
+				detail: ProductService.errorMessages.productOutOfStock,
 				idOutOfStock: p.product,
 			});
 		}

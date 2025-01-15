@@ -1,4 +1,4 @@
-import { CartController } from '../dao/controllers/cart.controller.js';
+import { CartController } from '../controllers/cart.controller.js';
 import { POLICIES } from '../config/config.js';
 import { Router } from './router.js';
 import {
@@ -18,7 +18,6 @@ class CartsRouter extends Router {
 	constructor() {
 		super();
 		this.customResponses = {
-			...this.customResponses,
 			sendCartNotFound() {
 				return this.status(404).json({
 					status: 'error',
@@ -31,85 +30,9 @@ class CartsRouter extends Router {
 					detail: 'El carrito no tiene unidades del producto',
 				});
 			},
+			...this.customResponses,
 		};
 		this.init();
-	}
-
-	async createCart(req, res) {
-		try {
-			const addedCart = await CartController.addCart();
-			return res.sendResourceCreated({ addedCart });
-		} catch (err) {
-			console.error(err);
-			return res.sendServerError();
-		}
-	}
-	async getCart(req) {
-		return req.cart;	// inyectado por [validateCartExists]
-	}
-	async addProduct(req, res) {
-		const { pid } = req.params;
-		const cid = req.user?.cart;
-		if (!cid) {
-			res.sendUnauthorized();
-		}
-		try {
-			const updatedCart = await CartController.addProductToCart(pid, cid);
-			return res.sendSuccess({ updatedCart });
-		} catch (err) {
-			console.error(err);
-			return res.sendServerError();
-		}
-	}
-	async deleteProduct(req, res) {
-		const { pid } = req.params;
-		const cid = req.user.cart;
-		try {
-			const updatedCart = await CartController.deleteProductFromCart(pid, cid);
-			return res.sendSuccess({ updatedCart });
-		} catch (err) {
-			console.error(err);
-			return res.sendServerError();
-		}
-	}
-	async updateCart(req, res) {
-		const productList = req.body;
-		const { cid } = req.params;
-		try {
-			const updatedCart = await CartController.updateCartProducts(
-				cid,
-				productList
-			);
-			return res.sendSuccess({ updatedCart });
-		} catch (err) {
-			console.error(err);
-			return res.sendServerError();
-		}
-	}
-	async updateProductQuantity(req, res) {
-		const { cid, pid } = req.params;
-		const { quantity } = req.body;
-		try {
-			const updatedCart = await CartController.updateProductQuantity(
-				cid,
-				pid,
-				quantity
-			);
-			return res.sendSuccess({ updatedCart });
-		} catch (err) {
-			console.error(err);
-			res.sendServerError();
-		}
-	}
-	async clearCart(req, res) {
-		const { cid } = req.params;
-		try {
-			const updatedCart = await CartController.clearCart(cid);
-			return res.sendSuccess({ updatedCart });
-		} catch (err) {
-			console.error(err);
-			res.sendServerError();
-		}
 	}
 
 	init() {
@@ -119,13 +42,13 @@ class CartsRouter extends Router {
 
 		this.param('pid', validatePid);
 
-		this.post('/', [POLICIES.user, POLICIES.admin], this.createCart);
+		this.post('/', [POLICIES.admin], CartController.createCart);
 
 		this.get(
 			'/:cid',
 			[POLICIES.user, POLICIES.admin],
 			validateCid,
-			this.getCart
+			CartController.getCart
 		);
 
 		this.post(
@@ -133,7 +56,7 @@ class CartsRouter extends Router {
 			[POLICIES.user, POLICIES.admin],
 			validateUserCartExists,
 			validateProductIsAviable,
-			this.addProduct
+			CartController.addProduct
 		);
 
 		this.delete(
@@ -141,14 +64,14 @@ class CartsRouter extends Router {
 			[POLICIES.user, POLICIES.admin],
 			validateUserCartExists,
 			validateProductInUserCart,
-			this.deleteProduct
+			CartController.deleteProduct
 		);
 
 		this.put(
 			'/:cid',
 			[POLICIES.user, POLICIES.admin],
 			validateBodyPids,
-			this.updateCart
+			CartController.updateCart
 		);
 
 		this.put(
@@ -156,13 +79,13 @@ class CartsRouter extends Router {
 			[POLICIES.user, POLICIES.admin],
 			validateProductInCart,
 			validateQuantity,
-			this.updateProductQuantity
+			CartController.updateProductQuantity
 		);
 
 		this.delete(
 			'/:cid',
 			[POLICIES.user, POLICIES.admin],
-			this.clearCart
+			CartController.clearCart
 		);
 	}
 }

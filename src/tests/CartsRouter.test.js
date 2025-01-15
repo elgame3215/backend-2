@@ -1,5 +1,5 @@
-import { CartController } from '../dao/controllers/cart.controller.js';
-import { ProductController } from '../dao/controllers/product.controller.js';
+import { CartsService } from '../db/services/cart.service.js';
+import { ProductService } from '../db/services/product.service.js';
 import { randomCode } from './ProductsRouter.test.js';
 import { assert, describe, expect, expectTypeOf, it } from 'vitest';
 const { domain } = 'localhost:8080';
@@ -57,7 +57,7 @@ describe('GET /carts/:cid invalid id', async () => {
 		expect(response.status).toBe(404);
 	});
 	it('Error message should be cart not found', () => {
-		expect(data.detail).toBe(CartController.errorMessages.cartNotFound);
+		expect(data.detail).toBe(CartsService.errorMessages.cartNotFound);
 	});
 });
 
@@ -97,7 +97,7 @@ describe('POST /:cid/product/:pid no stock', async () => {
 		expect(response.status).toBe(400);
 	});
 	it('Error message should be product out of stock', () => {
-		expect(data.detail).toBe(ProductController.errorMessages.productOutOfStock);
+		expect(data.detail).toBe(ProductService.errorMessages.productOutOfStock);
 	});
 });
 
@@ -127,7 +127,7 @@ describe('POST /:cid/product/:pid invalid cid', async () => {
 		expect(response.status).toBe(404);
 	});
 	it('Error message should be cart not found', () => {
-		expect(data.detail).toBe(CartController.errorMessages.cartNotFound);
+		expect(data.detail).toBe(CartsService.errorMessages.cartNotFound);
 	});
 });
 
@@ -140,7 +140,7 @@ describe('POST /:cid/product/:pid invalid pid', async () => {
 		expect(response.status).toBe(404);
 	});
 	it('Error message should be product not found', () => {
-		expect(data.detail).toBe(ProductController.errorMessages.productNotFound);
+		expect(data.detail).toBe(ProductService.errorMessages.productNotFound);
 	});
 });
 
@@ -177,7 +177,7 @@ describe('PUT /:cid/product/:pid no stock', async () => {
 		expect(response.status).toBe(400);
 	});
 	it('Error message should be product out of stock', () => {
-		expect(data.detail).toBe(ProductController.errorMessages.productOutOfStock);
+		expect(data.detail).toBe(ProductService.errorMessages.productOutOfStock);
 	});
 });
 

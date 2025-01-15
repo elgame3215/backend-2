@@ -1,7 +1,7 @@
-import { CartController } from '../dao/controllers/cart.controller.js';
+import { CartsService } from '../db/services/cart.service.js';
 import { formatResponse } from '../utils/query.process.js';
 import { POLICIES } from '../config/config.js';
-import { ProductController } from '../dao/controllers/product.controller.js';
+import { ProductService } from '../db/services/product.service.js';
 import { Router } from './router.js';
 import { validateQuery } from '../middleware/query.validate.js';
 
@@ -12,7 +12,7 @@ class ViewsRouter extends Router {
 			...this.customResponses,
 			renderServerError() {
 				this.render('error', {
-					error: ProductController.errorMessages.serverError,
+					error: ProductService.errorMessages.serverError,
 					code: 500,
 				});
 			},
@@ -28,7 +28,7 @@ class ViewsRouter extends Router {
 				const { limit, page, sort, query } = req.query;
 				const { username } = req.query;
 				try {
-					const response = await ProductController.getProducts(
+					const response = await ProductService.getProducts(
 						limit,
 						page,
 						sort,
@@ -50,7 +50,7 @@ class ViewsRouter extends Router {
 			async (req, res) => {
 				try {
 					const { limit, page, sort, query } = req.query;
-					const response = await ProductController.getProducts(
+					const response = await ProductService.getProducts(
 						limit,
 						page,
 						sort,
@@ -68,7 +68,7 @@ class ViewsRouter extends Router {
 		this.get('/mycart', [POLICIES.user, POLICIES.admin], async (req, res) => {
 			const cartId = req.user.cart;
 			try {
-				const cart = await CartController.getCartById(cartId);
+				const cart = await CartsService.getCartById(cartId);
 				const { products } = cart;
 				res.status(200).render('cart', { products, cartId });
 			} catch (err) {
