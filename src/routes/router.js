@@ -106,4 +106,8 @@ export class Router {
 			...callbacks
 		);
 	}
+
+	param(param, ...callbacks) {
+		this.router.param(param, ...callbacks);
+	}
 }

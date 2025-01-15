@@ -16,6 +16,7 @@ export async function validateCartExists(req, res, next) {
 	if (!cart) {
 		return res.sendCartNotFound();
 	}
+	req.cart = cart;
 	return next();
 }
 

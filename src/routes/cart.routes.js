@@ -44,18 +44,8 @@ class CartsRouter extends Router {
 			return res.sendServerError();
 		}
 	}
-	async getCart(req, res) {
-		const { cid } = req.params;
-		try {
-			const cart = await CartController.getCartById(cid);
-			if (!cart) {
-				return res.sendCartNotFound();
-			}
-			return res.sendSuccess(cart);
-		} catch (err) {
-			console.error(err);
-			return res.sendServerError();
-		}
+	async getCart(req) {
+		return req.cart;	// inyectado por [validateCartExists]
 	}
 	async addProduct(req, res) {
 		const { pid } = req.params;
@@ -123,6 +113,12 @@ class CartsRouter extends Router {
 	}
 
 	init() {
+		this.param('cid', validateCid, validateCartExists);
+		// [validateCartExists] se encarga de buscar el carrito e inyectarlo en [req]
+		// carga a la función con una responsabilidad de más, pero molesto a la db una única vez.
+
+		this.param('pid', validatePid);
+
 		this.post('/', [POLICIES.user, POLICIES.admin], this.createCart);
 
 		this.get(
@@ -135,7 +131,6 @@ class CartsRouter extends Router {
 		this.post(
 			'/mycart/product/:pid',
 			[POLICIES.user, POLICIES.admin],
-			validatePid,
 			validateUserCartExists,
 			validateProductIsAviable,
 			this.addProduct
@@ -144,7 +139,6 @@ class CartsRouter extends Router {
 		this.delete(
 			'/mycart/product/:pid',
 			[POLICIES.user, POLICIES.admin],
-			validatePid,
 			validateUserCartExists,
 			validateProductInUserCart,
 			this.deleteProduct
@@ -153,8 +147,6 @@ class CartsRouter extends Router {
 		this.put(
 			'/:cid',
 			[POLICIES.user, POLICIES.admin],
-			validateCid,
-			validateCartExists,
 			validateBodyPids,
 			this.updateCart
 		);
@@ -162,9 +154,6 @@ class CartsRouter extends Router {
 		this.put(
 			'/:cid/product/:pid',
 			[POLICIES.user, POLICIES.admin],
-			validateCid,
-			validatePid,
-			validateCartExists,
 			validateProductInCart,
 			validateQuantity,
 			this.updateProductQuantity
@@ -173,8 +162,6 @@ class CartsRouter extends Router {
 		this.delete(
 			'/:cid',
 			[POLICIES.user, POLICIES.admin],
-			validateCid,
-			validateCartExists,
 			this.clearCart
 		);
 	}
