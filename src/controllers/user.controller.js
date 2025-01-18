@@ -1,45 +1,46 @@
 import passport from 'passport';
+import { sendSuccess } from '../utils/customResponses.js';
 import { setToken } from '../utils/jwt.js';
 
 export class UserController {
-	static login(req, res) {
-		return passport.authenticate('login', {
-			failureMessage: true,
-			session: false,
-		}, (err, user) => {
-			if (err) {
-				return res.sendServerError();
+	static login(req, res, next) {
+		return passport.authenticate(
+			'login',
+			{
+				failureMessage: true,
+				session: false,
+			},
+			(err, user) => {
+				if (err) {
+					return next(err);
+				}
+				req.user = user;
+				setToken(req, res);
+				return sendSuccess(res, 200, 'Sesión iniciada', {
+					username: req.user.first_name,
+				});
 			}
-			if (!user) {
-				return res.sendLoginError();
-			}
-			req.user = user;
-			setToken(req, res);
-			return res.sendSuccesfullLogin({ username: req.user.first_name });
-		})(req, res);
+		)(req, res);
 	}
 
 	static logout(req, res) {
-		res.clearCookie('authStatus');
 		res.clearCookie('token');
-		res.clearCookie('username');
-		return res.sendSuccesfullLogout();
+		return sendSuccess(res, 200, 'Sesión cerrada');
 	}
-	static register(req, res) {
-		return passport.authenticate('register', { session: false }, (err, user) => {
-			if (err) {
-				switch (err.error) {
-					case 'serverError':
-						return res.sendServerError();
-					case 'existingEmail':
-						return res.sendExistingEmailError();
-					default:
-						return res.sendServerError();
+	static register(req, res, next) {
+		return passport.authenticate(
+			'register',
+			{ session: false },
+			(err, user) => {
+				if (err) {
+					return next(err);
 				}
+				req.user = user;
+				setToken(req, res);
+				return sendSuccess(res, 200, 'Registro exitoso', {
+					username: req.user.first_name,
+				});
 			}
-			req.user = user;
-			setToken(req, res);
-			return res.sendSuccesfullRegister({ username: req.user.first_name });
-		})(req, res);
+		)(req, res);
 	}
 }

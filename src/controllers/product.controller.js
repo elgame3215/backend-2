@@ -1,34 +1,37 @@
-import { ProductService } from "../db/services/product.service.js";
+import { formatResponse } from '../utils/query.process.js';
+import { InternalServerError } from '../errors/generic.errors.js';
+import { ProductNotFoundError } from '../errors/product.errors.js';
+import { ProductService } from '../db/services/product.service.js';
+import { sendSuccess } from '../utils/customResponses.js';
 
 export class ProductController {
-	static async addProduct(req, res) {
+	static async addProduct(req, res, next) {
 		const newProduct = req.body;
 		try {
 			const addedProduct = await ProductService.addProduct(newProduct);
 			req.io.emit('product added', addedProduct);
-			return res.sendResourceCreated({ addedProduct });
+			return sendSuccess(res, 201, 'Producto añadido', { addedProduct });
 		} catch (err) {
-			console.error(err);
 			req.io.emit('invalid product', err.message);
-			res.sendServerError();
+			next(new InternalServerError());
 		}
 	}
 
-	static async getOneProduct(req, res) {
+	static async getOneProduct(req, res, next) {
 		const { pid } = req.params;
 		try {
 			const product = await ProductService.getProductById(pid);
 			if (!product) {
-				return res.sendProductNotFound();
+				return next(new ProductNotFoundError());
 			}
-			res.sendSuccess(product);
+			sendSuccess(res, 200, null, { product });
 		} catch (err) {
 			console.error(err);
-			res.sendServerError();
+			next(new InternalServerError());
 		}
 	}
 
-	static async getAllProducts(req, res) {
+	static async getAllProducts(req, res, next) {
 		const { limit, sort, query } = req.query;
 		const page = req.query.page ?? 1;
 		try {
@@ -39,28 +42,28 @@ export class ProductController {
 				query
 			);
 			formatResponse(response, page, limit, sort, query);
-			return res.sendSuccess(response);
+			return sendSuccess(res, 200, { response });
 		} catch (err) {
 			console.error(err);
-			return res.sendServerError();
+			return next(new InternalServerError());
 		}
 	}
 
-	static async deleteProduct(req, res) {
+	static async deleteProduct(req, res, next) {
 		const { pid } = req.params;
 		try {
 			const deletedProduct = await ProductService.deleteProductById(pid);
 			if (!deletedProduct) {
-				return res.sendProductNotFound();
+				return next(new ProductNotFoundError());
 			}
-			return res.sendSuccess({ deletedProduct });
+			return sendSuccess(res, 200, 'Producto eliminado', { deletedProduct });
 		} catch (err) {
 			console.error(err);
-			res.sendServerError();
+			next(new InternalServerError());
 		}
 	}
 
-	static async updateProduct(req, res) {
+	static async updateProduct(req, res, next) {
 		const { pid } = req.params;
 		const modifiedValues = req.body;
 		try {
@@ -69,12 +72,12 @@ export class ProductController {
 				modifiedValues
 			);
 			if (!updatedProduct) {
-				return res.sendProductNotFound();
+				return next(new ProductNotFoundError());
 			}
-			return res.sendSuccess({ updatedProduct });
+			return sendSuccess(res, 200, 'Producto actualizado', { updatedProduct });
 		} catch (err) {
 			console.error(err);
-			res.sendServerError();
+			next(new InternalServerError());
 		}
 	}
 }

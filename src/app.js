@@ -1,10 +1,12 @@
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 import { config } from 'dotenv';
 import cookieParser from 'cookie-parser';
+import { CustomError } from './errors/CustomError.js';
 import { engine } from 'express-handlebars';
 import express from 'express';
 import Handlebars from 'handlebars';
 import mongoose from 'mongoose';
+import { sendError } from './utils/customResponses.js';
 import { Server } from 'socket.io';
 import { cartsRouter } from './routes/cart.routes.js'; // eslint-disable-line sort-imports
 import { initializePassport } from './config/passport.config.js';
@@ -50,6 +52,10 @@ app.use('/api', (req, res, next) => {
 	req.isApiReq = true;
 	return next();
 });
+
+// ROUTERS
+app.use('/api/carts', cartsRouter);
+app.use('/api/sessions', sessionsRouter);
 app.use(
 	'/api/products',
 	(req, res, next) => {
@@ -58,17 +64,35 @@ app.use(
 	},
 	productsRouter
 );
-app.use('/api/carts', cartsRouter);
 app.use('/', viewsRouter);
-app.use('/api/sessions', sessionsRouter);
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+	if (!(err instanceof CustomError)) {
+		console.error(err);
+		throw err;
+	}
+	if (req.isApiReq) {
+		const errDetails = {};
+		for (const key in err) {
+			// eslint-disable-next-line no-prototype-builtins
+			if (err.hasOwnProperty(key)) {
+				errDetails[key] = err[key];
+			}
+		}
+		sendError(res, err.code, err.message, { ...errDetails });
+	} else {
+		const { status, message } = err;
+		res.status(err.code).render('error', { status, message });
+	}
+});
 
 (async () => {
 	try {
 		await mongoose.connect(MONGO_CLUSTER_URL, {
 			dbName: 'ecommerce',
 		});
-		// eslint-disable-next-line no-console
-		console.log(`DB connected`);
+		console.log(`DB connected`); // eslint-disable-line no-console
 	} catch (error) {
 		console.error(`Error connecting to DB: ${error.message}`);
 	}

@@ -1,11 +1,14 @@
 import { CartsService } from '../db/services/cart.service.js';
+import { hasProduct } from './utils.js';
+import { ProductOutOfStockError } from '../errors/product.errors.js';
 import { ProductService } from '../db/services/product.service.js';
+import { CartNotFoundError, InvalidQuantityError, ProductNotInCartError } from '../errors/cart.errors.js';
 
 export async function validateUserCartExists(req, res, next) {
 	const cid = req.user.cart;
 	const cart = await CartsService.getCartById(cid);
 	if (!cart) {
-		return res.sendCartNotFound();
+		next(new CartNotFoundError());
 	}
 	return next();
 }
@@ -14,14 +17,10 @@ export async function validateCartExists(req, res, next) {
 	const { cid } = req.params;
 	const cart = await CartsService.getCartById(cid);
 	if (!cart) {
-		return res.sendCartNotFound();
+		next(new CartNotFoundError());
 	}
 	req.cart = cart;
 	return next();
-}
-
-function hasProduct(cart, pid) {
-	return cart.products.find(p => p.product._id == pid);
 }
 
 export async function validateProductInUserCart(req, res, next) {
@@ -30,7 +29,7 @@ export async function validateProductInUserCart(req, res, next) {
 	const cid = req.user.cart;
 	const cart = await CartsService.getCartById(cid);
 	if (!hasProduct(cart, pid)) {
-		return res.sendProductNotInCart();
+		next(new ProductNotInCartError());
 	}
 	return next();
 }
@@ -40,30 +39,20 @@ export async function validateProductInCart(req, res, next) {
 	const { cid, pid } = req.params;
 	const cart = await CartsService.getCartById(cid);
 	if (!hasProduct(cart, pid)) {
-		return res.sendProductNotInCart();
+		next(new ProductNotInCartError());
 	}
 	return next();
 }
 
 export async function validateQuantity(req, res, next) {
 	const { quantity } = req.body;
-	if (!quantity) {
-		return res
-			.status(400)
-			.json({ status: 'error', detail: 'quantity required' });
-	}
 	if (isNaN(quantity)) {
-		return res
-			.status(400)
-			.json({ status: 'error', detail: 'quantity must be a number' });
+		next(new InvalidQuantityError());
 	}
 	const { pid } = req.params;
 	const product = await ProductService.getProductById(pid);
 	if (product.stock < quantity) {
-		return res.status(400).json({
-			status: 'error',
-			detail: ProductService.errorMessages.productOutOfStock,
-		});
+		next(new ProductOutOfStockError());
 	}
 	return next();
 }

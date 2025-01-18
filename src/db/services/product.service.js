@@ -19,8 +19,8 @@ export class ProductService {
 		return addedProduct;
 	}
 
-	static async getProductById(id) {
-		const product = await productModel.findById(id);
+	static async getProductById(pid) {
+		const product = await productModel.findById(pid);
 		return product;
 	}
 
@@ -38,10 +38,4 @@ export class ProductService {
 		);
 		return updatedProduct;
 	}
-
-	static errorMessages = {
-		productNotFound: 'Producto no encontrado',
-		serverError: 'Error del servidor',
-		productOutOfStock: 'Producto sin stock suficiente',
-	};
 }
