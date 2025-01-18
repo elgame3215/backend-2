@@ -1,22 +1,13 @@
 import { POLICIES } from '../config/config.js';
 import { ProductController } from '../controllers/product.controller.js';
-import { ProductService } from '../db/services/product.service.js';
+import { ProductValidator } from '../utils/Product.validator.js';
 import { Router } from './router.js';
-import { validatePid } from '../middleware/mongoID.validate.js';
-import { validateProduct } from '../middleware/product.validate.js';
-import { validateQuery } from '../middleware/query.validate.js';
+import { validateProduct } from '../middleware/product.validations.js';
+import { validateQuery } from '../middleware/query.validations.js';
+import { validateCamps, validatePid } from '../middleware/generic.validations.js';
 class ProductsRouter extends Router {
 	constructor() {
 		super();
-		this.customResponses = {
-			sendProductNotFound() {
-				this.status(404).json({
-					status: 'error',
-					detail: ProductService.errorMessages.productNotFound,
-				});
-			},
-			...this.customResponses,
-		};
 		this.init();
 	}
 
@@ -38,6 +29,7 @@ class ProductsRouter extends Router {
 		this.post(
 			'/',
 			[POLICIES.admin],
+			validateCamps(ProductValidator.requiredKeys),
 			validateProduct,
 			ProductController.addProduct
 		);
@@ -53,6 +45,7 @@ class ProductsRouter extends Router {
 			'/:pid',
 			[POLICIES.admin],
 			validatePid,
+			validateCamps(ProductValidator.requiredKeys),
 			validateProduct,
 			ProductController.updateProduct
 		);

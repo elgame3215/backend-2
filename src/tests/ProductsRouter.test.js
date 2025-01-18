@@ -298,7 +298,7 @@ describe('DELETE /products/:pid valid', async () => {
 	});
 
 	const response2 = await fetch(endpoint);
-	it('Product is not aviable after delete', () => {
+	it('Product is not available after delete', () => {
 		expect(response2.status).toBe(404);
 	});
 });

@@ -3,35 +3,20 @@ import { POLICIES } from '../config/config.js';
 import { Router } from './router.js';
 import {
 	validateBodyPids,
-	validateProductIsAviable,
-} from '../middleware/product.validate.js';
+	validateProductIsAvailable,
+} from '../middleware/product.validations.js';
 import {
 	validateCartExists,
 	validateProductInCart,
 	validateProductInUserCart,
 	validateQuantity,
 	validateUserCartExists,
-} from '../middleware/cart.validate.js';
-import { validateCid, validatePid } from '../middleware/mongoID.validate.js';
+} from '../middleware/cart.validations.js';
+import { validateCid, validatePid } from '../middleware/generic.validations.js';
 
 class CartsRouter extends Router {
 	constructor() {
 		super();
-		this.customResponses = {
-			sendCartNotFound() {
-				return this.status(404).json({
-					status: 'error',
-					detail: 'Carrito no encontrado',
-				});
-			},
-			sendProductNotInCart() {
-				return this.status(404).json({
-					status: 'error',
-					detail: 'El carrito no tiene unidades del producto',
-				});
-			},
-			...this.customResponses,
-		};
 		this.init();
 	}
 
@@ -48,6 +33,7 @@ class CartsRouter extends Router {
 			'/:cid',
 			[POLICIES.user, POLICIES.admin],
 			validateCid,
+			validateCartExists,
 			CartController.getCart
 		);
 
@@ -55,7 +41,7 @@ class CartsRouter extends Router {
 			'/mycart/product/:pid',
 			[POLICIES.user, POLICIES.admin],
 			validateUserCartExists,
-			validateProductIsAviable,
+			validateProductIsAvailable,
 			CartController.addProduct
 		);
 

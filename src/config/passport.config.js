@@ -1,6 +1,7 @@
 import { CartsService } from '../db/services/cart.service.js';
 import { CONFIG } from './config.js';
 import GitHubStrategy from 'passport-github2';
+import { InvalidCredentialsError } from '../errors/UserErrors.js';
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 import passport from 'passport';
@@ -21,7 +22,7 @@ export function initializePassport() {
 			async function (email, password, done) {
 				const user = await UsersService.findUserByEmail(email);
 				if (!user || !(await comparePassword(password, user.password))) {
-					return done(null, false);
+					return done(new InvalidCredentialsError(), false);
 				}
 				return done(null, user);
 			}

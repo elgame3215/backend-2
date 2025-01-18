@@ -23,7 +23,7 @@ formELement.addEventListener('submit', e => {
 			}
 		})
 		.then(data => {
-			localStorage.setItem('username', data.payload.username);
+			localStorage.setItem('username', data.username);
 			window.location.href = '/';
 		});
 });

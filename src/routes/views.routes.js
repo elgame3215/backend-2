@@ -1,22 +1,14 @@
 import { CartsService } from '../db/services/cart.service.js';
 import { formatResponse } from '../utils/query.process.js';
+import { InternalServerError, NotFoundError } from '../errors/GenericErrors.js';
 import { POLICIES } from '../config/config.js';
 import { ProductService } from '../db/services/product.service.js';
 import { Router } from './router.js';
-import { validateQuery } from '../middleware/query.validate.js';
+import { validateQuery } from '../middleware/query.validations.js';
 
 class ViewsRouter extends Router {
 	constructor() {
 		super();
-		this.customResponses = {
-			...this.customResponses,
-			renderServerError() {
-				this.render('error', {
-					error: ProductService.errorMessages.serverError,
-					code: 500,
-				});
-			},
-		};
 		this.init();
 	}
 	init() {
@@ -38,7 +30,7 @@ class ViewsRouter extends Router {
 					res.status(200).render('products', { response, username });
 				} catch (err) {
 					console.error(err);
-					res.renderServerError();
+					next(new InternalServerError());
 				}
 			}
 		);
@@ -60,7 +52,7 @@ class ViewsRouter extends Router {
 					res.status(200).render('realTimeProducts', { response });
 				} catch (err) {
 					console.error(err);
-					res.renderServerError();
+					next(new InternalServerError());
 				}
 			}
 		);
@@ -73,7 +65,7 @@ class ViewsRouter extends Router {
 				res.status(200).render('cart', { products, cartId });
 			} catch (err) {
 				console.error(err);
-				res.renderServerError();
+				next(new InternalServerError());
 			}
 		});
 
@@ -92,8 +84,8 @@ class ViewsRouter extends Router {
 			res.redirect('/products');
 		});
 
-		this.get('/', [POLICIES.public], (req, res) => {
-			res.renderNotFound();
+		this.get('/*', [POLICIES.public], (req, res, next) => {
+			next(new NotFoundError());
 		});
 	}
 }
