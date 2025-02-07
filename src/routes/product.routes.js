@@ -1,10 +1,9 @@
-import { POLICIES } from '../config/config.js';
+import { POLICIES } from '../constants/enums/policies.js';
 import { ProductController } from '../controllers/product.controller.js';
-import { ProductValidator } from '../utils/Product.validator.js';
+import { productReqSchema } from '../dtos/product/req.product.dto.js';
 import { Router } from './Router.js';
-import { validateProduct } from '../middleware/product.validations.js';
-import { validateQuery } from '../middleware/query.validations.js';
-import { validateCamps, validatePid } from '../middleware/generic.validations.js';
+import { validateBody } from 'express-joi-validations';
+
 class ProductsRouter extends Router {
 	constructor() {
 		super();
@@ -12,41 +11,23 @@ class ProductsRouter extends Router {
 	}
 
 	init() {
-		this.get(
-			'/',
-			[POLICIES.public],
-			validateQuery,
-			ProductController.getAllProducts
-		);
+		this.get('/', [POLICIES.PUBLIC], ProductController.getAllProducts);
 
-		this.get(
-			'/:pid',
-			[POLICIES.public],
-			validatePid,
-			ProductController.getOneProduct
-		);
+		this.get('/:pid', [POLICIES.PUBLIC], ProductController.getOneProduct);
 
 		this.post(
 			'/',
-			[POLICIES.admin],
-			validateCamps(ProductValidator.requiredKeys),
-			validateProduct,
+			[POLICIES.ADMIN],
+			validateBody(productReqSchema),
 			ProductController.addProduct
 		);
 
-		this.delete(
-			'/:pid',
-			[POLICIES.admin],
-			validatePid,
-			ProductController.deleteProduct
-		);
+		this.delete('/:pid', [POLICIES.ADMIN], ProductController.deleteProduct);
 
 		this.put(
 			'/:pid',
-			[POLICIES.admin],
-			validatePid,
-			validateCamps(ProductValidator.requiredKeys),
-			validateProduct,
+			[POLICIES.ADMIN],
+			validateBody(productReqSchema),
 			ProductController.updateProduct
 		);
 	}

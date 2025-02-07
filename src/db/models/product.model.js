@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import paginate from 'mongoose-paginate-v2';
 
-const productSchema = new mongoose.Schema(
+const productReqSchema = new mongoose.Schema(
 	{
 		title: String,
 		description: String,
@@ -23,6 +23,6 @@ const productSchema = new mongoose.Schema(
 	}
 );
 
-productSchema.plugin(paginate);
+productReqSchema.plugin(paginate);
 
-export const productModel = mongoose.model('products', productSchema);
+export const productModel = mongoose.model('products', productReqSchema);

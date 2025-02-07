@@ -1,8 +1,14 @@
-import { CartsService } from '../db/services/cart.service.js';
-import { hasProduct } from './utils.js';
-import { ProductOutOfStockError } from '../errors/product.errors.js';
-import { ProductService } from '../db/services/product.service.js';
-import { CartNotFoundError, InvalidQuantityError, ProductNotInCartError } from '../errors/cart.errors.js';
+import { CartsService } from '../../db/services/cart.service.js';
+import { hasProduct } from '../../utils/cart.utils.js';
+import { ProductOutOfStockError } from '../../errors/product.errors.js';
+import { ProductService } from '../../db/services/product.service.js';
+import {
+	CartNotFoundError,
+	InvalidQuantityError,
+	ProductNotInCartError,
+} from '../../errors/cart.errors.js';
+
+// VALIDACIONES que dependen de la base de datos
 
 export async function validateUserCartExists(req, res, next) {
 	const cid = req.user.cart;

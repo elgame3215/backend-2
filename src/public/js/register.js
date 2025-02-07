@@ -18,7 +18,8 @@ form.addEventListener('submit', e => {
 				stopOnFocus: true,
 			}).showToast();
 			if (data.status == 'success') {
-				localStorage.setItem('username', data.username);
+				const [name] = data.payload.first_name.split(' ');
+				localStorage.setItem('username', name);
 				setTimeout(() => {
 					window.location.href = `/`;
 				}, 1500);

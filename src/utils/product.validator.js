@@ -1,5 +1,8 @@
 import { ProductService } from '../db/services/product.service.js';
-import { DuplicatedProductCodeError, ProductWithNegativeValuesError } from '../errors/product.errors.js';
+import {
+	DuplicatedProductCodeError,
+	ProductWithNegativeValuesError,
+} from '../errors/product.errors.js';
 
 export class ProductValidator {
 	static requiredKeys = [

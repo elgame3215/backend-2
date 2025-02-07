@@ -1,6 +1,6 @@
-import { formatResponse } from '../utils/query.process.js';
 import { InternalServerError } from '../errors/generic.errors.js';
 import { ProductNotFoundError } from '../errors/product.errors.js';
+import { productResSchema } from '../dtos/product/res.product.dto.js';
 import { ProductService } from '../db/services/product.service.js';
 import { sendSuccess } from '../utils/customResponses.js';
 
@@ -10,7 +10,14 @@ export class ProductController {
 		try {
 			const addedProduct = await ProductService.addProduct(newProduct);
 			req.io.emit('product added', addedProduct);
-			return sendSuccess(res, 201, 'Producto añadido', { addedProduct });
+			return sendSuccess({
+				res,
+				next,
+				code: 201,
+				detail: 'Producto añadido',
+				payload: addedProduct,
+				dtoSchema: productResSchema,
+			});
 		} catch (err) {
 			req.io.emit('invalid product', err.message);
 			next(new InternalServerError());
@@ -24,7 +31,13 @@ export class ProductController {
 			if (!product) {
 				return next(new ProductNotFoundError());
 			}
-			sendSuccess(res, 200, null, { product });
+			sendSuccess({
+				res,
+				next,
+				code: 200,
+				payload: product,
+				dtoSchema: productResSchema,
+			});
 		} catch (err) {
 			console.error(err);
 			next(new InternalServerError());
@@ -41,8 +54,13 @@ export class ProductController {
 				sort,
 				query
 			);
-			formatResponse(response, page, limit, sort, query);
-			return sendSuccess(res, 200, { response });
+			return sendSuccess({
+				res,
+				next,
+				code: 200,
+				payload: response,
+				dtoSchema: productResSchema,
+			});
 		} catch (err) {
 			console.error(err);
 			return next(new InternalServerError());
@@ -56,7 +74,13 @@ export class ProductController {
 			if (!deletedProduct) {
 				return next(new ProductNotFoundError());
 			}
-			return sendSuccess(res, 200, 'Producto eliminado', { deletedProduct });
+			return sendSuccess({
+				res,
+				next,
+				code: 200,
+				detail: 'Producto eliminado',
+				payload: deletedProduct,
+			});
 		} catch (err) {
 			console.error(err);
 			next(new InternalServerError());
@@ -74,7 +98,13 @@ export class ProductController {
 			if (!updatedProduct) {
 				return next(new ProductNotFoundError());
 			}
-			return sendSuccess(res, 200, 'Producto actualizado', { updatedProduct });
+			return sendSuccess({
+				res,
+				next,
+				code: 200,
+				detail: 'Producto actualizado',
+				payload: updatedProduct,
+			});
 		} catch (err) {
 			console.error(err);
 			next(new InternalServerError());

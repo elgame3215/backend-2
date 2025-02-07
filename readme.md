@@ -30,7 +30,7 @@ GET /api/products
 ```
 
 Lista todos los productos dados de alta mediante paginación.
-Acepta los parámetros: `limit` (limite de productos por página), `page` (numero de página a solicitar), `sort` (permite ordenar los productos por precio con "asc" o "desc"), `query` (permite filtrar los productos por la categoria que reciba).
+Acepta los parámetros: `limit` (limite de productos por página), `page` (numero de página a solicitar), `sort` (permite ordenar los productos por precio con "asc" o "desc"), `query` (permite filtrar los productos por la categoría que reciba).
 
 ---
 
@@ -97,7 +97,7 @@ Permite dar de alta un nuevo carrito, inicialmente vacío.
 ---
 
 ```
-POST /api/carts/mycart/product/:pid
+POST /api/carts/my-cart/product/:pid
 ```
 
 Agrega una unidad del producto correspondiente al id recibido por :pid al carrito correspondiente al usuario autenticado, siempre que haya un carrito y un producto con esos id, y que el stock del producto sea mayor que la cantidad de unidades del mismo producto en el carrito.
@@ -105,7 +105,7 @@ Agrega una unidad del producto correspondiente al id recibido por :pid al carrit
 ---
 
 ```
-DELETE /api/carts/mycart/product/:pid
+DELETE /api/carts/my-cart/product/:pid
 ```
 
 Elimina del carrito correspondiente al usuario autenticado el producto con el id recibido por :pid, siempre que el carrito contenga al producto en cuestión.
@@ -185,7 +185,7 @@ Da de alta al usuario, cuyas credenciales se esperan en el cuerpo de la petició
 
 La `password` se almacena hasheada usando bcrypt.
 
-El `email` no puede estar asociado a ningun usuario previamente registrado en el sistema.
+El `email` no puede estar asociado a ningún usuario previamente registrado en el sistema.
 
 ---
 
@@ -206,6 +206,8 @@ Inicia el proceso de autenticación con Github. Solicita los permisos:
 - `perfil`: lectura y escritura.
 - `emails`: lectura.
 
+Debido a limitaciones de la aplicación, cuando un usuario se registra con Github se le asigna una edad por defecto, que puede ser modificada en cualquier momento desde la configuración.
+
 ### products UI
 
 La ruta /products entrega una serie de interfaces visuales que le permiten al usuario tanto dar de alta/baja productos en el sistema, como visualizar productos y agregarlos o quitarlos de su carrito mediante los siguientes endpoints:
@@ -215,7 +217,7 @@ GET /products
 ```
 
 Lista todos los productos dados de alta mediante paginación.
-Acepta los parámetros: `limit` (limite de productos por página), `page` (numero de página a solicitar), `sort` (permite ordenar los productos por su precio con "asc" o "desc"), `query` (permite filtrar los productos por la categoria que reciba).
+Acepta los parámetros: `limit` (limite de productos por página), `page` (numero de página a solicitar), `sort` (permite ordenar los productos por su precio con "asc" o "desc"), `query` (permite filtrar los productos por la categoría que reciba).
 Cada producto brinda la posibilidad de ser añadido al carrito del usuario, siempre que posea un stock mayor a la cantidad de unidades del mismo producto que el usuario lleva añadidos a su carrito.
 También cuenta con un botón que dirige al usuario a la vista de su carrito, que es creado y asignado al usuario la primera vez que entra a la página.
 
@@ -231,7 +233,7 @@ También acepta los parámetros `limit`, `page`, `sort`, `query`.
 ---
 
 ```
-GET /mycart
+GET /my-cart
 ```
 
 Lista únicamente los productos agregados al carrito correspondiente al usuario que solicita la vista, permitiendo eliminar a cada uno del carrito (no del sistema).

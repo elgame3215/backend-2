@@ -1,17 +1,19 @@
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
-	first_name: {				// eslint-disable-line camelcase
+const userRegisterReqSchema = new mongoose.Schema({
+	first_name: {
+		 
 		type: String,
 		required: true,
 	},
-	last_name: {				// eslint-disable-line camelcase
+	last_name: {
+		 
 		type: String,
 		required: true,
 	},
 	age: {
 		type: Number,
-		required: false,		// [age] no puede ser requerido porque Github no proporciona la edad de sus usuarios, y solucionarlo por mi cuenta me costaría años de vida.
+		required: true, // [age] no puede ser requerido porque Github no proporciona la edad de sus usuarios, y solucionarlo por mi cuenta me costaría años de vida.
 	},
 	email: {
 		type: String,
@@ -19,7 +21,7 @@ const userSchema = new mongoose.Schema({
 		unique: true,
 	},
 	password: {
-		type: String,				// [password] no puede ser requerido porque Github no proporciona la contraseña de sus usuarios
+		type: String, // [password] no puede ser requerido porque Github no proporciona la contraseña de sus usuarios
 	},
 	githubId: {
 		type: String,
@@ -37,4 +39,4 @@ const userSchema = new mongoose.Schema({
 	},
 });
 
-export const userModel = mongoose.model('users', userSchema);
+export const userModel = mongoose.model('users', userRegisterReqSchema);

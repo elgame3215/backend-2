@@ -2,7 +2,7 @@ const removeButtons = document.querySelectorAll('.remove-button');
 for (let i = 0; i < removeButtons.length; i++) {
 	const button = removeButtons[i];
 	button.addEventListener('click', async e => {
-		fetch(`/api/carts/mycart/product/${e.target.id}`, {
+		fetch(`/api/carts/my-cart/product/${e.target.id}`, {
 			method: 'DELETE',
 		})
 			.then(response => {
@@ -20,7 +20,8 @@ for (let i = 0; i < removeButtons.length; i++) {
 							: 'Error al eliminar el producto del carrito',
 					duration: 3000,
 					gravity: 'bottom',
-					backgroundColor: data.status == 'success' ? '#007BFF' : '#B30010',
+					backgroundColor:
+						data.status == 'success' ? '#007BFF' : '#B30010',
 					stopOnFocus: true,
 				}).showToast();
 				data.status == 'success' &&

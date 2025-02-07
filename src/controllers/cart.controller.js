@@ -1,3 +1,4 @@
+import { cartResSchema } from '../dtos/cart/res.cart.dto.js';
 import { CartsService } from '../db/services/cart.service.js';
 import { sendSuccess } from '../utils/customResponses.js';
 import {
@@ -6,34 +7,33 @@ import {
 } from '../errors/generic.errors.js';
 
 export class CartController {
-	/**
-	 *
-	 * @param {Request} req
-	 * @param {Response} res
-	 */
-	static async createCart(req, res) {
+	static async createCart(req, res, next) {
 		try {
 			const addedCart = await CartsService.addCart();
-			return sendSuccess(res, 201, 'Carrito creado', { addedCart });
+			return sendSuccess({
+				res,
+				next,
+				status: 201,
+				detail: 'Carrito creado',
+				payload: addedCart,
+				dtoSchema: cartResSchema,
+			});
 		} catch (err) {
 			console.error(err);
 			return next(new InternalServerError());
 		}
 	}
-	/**
-	 *
-	 * @param {Request} req
-	 * @param {Response} res
-	 */
-	static async getCart(req, res) {
-		sendSuccess(res, 200, null, { cart: req.cart });
+	static async getCart(req, res, next) {
+		const cart = req.cart;
+		return sendSuccess({
+			res,
+			next,
+			status: 200,
+			payload: cart,
+			dtoSchema: cartResSchema,
+		});
 	}
-	/**
-	 *
-	 * @param {Request} req
-	 * @param {Response} res
-	 */
-	static async addProduct(req, res) {
+	static async addProduct(req, res, next) {
 		const { pid } = req.params;
 		const cid = req.user?.cart;
 		if (!cid) {
@@ -41,38 +41,37 @@ export class CartController {
 		}
 		try {
 			const updatedCart = await CartsService.addProductToCart(pid, cid);
-			return sendSuccess(res, 200, 'Producto añadido al carrito', {
-				updatedCart,
+			return sendSuccess({
+				res,
+				next,
+				status: 200,
+				detail: 'Producto añadido al carrito',
+				payload: updatedCart,
 			});
 		} catch (err) {
 			console.error(err);
 			return next(new InternalServerError());
 		}
 	}
-	/**
-	 *
-	 * @param {Request} req
-	 * @param {Response} res
-	 */
-	static async deleteProduct(req, res) {
+	static async deleteProduct(req, res, next) {
 		const { pid } = req.params;
 		const cid = req.user.cart;
 		try {
 			const updatedCart = await CartsService.deleteProductFromCart(pid, cid);
-			return sendSuccess(res, 200, 'Producto eliminado del carrito', {
-				updatedCart,
+			return sendSuccess({
+				res,
+				next,
+				code: 200,
+				detail: 'Producto eliminado del carrito',
+				payload: updatedCart,
+				dtoSchema: cartResSchema,
 			});
 		} catch (err) {
 			console.error(err);
 			return next(new InternalServerError());
 		}
 	}
-	/**
-	 *
-	 * @param {Request} req
-	 * @param {Response} res
-	 */
-	static async updateCart(req, res) {
+	static async updateCart(req, res, next) {
 		const productList = req.body;
 		const { cid } = req.params;
 		try {
@@ -80,18 +79,13 @@ export class CartController {
 				cid,
 				productList
 			);
-			return CartController.sendUpdatedCart(res, updatedCart);
+			return CartController.sendUpdatedCart(res, next, updatedCart);
 		} catch (err) {
 			console.error(err);
 			return next(new InternalServerError());
 		}
 	}
-	/**
-	 *
-	 * @param {Request} req
-	 * @param {Response} res
-	 */
-	static async updateProductQuantity(req, res) {
+	static async updateProductQuantity(req, res, next) {
 		const { cid, pid } = req.params;
 		const { quantity } = req.body;
 		try {
@@ -100,34 +94,31 @@ export class CartController {
 				pid,
 				quantity
 			);
-			return CartController.sendUpdatedCart(res, updatedCart);
+			return CartController.sendUpdatedCart(res, next, updatedCart);
 		} catch (err) {
 			console.error(err);
 			next(new InternalServerError());
 		}
 	}
-	/**
-	 *
-	 * @param {Request} req
-	 * @param {Response} res
-	 */
-	static async clearCart(req, res) {
+	static async clearCart(req, res, next) {
 		const { cid } = req.params;
 		try {
 			const updatedCart = await CartsService.clearCart(cid);
-			return CartController.sendUpdatedCart(res, updatedCart);
+			return CartController.sendUpdatedCart(res, next, updatedCart);
 		} catch (err) {
 			console.error(err);
 			next(new InternalServerError());
 		}
 	}
 
-	/**
-	 *
-	 * @param {Response} res
-	 * @param {Object} updatedCart
-	 */
-	static sendUpdatedCart(res, updatedCart) {
-		return sendSuccess(res, 200, 'Carrito actualizado', { updatedCart });
+	static sendUpdatedCart(res, next, updatedCart) {
+		return sendSuccess({
+			res,
+			next,
+			code: 200,
+			detail: 'Carrito actualizado',
+			payload: updatedCart,
+			dtoSchema: cartResSchema,
+		});
 	}
 }
