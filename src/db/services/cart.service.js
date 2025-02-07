@@ -74,10 +74,4 @@ export class CartsService {
 		);
 		return updatedCart;
 	}
-
-	static errorMessages = {
-		cartNotFound: 'Carrito no encontrado',
-		serverError: 'Error del servidor',
-		nonNumericId: 'El/Los ID deben ser numéricos',
-	};
 }

@@ -1,10 +1,14 @@
 import { CartsService } from '../db/services/cart.service.js';
-import { formatResponse } from '../utils/query.process.js';
-import { InternalServerError, NotFoundError } from '../errors/GenericErrors.js';
-import { POLICIES } from '../config/config.js';
+import { POLICIES } from '../constants/enums/policies.js';
+import { productListSchema } from '../dtos/product/res.products.list.dto.js';
 import { ProductService } from '../db/services/product.service.js';
-import { Router } from './router.js';
-import { validateQuery } from '../middleware/query.validations.js';
+import { queryReqSchema } from '../dtos/req.query.dto.js';
+import { Router } from './Router.js';
+import { validateQuery } from 'express-joi-validations';
+import {
+	InternalServerError,
+	NotFoundError,
+} from '../errors/generic.errors.js';
 
 class ViewsRouter extends Router {
 	constructor() {
@@ -14,8 +18,8 @@ class ViewsRouter extends Router {
 	init() {
 		this.get(
 			'/products',
-			[POLICIES.public],
-			validateQuery,
+			[POLICIES.PUBLIC],
+			validateQuery(queryReqSchema, { stripUnknown: true }),
 			async (req, res) => {
 				const { limit, page, sort, query } = req.query;
 				const { username } = req.query;
@@ -26,8 +30,10 @@ class ViewsRouter extends Router {
 						sort,
 						query
 					);
-					formatResponse(response, limit, page, sort, query);
-					res.status(200).render('products', { response, username });
+					res.status(200).render('products', {
+						response: productListSchema.validate(response).value,
+						username,
+					});
 				} catch (err) {
 					console.error(err);
 					next(new InternalServerError());
@@ -37,8 +43,8 @@ class ViewsRouter extends Router {
 
 		this.get(
 			'/realtimeproducts',
-			[POLICIES.admin],
-			validateQuery,
+			[POLICIES.ADMIN],
+			validateQuery(queryReqSchema),
 			async (req, res) => {
 				try {
 					const { limit, page, sort, query } = req.query;
@@ -48,8 +54,9 @@ class ViewsRouter extends Router {
 						sort,
 						query
 					);
-					formatResponse(response, limit, page, sort, query);
-					res.status(200).render('realTimeProducts', { response });
+					res.status(200).render('realTimeProducts', {
+						response: productListSchema.validate(response).value,
+					});
 				} catch (err) {
 					console.error(err);
 					next(new InternalServerError());
@@ -57,7 +64,7 @@ class ViewsRouter extends Router {
 			}
 		);
 
-		this.get('/mycart', [POLICIES.user, POLICIES.admin], async (req, res) => {
+		this.get('/my-cart', [POLICIES.USER], async (req, res) => {
 			const cartId = req.user.cart;
 			try {
 				const cart = await CartsService.getCartById(cartId);
@@ -69,22 +76,19 @@ class ViewsRouter extends Router {
 			}
 		});
 
-		this.get('/login', [POLICIES.public], (req, res) => {
-			if (req.user) {
-				res.redirect('/');
-			}
-			res.render('login');
-		});
-
-		this.get('/register', [POLICIES.public], (req, res) => {
+		this.get('/register', [POLICIES.PUBLIC], (req, res) => {
 			res.render('register');
 		});
 
-		this.get('/', [POLICIES.public], (req, res) => {
+		this.get('/login', [POLICIES.PUBLIC], (req, res) => {
+			res.render('login');
+		});
+
+		this.get('/', [POLICIES.PUBLIC], (req, res) => {
 			res.redirect('/products');
 		});
 
-		this.get('/*', [POLICIES.public], (req, res, next) => {
+		this.get('/*', [POLICIES.PUBLIC], (req, res, next) => {
 			next(new NotFoundError());
 		});
 	}

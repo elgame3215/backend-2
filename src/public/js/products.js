@@ -2,7 +2,7 @@ const addToCartButtons = document.querySelectorAll('.add-button');
 for (let i = 0; i < addToCartButtons.length; i++) {
 	const addButton = addToCartButtons[i];
 	addButton.addEventListener('click', async e => {
-		fetch(`/api/carts/mycart/product/${e.target.id}`, {
+		fetch(`/api/carts/my-cart/product/${e.target.id}`, {
 			method: 'POST',
 		})
 			.then(response => {

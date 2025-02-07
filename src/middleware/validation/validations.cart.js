@@ -1,10 +1,3 @@
-<<<<<<<< HEAD:src/middleware/cart.validations.js
-import { CartsService } from '../db/services/cart.service.js';
-import { hasProduct } from './utils.js';
-import { ProductOutOfStockError } from '../errors/ProductErrors.js';
-import { ProductService } from '../db/services/product.service.js';
-import { CartNotFoundError, InvalidQuantityError, ProductNotInCartError } from '../errors/CartErrors.js';
-========
 import { CartsService } from '../../db/services/cart.service.js';
 import { hasProduct } from '../../utils/cart.utils.js';
 import { ProductOutOfStockError } from '../../errors/product.errors.js';
@@ -16,7 +9,6 @@ import {
 } from '../../errors/cart.errors.js';
 
 // VALIDACIONES que dependen de la base de datos
->>>>>>>> add/joi:src/middleware/validation/validations.cart.js
 
 export async function validateUserCartExists(req, res, next) {
 	const cid = req.user.cart;

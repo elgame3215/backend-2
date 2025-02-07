@@ -8,7 +8,9 @@ export default [
 	pluginJs.configs.recommended,
 	eslintConfigPrettier,
 	{
-		languageOptions: { globals: { ...globals.browser, Toastify: 'readable' } },
+		languageOptions: {
+			globals: { ...globals.browser, Toastify: 'readable' },
+		},
 		plugins: {
 			'@stylistic/js': stylisticJs,
 		},

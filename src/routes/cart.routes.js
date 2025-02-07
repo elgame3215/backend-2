@@ -1,18 +1,21 @@
 import { CartController } from '../controllers/cart.controller.js';
-import { POLICIES } from '../config/config.js';
-import { Router } from './router.js';
+import { POLICIES } from '../constants/enums/policies.js';
+import { Router } from './Router.js';
 import {
 	validateBodyPids,
 	validateProductIsAvailable,
-} from '../middleware/product.validations.js';
+} from '../middleware/validation/validations.product.js';
 import {
 	validateCartExists,
 	validateProductInCart,
 	validateProductInUserCart,
 	validateQuantity,
 	validateUserCartExists,
-} from '../middleware/cart.validations.js';
-import { validateCid, validatePid } from '../middleware/generic.validations.js';
+} from '../middleware/validation/validations.cart.js';
+import {
+	validateCid,
+	validatePid,
+} from '../middleware/validation/validations.mongo.js';
 
 class CartsRouter extends Router {
 	constructor() {
@@ -27,27 +30,21 @@ class CartsRouter extends Router {
 
 		this.param('pid', validatePid);
 
-		this.post('/', [POLICIES.admin], CartController.createCart);
+		this.post('/', [POLICIES.USER], CartController.createCart);
 
-		this.get(
-			'/:cid',
-			[POLICIES.user, POLICIES.admin],
-			validateCid,
-			validateCartExists,
-			CartController.getCart
-		);
+		this.get('/:cid', [POLICIES.USER], CartController.getCart);
 
 		this.post(
-			'/mycart/product/:pid',
-			[POLICIES.user, POLICIES.admin],
+			'/my-cart/product/:pid',
+			[POLICIES.USER],
 			validateUserCartExists,
 			validateProductIsAvailable,
 			CartController.addProduct
 		);
 
 		this.delete(
-			'/mycart/product/:pid',
-			[POLICIES.user, POLICIES.admin],
+			'/my-cart/product/:pid',
+			[POLICIES.USER],
 			validateUserCartExists,
 			validateProductInUserCart,
 			CartController.deleteProduct
@@ -55,24 +52,20 @@ class CartsRouter extends Router {
 
 		this.put(
 			'/:cid',
-			[POLICIES.user, POLICIES.admin],
+			[POLICIES.USER],
 			validateBodyPids,
 			CartController.updateCart
 		);
 
 		this.put(
 			'/:cid/product/:pid',
-			[POLICIES.user, POLICIES.admin],
+			[POLICIES.USER],
 			validateProductInCart,
 			validateQuantity,
 			CartController.updateProductQuantity
 		);
 
-		this.delete(
-			'/:cid',
-			[POLICIES.user, POLICIES.admin],
-			CartController.clearCart
-		);
+		this.delete('/:cid', [POLICIES.ADMIN], CartController.clearCart);
 	}
 }
 

@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { sendSuccess } from '../utils/customResponses.js';
 import { setToken } from '../utils/jwt.js';
+import { userResSchema } from '../dtos/user/res.user.dto.js';
 
 export class UserController {
 	static login(req, res, next) {
@@ -16,16 +17,21 @@ export class UserController {
 				}
 				req.user = user;
 				setToken(req, res);
-				return sendSuccess(res, 200, 'Sesión iniciada', {
-					username: req.user.first_name,
+				return sendSuccess({
+					res,
+					next,
+					code: 200,
+					detail: 'Sesión iniciada',
+					payload: user,
+					dtoSchema: userResSchema,
 				});
 			}
 		)(req, res);
 	}
 
-	static logout(req, res) {
+	static logout(req, res, next) {
 		res.clearCookie('token');
-		return sendSuccess(res, 200, 'Sesión cerrada');
+		return sendSuccess({ res, next, code: 200, detail: 'Sesión cerrada' });
 	}
 	static register(req, res, next) {
 		return passport.authenticate(
@@ -37,8 +43,13 @@ export class UserController {
 				}
 				req.user = user;
 				setToken(req, res);
-				return sendSuccess(res, 200, 'Registro exitoso', {
-					username: req.user.first_name,
+				return sendSuccess({
+					res,
+					next,
+					code: 200,
+					detail: 'Registro exitoso',
+					payload: user,
+					dtoSchema: userResSchema,
 				});
 			}
 		)(req, res);
