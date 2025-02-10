@@ -1,4 +1,3 @@
-const socket = io();
 const submit = document.getElementById('submit');
 const productsContainer = document.querySelector('.products-container');
 
@@ -11,46 +10,49 @@ submit.addEventListener('click', async e => {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(data),
-	});
-});
-
-socket.on('product added', product => {
-	const newProductEl = `
-		<div class="product-card">
-			<div class="product-info">
-				<h2 class="product-title">${product.title}</h2>
-				<p class="product-price">$${product.price}</p>
-				<p class="product-description">${product.description}</p>
-				<p class="product-stock">stock: ${product.stock}</p>
-				<p class="product-category">${product.category}</p>
-			</div>
-			<button class="delete-button" id="${product._id}">Eliminar</button>
+	})
+		.then(response => response.json())
+		.then(data => {
+			if (data.status == 'success') {
+				const product = data.payload;
+				const newProductEl = `
+	<div class="product-card">
+		<div class="product-info">
+			<h2 class="product-title">${product.title}</h2>
+			<p class="product-price">$${product.price}</p>
+			<p class="product-description">${product.description}</p>
+			<p class="product-stock">stock: ${product.stock}</p>
+			<p class="product-category">${product.category}</p>
 		</div>
-		`;
-	productsContainer.insertAdjacentHTML('beforeend', newProductEl);
-	const deleteButton = document.getElementById(product._id);
-	deleteButton.addEventListener('click', deleteProduct);
-	document
-		.querySelectorAll('.form-group input, textarea')
-		.forEach(n => (n.value = ''));
-	Toastify({
-		text: 'Producto agregado',
-		duration: 3000,
-		gravity: 'bottom',
-		backgroundColor: '#007BFF',
-		stopOnFocus: true,
-	}).showToast();
+		<button class="delete-button" id="${product._id}">Eliminar</button>
+	</div>
+	`;
+				productsContainer.insertAdjacentHTML('beforeend', newProductEl);
+				const deleteButton = document.getElementById(product._id);
+				deleteButton.addEventListener('click', deleteProduct);
+				document
+					.querySelectorAll('.form-group input, textarea')
+					.forEach(n => (n.value = ''));
+				Toastify({
+					text: 'Producto agregado',
+					duration: 3000,
+					gravity: 'bottom',
+					backgroundColor: '#007BFF',
+					stopOnFocus: true,
+				}).showToast();
+			} else {
+				const message = data.message;
+				Toastify({
+					text: message,
+					duration: 3000,
+					gravity: 'bottom',
+					backgroundColor: '#B30010',
+					stopOnFocus: true,
+				}).showToast();
+			}
+		});
 });
 
-socket.on('invalid product', message => {
-	Toastify({
-		text: message,
-		duration: 3000,
-		gravity: 'bottom',
-		backgroundColor: '#B30010',
-		stopOnFocus: true,
-	}).showToast();
-});
 
 async function deleteProduct(e) {
 	const response = await fetch(`/api/products/${e.target.id}`, {

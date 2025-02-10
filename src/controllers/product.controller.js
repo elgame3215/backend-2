@@ -1,4 +1,5 @@
 import { InternalServerError } from '../errors/generic.errors.js';
+import { productListResSchema } from '../dtos/product/res.products.list.dto.js';
 import { ProductNotFoundError } from '../errors/product.errors.js';
 import { productResSchema } from '../dtos/product/res.product.dto.js';
 import { ProductService } from '../db/services/product.service.js';
@@ -9,7 +10,6 @@ export class ProductController {
 		const newProduct = req.body;
 		try {
 			const addedProduct = await ProductService.addProduct(newProduct);
-			req.io.emit('product added', addedProduct);
 			return sendSuccess({
 				res,
 				next,
@@ -19,7 +19,7 @@ export class ProductController {
 				dtoSchema: productResSchema,
 			});
 		} catch (err) {
-			req.io.emit('invalid product', err.message);
+			console.error(err);
 			next(new InternalServerError());
 		}
 	}
@@ -29,7 +29,7 @@ export class ProductController {
 		try {
 			const product = await ProductService.getProductById(pid);
 			if (!product) {
-				return next(new ProductNotFoundError());
+				return next(new ProductNotFoundError(pid));
 			}
 			sendSuccess({
 				res,
@@ -59,7 +59,7 @@ export class ProductController {
 				next,
 				code: 200,
 				payload: response,
-				dtoSchema: productResSchema,
+				dtoSchema: productListResSchema,
 			});
 		} catch (err) {
 			console.error(err);
@@ -80,6 +80,7 @@ export class ProductController {
 				code: 200,
 				detail: 'Producto eliminado',
 				payload: deletedProduct,
+				dtoSchema: productResSchema,
 			});
 		} catch (err) {
 			console.error(err);
@@ -104,6 +105,7 @@ export class ProductController {
 				code: 200,
 				detail: 'Producto actualizado',
 				payload: updatedProduct,
+				dtoSchema: productResSchema,
 			});
 		} catch (err) {
 			console.error(err);

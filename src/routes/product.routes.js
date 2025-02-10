@@ -1,8 +1,10 @@
+import { idParamSchema } from '../dtos/IDs/index.js';
 import { POLICIES } from '../constants/enums/policies.js';
 import { ProductController } from '../controllers/product.controller.js';
 import { productReqSchema } from '../dtos/product/req.product.dto.js';
 import { Router } from './Router.js';
-import { validateBody } from 'express-joi-validations';
+import { validateUniqueCode } from '../middleware/validation/validations.product.js';
+import { validateBody, validateParams } from 'express-joi-validations';
 
 class ProductsRouter extends Router {
 	constructor() {
@@ -11,6 +13,8 @@ class ProductsRouter extends Router {
 	}
 
 	init() {
+		this.param('pid', validateParams(idParamSchema));
+
 		this.get('/', [POLICIES.PUBLIC], ProductController.getAllProducts);
 
 		this.get('/:pid', [POLICIES.PUBLIC], ProductController.getOneProduct);
@@ -18,6 +22,7 @@ class ProductsRouter extends Router {
 		this.post(
 			'/',
 			[POLICIES.ADMIN],
+			validateUniqueCode,
 			validateBody(productReqSchema),
 			ProductController.addProduct
 		);

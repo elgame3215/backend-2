@@ -1,8 +1,11 @@
+import { idSchema } from '../IDs/index.js';
 import Joi from 'joi';
-import { mongoIdSchema } from '../mongoId.dto.js';
 import { productResSchema } from '../product/res.product.dto.js';
 
 export const cartResSchema = Joi.object({
-	_id: mongoIdSchema,
-	products: Joi.array().items(productResSchema),
+	id: idSchema,
+	products: Joi.array().items(Joi.object({
+		product: productResSchema,
+		quantity: Joi.number().required()
+	})),
 });

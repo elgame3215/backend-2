@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
+import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
 import paginate from 'mongoose-paginate-v2';
 
-const productReqSchema = new mongoose.Schema(
+const productSchema = new mongoose.Schema(
 	{
 		title: String,
 		description: String,
@@ -18,11 +19,14 @@ const productReqSchema = new mongoose.Schema(
 		},
 	},
 	{
-		strict: false,
 		collection: 'products',
+		id: true,
+		toJSON: { virtuals: true },
+		toObject: { virtuals: true },
 	}
 );
 
-productReqSchema.plugin(paginate);
+productSchema.plugin(paginate);
+productSchema.plugin(mongooseLeanVirtuals);
 
-export const productModel = mongoose.model('products', productReqSchema);
+export const productModel = mongoose.model('products', productSchema);

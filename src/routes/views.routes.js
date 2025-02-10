@@ -1,6 +1,6 @@
 import { CartsService } from '../db/services/cart.service.js';
 import { POLICIES } from '../constants/enums/policies.js';
-import { productListSchema } from '../dtos/product/res.products.list.dto.js';
+import { productListResSchema } from '../dtos/product/res.products.list.dto.js';
 import { ProductService } from '../db/services/product.service.js';
 import { queryReqSchema } from '../dtos/req.query.dto.js';
 import { Router } from './Router.js';
@@ -31,7 +31,7 @@ class ViewsRouter extends Router {
 						query
 					);
 					res.status(200).render('products', {
-						response: productListSchema.validate(response).value,
+						response: productListResSchema.validate(response).value,
 						username,
 					});
 				} catch (err) {
@@ -55,7 +55,7 @@ class ViewsRouter extends Router {
 						query
 					);
 					res.status(200).render('realTimeProducts', {
-						response: productListSchema.validate(response).value,
+						response: productListResSchema.validate(response).value,
 					});
 				} catch (err) {
 					console.error(err);

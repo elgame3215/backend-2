@@ -3,13 +3,13 @@ import mongoose from 'mongoose';
 
 export class CartsService {
 	static async addCart() {
-		const products = { products: [] };
-		const addedCart = await cartModel.create(products);
+		const products = [];
+		const addedCart = await cartModel.create({ products });
 		return addedCart;
 	}
 
 	static async getCartById(cid) {
-		const cart = await cartModel.findById(cid);
+		const cart = await cartModel.findById(cid).lean();
 		return cart;
 	}
 
@@ -21,57 +21,63 @@ export class CartsService {
 		} else {
 			cart.products.push({ product: pid, quantity: 1 });
 		}
-		const updatedCart = await cartModel.findByIdAndUpdate(cid, cart, {
+		const updatedCart = await cartModel
+		.findByIdAndUpdate(cid, cart, {
 			new: true,
-		});
+		})
+		.lean();
 		return updatedCart;
 	}
 
 	static async deleteProductFromCart(pid, cid) {
-		const updatedCart = await cartModel.findByIdAndUpdate(
-			cid,
-			{
-				$pull: { products: { product: pid } },
-			},
-			{
-				new: true,
-			}
-		);
+		const updatedCart = await cartModel
+			.findByIdAndUpdate(
+				cid,
+				{
+					$pull: { products: { product: pid } },
+				},
+				{
+					new: true,
+				}
+			)
+			.lean();
 		return updatedCart;
 	}
 
 	static async updateCartProducts(cid, productList) {
-		const updatedCart = await cartModel.findByIdAndUpdate(
-			cid,
-			{ products: productList },
-			{ new: true }
-		);
+		const updatedCart = await cartModel
+			.findByIdAndUpdate(cid, { products: productList }, { new: true })
+			.lean();
 		return updatedCart;
 	}
 
 	static async updateProductQuantity(cid, pid, quantity) {
-		const objPid = new mongoose.Types.ObjectId(pid);
-		const updatedProduct = await cartModel.findByIdAndUpdate(
-			cid,
-			{ 'products.$[product].quantity': quantity },
-			{
-				arrayFilters: [{ 'product.product': objPid }],
-				new: true,
-			}
-		);
+		const objPid = mongoose.Types.ObjectId.createFromHexString(pid);
+		const updatedProduct = await cartModel
+			.findByIdAndUpdate(
+				cid,
+				{ 'products.$[product].quantity': quantity },
+				{
+					arrayFilters: [{ 'product.product': objPid }],
+					new: true,
+				}
+			)
+			.lean();
 		return updatedProduct;
 	}
 
 	static async clearCart(cid) {
-		const updatedCart = await cartModel.findByIdAndUpdate(
-			cid,
-			{
-				products: [],
-			},
-			{
-				new: true,
-			}
-		);
+		const updatedCart = await cartModel
+			.findByIdAndUpdate(
+				cid,
+				{
+					products: [],
+				},
+				{
+					new: true,
+				}
+			)
+			.lean();
 		return updatedCart;
 	}
 }

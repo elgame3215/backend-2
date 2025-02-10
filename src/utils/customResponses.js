@@ -16,9 +16,10 @@ export function sendSuccess({ res, next, code, detail, payload, dtoSchema }) {
 		response.detail = detail;
 	}
 	if (payload) {
-		const { error, value } = dtoSchema
-			.unknown(true)
-			.validate(payload, { convert: true, stripUnknown: true });
+		const { error, value } = dtoSchema.validate(payload, {
+			convert: true,
+			stripUnknown: true,
+		});
 		if (error) {
 			return next(new DtoError(error));
 		}

@@ -1,6 +1,6 @@
-import { InvalidMongoIDError } from '../errors/MongoErrors.js';
+import { InvalidMongoIDError } from '../../errors/MongoErrors.js';
 import { isValidObjectId } from 'mongoose';
-import { MissingCampsError } from '../errors/GenericErrors.js';
+import { MissingCampsError } from '../../errors/GenericErrors.js';
 
 export function validateCamps(requiredCamps) {
 	return async function (req, res, next) {

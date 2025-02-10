@@ -13,9 +13,9 @@ export class CartController {
 			return sendSuccess({
 				res,
 				next,
-				status: 201,
+				code: 201,
 				detail: 'Carrito creado',
-				payload: addedCart,
+				payload: addedCart.toObject(),
 				dtoSchema: cartResSchema,
 			});
 		} catch (err) {
@@ -23,16 +23,18 @@ export class CartController {
 			return next(new InternalServerError());
 		}
 	}
-	static async getCart(req, res, next) {
+
+	static getCart(req, res, next) {
 		const cart = req.cart;
 		return sendSuccess({
 			res,
 			next,
-			status: 200,
+			code: 200,
 			payload: cart,
 			dtoSchema: cartResSchema,
 		});
 	}
+
 	static async addProduct(req, res, next) {
 		const { pid } = req.params;
 		const cid = req.user?.cart;
@@ -44,15 +46,17 @@ export class CartController {
 			return sendSuccess({
 				res,
 				next,
-				status: 200,
+				code: 200,
 				detail: 'Producto añadido al carrito',
 				payload: updatedCart,
+				dtoSchema: cartResSchema,
 			});
 		} catch (err) {
 			console.error(err);
 			return next(new InternalServerError());
 		}
 	}
+
 	static async deleteProduct(req, res, next) {
 		const { pid } = req.params;
 		const cid = req.user.cart;
@@ -71,6 +75,7 @@ export class CartController {
 			return next(new InternalServerError());
 		}
 	}
+
 	static async updateCart(req, res, next) {
 		const productList = req.body;
 		const { cid } = req.params;
@@ -85,6 +90,7 @@ export class CartController {
 			return next(new InternalServerError());
 		}
 	}
+
 	static async updateProductQuantity(req, res, next) {
 		const { cid, pid } = req.params;
 		const { quantity } = req.body;
@@ -100,6 +106,7 @@ export class CartController {
 			next(new InternalServerError());
 		}
 	}
+
 	static async clearCart(req, res, next) {
 		const { cid } = req.params;
 		try {

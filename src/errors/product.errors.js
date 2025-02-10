@@ -8,10 +8,7 @@ export class ProductOutOfStockError extends CustomError {
 
 export class ProductNotFoundError extends CustomError {
 	constructor(idNotFound) {
-		super('Producto no encontrado', 404);
-		if (idNotFound) {
-			this.idNotFound = idNotFound;
-		}
+		super(`Producto no encontrado: ${idNotFound}`, 404);
 	}
 }
 

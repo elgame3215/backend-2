@@ -8,34 +8,37 @@ export class ProductService {
 		const products = await productModel.paginate(filter, {
 			page,
 			limit,
-			lean: true,
 			sort: sorter,
+			lean: true,
 		});
 		return products;
 	}
 
 	static async addProduct(product) {
 		const addedProduct = await productModel.create(product);
-		return addedProduct;
+		return addedProduct.toObject();
 	}
 
 	static async getProductById(pid) {
-		const product = await productModel.findById(pid);
+		const product = await productModel.findById(pid).lean({ virtuals: true });
+		return product;
+	}
+
+	static async getProductByCode(code) {
+		const product = await productModel.findOne({ code }).lean();
 		return product;
 	}
 
 	static async deleteProductById(pid) {
-		const deletedProduct = await productModel.findByIdAndDelete(pid);
+		const deletedProduct = await productModel.findByIdAndDelete(pid).lean();
 		return deletedProduct;
 	}
 
 	static async updateProductById(pid, modifiedValues) {
 		delete modifiedValues._id;
-		const updatedProduct = await productModel.findByIdAndUpdate(
-			pid,
-			{ $set: modifiedValues },
-			{ new: true }
-		);
+		const updatedProduct = await productModel
+			.findByIdAndUpdate(pid, { $set: modifiedValues }, { new: true })
+			.lean();
 		return updatedProduct;
 	}
 }

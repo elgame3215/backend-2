@@ -7,8 +7,8 @@ const instant = Temporal.Now.instant()
 	.toLocaleString();
 
 export const userRegisterReqSchema = Joi.object({
-	firstName: Joi.string().trim().min(1).label('Nombre'),
-	lastName: Joi.string().trim().min(1).label('Apellido'),
+	firstName: Joi.string().trim().min(1).required(),
+	lastName: Joi.string().trim().min(1).required(),
 	dateBirth: Joi.date()
 		.min('01-01-1900')
 		.max(instant)
@@ -18,6 +18,6 @@ export const userRegisterReqSchema = Joi.object({
 				'date.max': 'Age of majority required',
 			},
 		})
-		.label('Fecha de nacimiento'),
+		.required(),
 	rol: Joi.string().forbidden().default('user'),
 }).keys(userLoginReqSchema.describe());

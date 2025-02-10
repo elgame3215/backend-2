@@ -3,20 +3,21 @@
 	<h1 class='title'>CARRITO</h1>
 	<div class='products-container'>
 		{{#each products}}
-			<div class='product-card'>
-				<div class='product-info'>
-					<h2 class='product-title'>{{this.product.title}}</h2>
-					<p class='product-price'>${{this.product.price}}</p>
-					<p class='product-description'>{{this.product.description}}</p>
-					<p class='product-category'>{{this.product.category}}</p>
-					<p class='product-quantity'>unidades: {{this.quantity}}</p>
-				</div>
-				<button class='remove-button' id='{{this.product._id}}'>Quitar del
-					carrito</button>
+		<div class='product-card'>
+			<div class='product-info'>
+				<h2 class='product-title'>{{this.product.title}}</h2>
+				<p class='product-price'>${{this.product.price}}</p>
+				<p class='product-description'>{{this.product.description}}</p>
+				<p class='product-category'>{{this.product.category}}</p>
+				<p class='product-quantity'>unidades: {{this.quantity}}</p>
 			</div>
+			<button class='remove-button' id='{{this.product._id}}'>Quitar del
+				carrito</button>
+		</div>
 		{{else}}
-			<p>no hay productos disponibles</p>
+		<p>no hay productos disponibles</p>
 		{{/each}}
 	</div>
-	<script src='/js/cart.js'></script>
 </div>
+<footer><button class="pagination-button" onclick="">Comprar</button></footer>
+<script src='/js/cart.js'></script>

@@ -33,9 +33,32 @@ export class UserController {
 		res.clearCookie('token');
 		return sendSuccess({ res, next, code: 200, detail: 'Sesión cerrada' });
 	}
+
 	static register(req, res, next) {
 		return passport.authenticate(
 			'register',
+			{ session: false },
+			(err, user) => {
+				if (err) {
+					return next(err);
+				}
+				req.user = user;
+				setToken(req, res);
+				return sendSuccess({
+					res,
+					next,
+					code: 200,
+					detail: 'Registro exitoso',
+					payload: user,
+					dtoSchema: userResSchema,
+				});
+			}
+		)(req, res);
+	}
+
+	static registerAdmin(req, res, next) {
+		return passport.authenticate(
+			'registerAdmin',
 			{ session: false },
 			(err, user) => {
 				if (err) {

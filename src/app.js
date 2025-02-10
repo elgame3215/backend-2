@@ -1,7 +1,6 @@
 import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 import { CONFIG } from './config/config.js';
 import cookieParser from 'cookie-parser';
-import { CustomError } from './errors/CustomError.js';
 import { engine } from 'express-handlebars';
 import express from 'express';
 import { expressJoiValidations } from 'express-joi-validations';
@@ -10,7 +9,6 @@ import { initializePassport } from './config/passport.config.js';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import { router } from './routes/index.js';
-import { Server } from 'socket.io';
 
 const { PORT, MONGO_CLUSTER_URL } = CONFIG;
 
@@ -54,13 +52,7 @@ app.use(router);
 	}
 })();
 
-const server = app.listen(PORT, () => {
+app.listen(PORT, () => {
 	// eslint-disable-next-line no-console
 	console.log(`Server up on http://localhost:${PORT}`);
-});
-
-const io = new Server(server);
-router.use('/api/products', (req, res, next) => {
-	req.io = io;
-	return next();
 });

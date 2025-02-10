@@ -3,16 +3,16 @@ import { userModel } from '../models/user.model.js';
 export class UsersService {
 	static async registerUser(user) {
 		const newUser = await userModel.create(user);
-		return newUser;
+		return newUser.toObject();
 	}
 
 	static async findUserByEmail(email) {
 		return await userModel.findOne({
 			email: email,
-		});
+		}).lean();
 	}
 
 	static async findUserById(id) {
-		return await userModel.findById(id);
+		return await userModel.findById(id).lean();
 	}
 }

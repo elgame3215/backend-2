@@ -1,6 +1,8 @@
 import { CartController } from '../controllers/cart.controller.js';
+import { idParamSchema } from '../dtos/IDs/index.js';
 import { POLICIES } from '../constants/enums/policies.js';
 import { Router } from './Router.js';
+import { validateParams } from 'express-joi-validations';
 import {
 	validateBodyPids,
 	validateProductIsAvailable,
@@ -12,10 +14,6 @@ import {
 	validateQuantity,
 	validateUserCartExists,
 } from '../middleware/validation/validations.cart.js';
-import {
-	validateCid,
-	validatePid,
-} from '../middleware/validation/validations.mongo.js';
 
 class CartsRouter extends Router {
 	constructor() {
@@ -24,11 +22,11 @@ class CartsRouter extends Router {
 	}
 
 	init() {
-		this.param('cid', validateCid, validateCartExists);
-		// [validateCartExists] se encarga de buscar el carrito e inyectarlo en [req]
-		// carga a la función con una responsabilidad de más, pero molesto a la db una única vez.
+		this.param('cid', validateParams(idParamSchema));
 
-		this.param('pid', validatePid);
+		this.param('cid', validateCartExists);
+
+		this.param('pid', validateParams(idParamSchema));
 
 		this.post('/', [POLICIES.USER], CartController.createCart);
 
@@ -65,7 +63,7 @@ class CartsRouter extends Router {
 			CartController.updateProductQuantity
 		);
 
-		this.delete('/:cid', [POLICIES.ADMIN], CartController.clearCart);
+		this.delete('/:cid', [POLICIES.USER], CartController.clearCart);
 	}
 }
 

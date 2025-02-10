@@ -21,11 +21,19 @@ class SessionsRouter extends Router {
 			validateBody(userLoginReqSchema),
 			UserController.login
 		);
+
 		this.post(
 			'/register',
 			[POLICIES.PUBLIC],
 			validateBody(userRegisterReqSchema),
 			UserController.register
+		);
+
+		this.post(
+			'/register-admin',
+			[POLICIES.PUBLIC],
+			validateBody(userRegisterReqSchema),
+			UserController.registerAdmin
 		);
 
 		this.post('/logout', [POLICIES.PUBLIC], UserController.logout);
