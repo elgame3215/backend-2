@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
 import paginate from 'mongoose-paginate-v2';
+import { model, Schema } from 'mongoose';
 
-const productSchema = new mongoose.Schema(
+const productSchema = new Schema(
 	{
 		title: String,
 		description: String,
@@ -29,4 +29,4 @@ const productSchema = new mongoose.Schema(
 productSchema.plugin(paginate);
 productSchema.plugin(mongooseLeanVirtuals);
 
-export const productModel = mongoose.model('products', productSchema);
+export const productModel = model('products', productSchema);

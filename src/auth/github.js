@@ -33,7 +33,6 @@ export function initializePassportGithub() {
 					email,
 					githubId: profile.id,
 					cart: newCart._id,
-					age: CONFIG.AGE_REQUIRED, // edad por defecto al registrarse con github
 				});
 				return done(null, newUser);
 			}

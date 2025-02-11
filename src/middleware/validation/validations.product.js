@@ -1,10 +1,6 @@
 import { CartsService } from '../../db/services/cart.service.js';
-import { isValidObjectId } from 'mongoose';
+import { InternalServerError } from '../../errors/generic.errors.js';
 import { ProductService } from '../../db/services/product.service.js';
-import {
-	BadRequestError,
-	InternalServerError,
-} from '../../errors/generic.errors.js';
 import {
 	DuplicatedProductCodeError,
 	ProductNotFoundError,
@@ -25,7 +21,7 @@ export async function validateUniqueCode(req, res, next) {
 }
 
 /**
- *
+ * @middleware `validateUserCartExists`
  * @throws `ReferenceError` si `req.user === undefined`
  */
 export async function validateProductIsAvailable(req, res, next) {
@@ -40,7 +36,7 @@ export async function validateProductIsAvailable(req, res, next) {
 		}
 
 		if (product.stock < 1) {
-			return next(new ProductOutOfStockError());
+			return next(new ProductOutOfStockError(pid));
 		}
 
 		const cart = await CartsService.getCartById(cid);
@@ -51,7 +47,7 @@ export async function validateProductIsAvailable(req, res, next) {
 		}
 
 		if (product.stock <= productInCart.quantity) {
-			return next(new ProductOutOfStockError());
+			return next(new ProductOutOfStockError(pid));
 		}
 	} catch (err) {
 		return next(new InternalServerError());
@@ -60,30 +56,10 @@ export async function validateProductIsAvailable(req, res, next) {
 	return next();
 }
 
-export async function validateBodyPids(req, res, next) {
+export async function validateProductsStock(req, res, next) {
 	const productList = req.body;
 
-	if (!Array.isArray(productList)) {
-		return next(new BadRequestError('Array esperado'));
-	}
-
 	for (const p of productList) {
-		if (!(Object.hasOwn(p, 'product') && Object.hasOwn(p, 'quantity'))) {
-			return next(new BadRequestError('Formato inválido'));
-		}
-
-		if (!isValidObjectId(p.product)) {
-			return next(new BadRequestError('PID inválido'));
-		}
-
-		if (isNaN(p.quantity) || p.quantity < 1) {
-			return next(
-				new BadRequestError(
-					`La cantidad del producto ${p.product} debe ser un número mayor a 0`
-				)
-			);
-		}
-
 		try {
 			const product = await ProductService.getProductById(p.product);
 
@@ -92,11 +68,24 @@ export async function validateBodyPids(req, res, next) {
 			}
 
 			if (product.stock < p.quantity) {
-				return next(new ProductOutOfStockError());
+				return next(new ProductOutOfStockError(p.product));
 			}
 		} catch (err) {
 			return next(new InternalServerError());
 		}
+	}
+	return next();
+}
+
+export function validateProductsInCartStock(req, res, next) {
+	const { products } = req.cart;
+	const outOfStockProducts = products.filter(
+		p => p.product.stock < p.quantity
+	);
+	if (outOfStockProducts.length) {
+		return next(
+			new ProductOutOfStockError(outOfStockProducts.map(p => p.product.id))
+		);
 	}
 	return next();
 }

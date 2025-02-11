@@ -1,12 +1,12 @@
-import mongoose from 'mongoose';
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
+import { model, Schema } from 'mongoose';
 
-const cartSchema = new mongoose.Schema(
+const cartSchema = new Schema(
 	{
 		products: [
 			{
 				product: {
-					type: mongoose.Schema.Types.ObjectId,
+					type: Schema.Types.ObjectId,
 					ref: 'products',
 				},
 				quantity: Number,
@@ -21,17 +21,17 @@ const cartSchema = new mongoose.Schema(
 	}
 );
 
+cartSchema.plugin(mongooseLeanVirtuals);
+
 cartSchema.pre('find', function () {
-	this.populate('products.product').lean();
+	this.populate('products.product');
 });
 cartSchema.pre('findOne', function () {
-	this.populate('products.product').lean();
+	this.populate('products.product');
 });
 
 cartSchema.pre('findOneAndUpdate', function () {
-	this.populate('products.product').lean();
+	this.populate('products.product');
 });
 
-cartSchema.plugin(mongooseLeanVirtuals);
-
-export const cartModel = mongoose.model('carts', cartSchema);
+export const cartModel = model('carts', cartSchema);

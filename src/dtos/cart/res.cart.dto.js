@@ -3,9 +3,11 @@ import Joi from 'joi';
 import { productResSchema } from '../product/res.product.dto.js';
 
 export const cartResSchema = Joi.object({
-	id: idSchema,
-	products: Joi.array().items(Joi.object({
-		product: productResSchema,
-		quantity: Joi.number().required()
-	})),
+	id: idSchema.required(),
+	products: Joi.array().items(
+		Joi.object({
+			product: productResSchema,
+			quantity: Joi.number().required(),
+		})
+	),
 });

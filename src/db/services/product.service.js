@@ -25,12 +25,16 @@ export class ProductService {
 	}
 
 	static async getProductByCode(code) {
-		const product = await productModel.findOne({ code }).lean();
+		const product = await productModel
+			.findOne({ code })
+			.lean({ virtuals: true });
 		return product;
 	}
 
 	static async deleteProductById(pid) {
-		const deletedProduct = await productModel.findByIdAndDelete(pid).lean();
+		const deletedProduct = await productModel
+			.findByIdAndDelete(pid)
+			.lean({ virtuals: true });
 		return deletedProduct;
 	}
 
@@ -38,7 +42,21 @@ export class ProductService {
 		delete modifiedValues._id;
 		const updatedProduct = await productModel
 			.findByIdAndUpdate(pid, { $set: modifiedValues }, { new: true })
-			.lean();
+			.lean({ virtuals: true });
 		return updatedProduct;
+	}
+
+	static async reduceAmounts(products) {
+		const query = products.map(p => {
+			return {
+				updateOne: {
+					filter: { _id: p.product._id },
+					update: { $inc: { stock: -p.quantity } },
+				},
+			};
+		});
+
+		const response = await productModel.bulkWrite(query);
+		return response;
 	}
 }

@@ -1,7 +1,9 @@
-import mongoose from 'mongoose';
+import { CONFIG } from '../../config/config.js';
 import mongooseLeanVirtuals from 'mongoose-lean-virtuals';
+import { POLICIES } from '../../constants/enums/policies.js';
+import { model, Schema } from 'mongoose';
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
 	{
 		first_name: {
 			type: String,
@@ -13,7 +15,7 @@ const userSchema = new mongoose.Schema(
 		},
 		age: {
 			type: Number,
-			required: true, // [age] no puede ser requerido porque Github no proporciona la edad de sus usuarios, y solucionarlo por mi cuenta me costaría años de vida.
+			default: CONFIG.AGE_REQUIRED, // [age] no puede ser requerido porque Github no proporciona la edad de sus usuarios
 		},
 		email: {
 			type: String,
@@ -28,14 +30,16 @@ const userSchema = new mongoose.Schema(
 			unique: true,
 			sparse: true,
 		},
-		rol: {
+		role: {
 			type: String,
-			default: 'user',
+			default: POLICIES.USER,
 		},
 		cart: {
-			type: mongoose.Schema.Types.ObjectId,
+			type: Schema.Types.ObjectId,
 			ref: 'carts',
-			required: true,
+			required: function () {
+				return this.role == POLICIES.USER;
+			},
 		},
 	},
 	{
@@ -47,5 +51,4 @@ const userSchema = new mongoose.Schema(
 
 userSchema.plugin(mongooseLeanVirtuals);
 
-
-export const userModel = mongoose.model('users', userSchema);
+export const userModel = model('users', userSchema);

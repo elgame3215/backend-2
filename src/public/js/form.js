@@ -53,7 +53,6 @@ submit.addEventListener('click', async e => {
 		});
 });
 
-
 async function deleteProduct(e) {
 	const response = await fetch(`/api/products/${e.target.id}`, {
 		method: 'DELETE',

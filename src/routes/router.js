@@ -16,9 +16,9 @@ export class Router {
 			}
 
 			passport.authenticate('jwt', { session: false }, (err, user) => {
-				if (!policies.includes(user?.rol)) {
+				if (!policies.includes(user?.role)) {
 					const error =
-						user.rol == POLICIES.ADMIN
+						user.role == POLICIES.ADMIN
 							? new ForbiddenError()
 							: new UnauthorizedError();
 					return next(error);

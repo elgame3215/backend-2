@@ -9,27 +9,35 @@ export function handleRegister({ isAdmin } = {}) {
 	return async function (req, email, password, done) {
 		const { firstName, lastName } = req.body;
 		const dateBirth = new Date(req.body.dateBirth);
+
 		try {
 			const user = await UsersService.findUserByEmail(email);
 			if (user) {
 				return done(new existingEmailError(), false);
 			}
 		} catch (err) {
-			console.error(err);
 			return done(new InternalServerError(), false);
 		}
-		const newCart = await CartsService.addCart();
+
 		const hashedPassword = await hashPassword(password);
 		const age = new Date().getFullYear() - dateBirth.getFullYear();
-		const newUser = await UsersService.registerUser({
+
+		const user = {
 			first_name: firstName, // eslint-disable-line camelcase
 			last_name: lastName, // eslint-disable-line camelcase
 			email,
 			age,
 			password: hashedPassword,
-			cart: newCart._id,
-			rol: isAdmin ? POLICIES.ADMIN : POLICIES.USER,
-		});
+		};
+
+		if (isAdmin) {
+			user.role = POLICIES.ADMIN;
+		} else {
+			const newCart = await CartsService.addCart();
+			user.cart = newCart.id;
+		}
+
+		const newUser = await UsersService.registerUser(user);
 		return done(null, newUser);
 	};
 }

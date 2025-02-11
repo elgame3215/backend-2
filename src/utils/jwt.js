@@ -6,7 +6,7 @@ const { JWT_SECRET } = CONFIG;
 export function setToken(req, res) {
 	const payload = {
 		email: req.user.email,
-		rol: req.user.rol,
+		role: req.user.role,
 	};
 	const token = jwt.sign(payload, JWT_SECRET, {
 		expiresIn: '15m',

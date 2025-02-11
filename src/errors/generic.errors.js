@@ -24,18 +24,6 @@ export class NotFoundError extends CustomError {
 	}
 }
 
-export class BadRequestError extends CustomError {
-	constructor(message) {
-		super(message, 400);
-	}
-}
-
-export class MissingCampsError extends CustomError {
-	constructor(missingCamps) {
-		super(`Campos faltantes: ${missingCamps.join(', ')}`, 400);
-	}
-}
-
 export class DtoError extends CustomError {
 	constructor(dtoError) {
 		super(dtoError.details[0].message, 400);

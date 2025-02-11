@@ -1,9 +1,11 @@
 import { CartsService } from '../../db/services/cart.service.js';
 import { hasProduct } from '../../utils/cart.utils.js';
+import { InternalServerError } from '../../errors/generic.errors.js';
 import { ProductOutOfStockError } from '../../errors/product.errors.js';
 import { ProductService } from '../../db/services/product.service.js';
 import {
 	CartNotFoundError,
+	emptyCartError,
 	InvalidQuantityError,
 	ProductNotInCartError,
 } from '../../errors/cart.errors.js';
@@ -23,9 +25,16 @@ export async function validateCartExists(req, res, next) {
 	const { cid } = req.params;
 	const cart = await CartsService.getCartById(cid);
 	if (!cart) {
-		next(new CartNotFoundError());
+		return next(new CartNotFoundError());
 	}
 	req.cart = cart;
+	return next();
+}
+
+export async function validateNotEmptyCart(req, res, next) {
+	if (!req.cart.products.length) {
+		return next(new emptyCartError());
+	}
 	return next();
 }
 
@@ -33,21 +42,29 @@ export async function validateProductInUserCart(req, res, next) {
 	// valida que el carrito del usuario autenticado cuente con unidades del producto recibido por parámetro
 	const { pid } = req.params;
 	const cid = req.user.cart;
-	const cart = await CartsService.getCartById(cid);
-	if (!hasProduct(cart, pid)) {
-		next(new ProductNotInCartError());
+	try {
+		const cart = await CartsService.getCartById(cid);
+		if (!hasProduct(cart, pid)) {
+			next(new ProductNotInCartError());
+		}
+		return next();
+	} catch (err) {
+		return next(new InternalServerError());
 	}
-	return next();
 }
 
 export async function validateProductInCart(req, res, next) {
 	// valida que el carrito recibido por parámetro cuente con unidades del producto recibido por parámetro
 	const { cid, pid } = req.params;
-	const cart = await CartsService.getCartById(cid);
-	if (!hasProduct(cart, pid)) {
-		next(new ProductNotInCartError());
+	try {
+		const cart = await CartsService.getCartById(cid);
+		if (!hasProduct(cart, pid)) {
+			next(new ProductNotInCartError());
+		}
+		return next();
+	} catch (err) {
+		return next(new InternalServerError());
 	}
-	return next();
 }
 
 export async function validateQuantity(req, res, next) {
@@ -56,9 +73,13 @@ export async function validateQuantity(req, res, next) {
 		next(new InvalidQuantityError());
 	}
 	const { pid } = req.params;
-	const product = await ProductService.getProductById(pid);
-	if (product.stock < quantity) {
-		next(new ProductOutOfStockError());
+	try {
+		const product = await ProductService.getProductById(pid);
+		if (product.stock < quantity) {
+			next(new ProductOutOfStockError(pid));
+		}
+		return next();
+	} catch (err) {
+		return next(new InternalServerError());
 	}
-	return next();
 }

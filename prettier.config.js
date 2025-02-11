@@ -4,6 +4,7 @@ const config = {
 	arrowParens: 'avoid',
 	useTabs: true,
 	tabWidth: 3,
+	printWidth: 80,
 };
 
 export default config;

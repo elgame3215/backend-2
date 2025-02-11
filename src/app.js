@@ -36,7 +36,12 @@ initializePassport();
 app.use(passport.initialize());
 
 // JOI
-app.use(expressJoiValidations({ overwriteRequest: true, throwErrors: true }));
+app.use(
+	expressJoiValidations({
+		overwriteRequest: true,
+		throwErrors: true,
+	})
+);
 
 // ROUTER
 app.use(router);

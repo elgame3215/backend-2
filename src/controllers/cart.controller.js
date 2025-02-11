@@ -1,6 +1,9 @@
 import { cartResSchema } from '../dtos/cart/res.cart.dto.js';
 import { CartsService } from '../db/services/cart.service.js';
+import { ProductService } from '../db/services/product.service.js';
 import { sendSuccess } from '../utils/customResponses.js';
+import { ticketResSchema } from '../dtos/ticket/res.ticket.dto.js';
+import { TicketService } from '../db/services/ticket.service.js';
 import {
 	InternalServerError,
 	UnauthorizedError,
@@ -73,6 +76,32 @@ export class CartController {
 		} catch (err) {
 			console.error(err);
 			return next(new InternalServerError());
+		}
+	}
+
+	static async purchase(req, res, next) {
+		const { products } = req.cart;
+		try {
+			await ProductService.reduceAmounts(products);
+
+			const ticket = await TicketService.generateTicket({
+				products,
+				purchaser: req.user.email,
+			});
+
+			await CartsService.clearCart(req.cart.id);
+
+			return sendSuccess({
+				res,
+				next,
+				code: 201,
+				detail: 'Compra realizada',
+				payload: ticket,
+				dtoSchema: ticketResSchema,
+			});
+		} catch (err) {
+			console.error(err);
+			return next(err);
 		}
 	}
 

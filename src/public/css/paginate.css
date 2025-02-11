@@ -1,4 +1,5 @@
-.pagination, footer {
+.pagination,
+footer {
 	display: flex;
 	justify-content: center;
 	padding: 5px;

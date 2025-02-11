@@ -38,7 +38,7 @@ Acepta los parámetros: `limit` (limite de productos por página), `page` (numer
 GET /api/products/:pid
 ```
 
-Trae la información del producto correspondiente al id recibido por :pid, siempre que haya uno.
+Trae la información del producto correspondiente al ID recibido por :pid, siempre que haya uno.
 
 ---
 
@@ -66,7 +66,7 @@ Para ser considerado válido, un producto debe tener el siguiente formato:
 DELETE /api/products/:pid
 ```
 
-Da de baja el producto correspondiente al id recibido por :pid, siempre que haya uno.
+Da de baja el producto correspondiente al ID recibido por :pid, siempre que haya uno.
 
 ---
 
@@ -74,7 +74,7 @@ Da de baja el producto correspondiente al id recibido por :pid, siempre que haya
 PUT /api/products/:pid
 ```
 
-Modifica la información del producto correspondiente al id recibido por :pid, siempre que haya uno y la nueva información, que se incluirá en el body de la petición, sea correcta de acuerdo a las [restricciones](#restricciones).
+Modifica la información del producto correspondiente al ID recibido por :pid, siempre que haya uno y la nueva información, que se incluirá en el body de la petición, sea correcta de acuerdo a las [restricciones](#restricciones).
 
 ### Carts API
 
@@ -84,12 +84,12 @@ La ruta /api/carts permite crear, eliminar y modificar carritos de compra de la 
 GET /api/carts/:cid
 ```
 
-Trae los productos del carrito correspondiente al id recibido por :cid, siempre que haya un carrito con ese id.
+Trae los productos del carrito correspondiente al ID recibido por :cid, siempre que haya un carrito con ese ID.
 
 ---
 
 ```
-POST /api/products
+POST /api/carts
 ```
 
 Permite dar de alta un nuevo carrito, inicialmente vacío.
@@ -100,7 +100,7 @@ Permite dar de alta un nuevo carrito, inicialmente vacío.
 POST /api/carts/my-cart/product/:pid
 ```
 
-Agrega una unidad del producto correspondiente al id recibido por :pid al carrito correspondiente al usuario autenticado, siempre que haya un carrito y un producto con esos id, y que el stock del producto sea mayor que la cantidad de unidades del mismo producto en el carrito.
+Agrega una unidad del producto correspondiente al ID recibido por :pid al carrito correspondiente al usuario autenticado, siempre que haya un carrito y un producto con esos ID, y que el stock del producto no sea menor que la cantidad de unidades del mismo producto en el carrito.
 
 ---
 
@@ -108,7 +108,7 @@ Agrega una unidad del producto correspondiente al id recibido por :pid al carrit
 DELETE /api/carts/my-cart/product/:pid
 ```
 
-Elimina del carrito correspondiente al usuario autenticado el producto con el id recibido por :pid, siempre que el carrito contenga al producto en cuestión.
+Elimina del carrito correspondiente al usuario autenticado el producto con el ID recibido por :pid, siempre que el carrito contenga al producto en cuestión.
 
 ---
 
@@ -116,13 +116,13 @@ Elimina del carrito correspondiente al usuario autenticado el producto con el id
 PUT /api/carts/:cid
 ```
 
-Reemplaza la lista de productos del carrito correspondiente al id recibido por :cid por la lista recibida por el body de la petición. Siempre que haya un carrito con el id dado, un producto para cada id recibido y cada producto cuente con un stock no menor a la cantidad demandada del mismo.
+Reemplaza la lista de productos del carrito correspondiente al ID recibido por :cid por la lista recibida por el body de la petición. Siempre que haya un carrito con el ID dado, un producto para cada ID recibido y cada producto cuente con un stock no menor a la cantidad demandada del mismo.
 El formato del body debe ser el siguiente:
 
 ```JS
 [
 	{
-		product: id,			// id del producto cuya cantidad de unidades se desea modificar
+		product: ID,			// ID del producto cuya cantidad de unidades se desea modificar
 		quantity: cantidad_de_unidades	// cantidad de unidades a establecer para el producto
 	}
 ]
@@ -134,7 +134,7 @@ El formato del body debe ser el siguiente:
 PUT /api/carts/:cid/product/:pid
 ```
 
-Modifica la cantidad de unidades del producto correspondiente al id recibido por :pid en el carrito con el id recibido por :cid, siempre y cuando exista un carrito con ese id, incluya al producto con el id dado y dicho producto cuente con un stock no menor a la cantidad demandada del mismo.
+Modifica la cantidad de unidades del producto correspondiente al ID recibido por :pid en el carrito con el ID recibido por :cid, siempre y cuando exista un carrito con ese ID, incluya al producto con el ID dado y dicho producto cuente con un stock no menor a la cantidad demandada del mismo.
 
 ---
 
@@ -142,7 +142,16 @@ Modifica la cantidad de unidades del producto correspondiente al id recibido por
 DELETE /api/carts/:cid
 ```
 
-Elimina todos los productos del carrito correspondiente al id recibido por :cid, siempre que haya un carrito con ese id.
+Elimina todos los productos del carrito correspondiente al ID recibido por :cid, siempre que haya un carrito con ese ID.
+
+---
+
+```
+POST /api/carts/:cid/purchase
+```
+
+Procesa la compra de todos los productos del carrito correspondiente al ID recibido por :cid, ajustando el stock de los productos comprados y generando un ticket con los datos de la compra. Si algún producto no cuenta con stock suficiente, la compra no se realiza y devuelve los ID de los productos que no cuentan con stock suficiente.
+
 
 ### Users API
 
@@ -190,6 +199,32 @@ El `email` no puede estar asociado a ningún usuario previamente registrado en e
 ---
 
 ```
+POST api/sessions/register-admin
+```
+
+Da de alta al usuario con permisos de administrador, cuyas credenciales se esperan en el cuerpo de la petición en el siguiente formato:
+
+```JS
+[
+	{
+		firstName: 'John',
+		lastName: 'Doe',
+		dateBirth: '09-12-2018',
+		email: 'johndoe@example.com',
+		password: 'password'
+	}
+]
+```
+
+La `password` se almacena hasheada usando bcrypt.
+
+El `email` no puede estar asociado a ningún usuario previamente registrado en el sistema.
+
+Sólo un usuario con permisos de administrador puede dar de alta a otro administrador.
+
+---
+
+```
 POST api/sessions/logout
 ```
 
@@ -208,7 +243,7 @@ Inicia el proceso de autenticación con Github. Solicita los permisos:
 
 Debido a limitaciones de la aplicación, cuando un usuario se registra con Github se le asigna una edad por defecto, que puede ser modificada en cualquier momento desde la configuración.
 
-### products UI
+### Products UI
 
 La ruta /products entrega una serie de interfaces visuales que le permiten al usuario tanto dar de alta/baja productos en el sistema, como visualizar productos y agregarlos o quitarlos de su carrito mediante los siguientes endpoints:
 
@@ -224,7 +259,7 @@ También cuenta con un botón que dirige al usuario a la vista de su carrito, qu
 ---
 
 ```
-GET /realtimeproducts
+GET /realtimeproducts (sólo admin)
 ```
 
 Lista los productos dados de alta igual que el endpoint anterior, además de proveer un formulario mediante el cual se pueden dar de alta productos. Además, cada producto puede ser eliminado del sistema desde la interfaz.
@@ -233,7 +268,7 @@ También acepta los parámetros `limit`, `page`, `sort`, `query`.
 ---
 
 ```
-GET /my-cart
+GET /my-cart (sólo user)
 ```
 
 Lista únicamente los productos agregados al carrito correspondiente al usuario que solicita la vista, permitiendo eliminar a cada uno del carrito (no del sistema).

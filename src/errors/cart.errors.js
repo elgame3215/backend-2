@@ -17,3 +17,9 @@ export class ProductNotInCartError extends CustomError {
 		super('El carrito no tiene unidades del producto', 400);
 	}
 }
+
+export class emptyCartError extends CustomError {
+	constructor() {
+		super('El carrito está vacío', 400);
+	}
+}

@@ -9,7 +9,7 @@ export class CartsService {
 	}
 
 	static async getCartById(cid) {
-		const cart = await cartModel.findById(cid).lean();
+		const cart = await cartModel.findById(cid).lean({ virtuals: true });
 		return cart;
 	}
 
@@ -22,10 +22,10 @@ export class CartsService {
 			cart.products.push({ product: pid, quantity: 1 });
 		}
 		const updatedCart = await cartModel
-		.findByIdAndUpdate(cid, cart, {
-			new: true,
-		})
-		.lean();
+			.findByIdAndUpdate(cid, cart, {
+				new: true,
+			})
+			.lean({ virtuals: true });
 		return updatedCart;
 	}
 
@@ -40,14 +40,14 @@ export class CartsService {
 					new: true,
 				}
 			)
-			.lean();
+			.lean({ virtuals: true });
 		return updatedCart;
 	}
 
 	static async updateCartProducts(cid, productList) {
 		const updatedCart = await cartModel
 			.findByIdAndUpdate(cid, { products: productList }, { new: true })
-			.lean();
+			.lean({ virtuals: true });
 		return updatedCart;
 	}
 
@@ -62,7 +62,7 @@ export class CartsService {
 					new: true,
 				}
 			)
-			.lean();
+			.lean({ virtuals: true });
 		return updatedProduct;
 	}
 
@@ -77,7 +77,7 @@ export class CartsService {
 					new: true,
 				}
 			)
-			.lean();
+			.lean({ virtuals: true });
 		return updatedCart;
 	}
 }

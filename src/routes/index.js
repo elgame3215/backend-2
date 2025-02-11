@@ -23,7 +23,7 @@ router.use('/', viewsRouter);
 // eslint-disable-next-line no-unused-vars
 router.use((err, req, res, next) => {
 	console.error(err);
-	
+
 	if (err instanceof ValidationError) {
 		return sendError({ res, code: 400, message: err.message });
 	}

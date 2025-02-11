@@ -31,7 +31,12 @@ export class UserController {
 
 	static logout(req, res, next) {
 		res.clearCookie('token');
-		return sendSuccess({ res, next, code: 200, detail: 'Sesión cerrada' });
+		return sendSuccess({
+			res,
+			next,
+			code: 200,
+			detail: 'Sesión cerrada',
+		});
 	}
 
 	static register(req, res, next) {

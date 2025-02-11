@@ -7,12 +7,14 @@ export class UsersService {
 	}
 
 	static async findUserByEmail(email) {
-		return await userModel.findOne({
-			email: email,
-		}).lean();
+		return await userModel
+			.findOne({
+				email: email,
+			})
+			.lean({ virtuals: true });
 	}
 
 	static async findUserById(id) {
-		return await userModel.findById(id).lean();
+		return await userModel.findById(id).lean({ virtuals: true });
 	}
 }

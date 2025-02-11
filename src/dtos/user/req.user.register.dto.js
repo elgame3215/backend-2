@@ -1,9 +1,10 @@
+import { CONFIG } from '../../config/config.js';
 import Joi from 'joi';
 import { Temporal } from 'temporal-polyfill';
 import { userLoginReqSchema } from './req.user.login.dto.js';
 
 const instant = Temporal.Now.instant()
-	.subtract({ hours: 24 * 365 * 18 }) // 18 años
+	.subtract({ hours: 24 * 365 * CONFIG.AGE_REQUIRED }) // 18 años
 	.toLocaleString();
 
 export const userRegisterReqSchema = Joi.object({
@@ -19,5 +20,5 @@ export const userRegisterReqSchema = Joi.object({
 			},
 		})
 		.required(),
-	rol: Joi.string().forbidden().default('user'),
+	role: Joi.string().forbidden().default('user'),
 }).keys(userLoginReqSchema.describe());

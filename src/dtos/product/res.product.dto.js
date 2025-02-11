@@ -3,5 +3,5 @@ import Joi from 'joi';
 import { productReqSchema } from '../product/req.product.dto.js';
 
 export const productResSchema = Joi.object({
-	id: idSchema,
+	id: idSchema.required(),
 }).concat(productReqSchema);

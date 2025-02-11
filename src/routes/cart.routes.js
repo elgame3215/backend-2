@@ -2,18 +2,21 @@ import { CartController } from '../controllers/cart.controller.js';
 import { idParamSchema } from '../dtos/IDs/index.js';
 import { POLICIES } from '../constants/enums/policies.js';
 import { Router } from './Router.js';
-import { validateParams } from 'express-joi-validations';
-import {
-	validateBodyPids,
-	validateProductIsAvailable,
-} from '../middleware/validation/validations.product.js';
+import { updateCartReqSchema } from '../dtos/req.update.cart.dto.js';
+import { validateBody, validateParams } from 'express-joi-validations';
 import {
 	validateCartExists,
+	validateNotEmptyCart,
 	validateProductInCart,
 	validateProductInUserCart,
 	validateQuantity,
 	validateUserCartExists,
 } from '../middleware/validation/validations.cart.js';
+import {
+	validateProductIsAvailable,
+	validateProductsInCartStock,
+	validateProductsStock,
+} from '../middleware/validation/validations.product.js';
 
 class CartsRouter extends Router {
 	constructor() {
@@ -40,6 +43,14 @@ class CartsRouter extends Router {
 			CartController.addProduct
 		);
 
+		this.post(
+			'/:cid/purchase',
+			[POLICIES.USER],
+			validateNotEmptyCart,
+			validateProductsInCartStock,
+			CartController.purchase
+		);
+
 		this.delete(
 			'/my-cart/product/:pid',
 			[POLICIES.USER],
@@ -51,7 +62,8 @@ class CartsRouter extends Router {
 		this.put(
 			'/:cid',
 			[POLICIES.USER],
-			validateBodyPids,
+			validateBody(updateCartReqSchema),
+			validateProductsStock,
 			CartController.updateCart
 		);
 
